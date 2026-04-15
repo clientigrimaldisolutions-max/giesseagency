@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Giesse Agency | Strategie di Marketing Digitale</title>
+  <meta name="description" content="Articoli, guide e strategie di video marketing, social media e advertising dal team di Giesse Agency. Consigli pratici per far crescere il tuo business.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.giesseagency.com/blog.html">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#0A0A0A">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.giesseagency.com/blog.html">
+  <meta property="og:title" content="Blog — Giesse Agency">
+  <meta property="og:description" content="Strategie di marketing digitale, video marketing e advertising per far crescere il tuo business.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { brand: '#F5B800', dark: '#0A0A0A', light: '#FAFAFA' },
+          fontFamily: { display: ['"Playfair Display"', 'serif'], body: ['"Inter"', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #0A0A0A; }
+    .article-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .article-card:hover {
+      border-color: rgba(245,184,0,0.3);
+      transform: translateY(-4px);
+    }
+    .article-card .thumb {
+      aspect-ratio: 16/9;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .article-card .thumb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, rgba(10,10,10,0.8));
+    }
+    .tag-pill {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: rgba(245,184,0,0.12);
+      color: #F5B800;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 w-full z-50 border-b border-white/[0.06]" style="background:rgba(10,10,10,0.9); backdrop-filter:blur(12px);">
+    <div class="max-w-[1200px] mx-auto px-[5vw] flex items-center justify-between h-20">
+      <a href="index.html" class="relative z-50 flex items-center"><span class="text-brand text-2xl" style="font-family:'Comfortaa',sans-serif; font-weight:300; line-height:1; letter-spacing:-0.5px;">giesse</span><span class="inline-block w-[6px] h-[6px] bg-white rounded-full ml-[2px] mb-[2px] self-end"></span></a>
+      <div class="flex items-center gap-6">
+        <a href="index.html" class="font-body text-sm text-white/90 hover:text-brand transition-colors">Home</a>
+        <a href="index.html#contatti" class="font-body text-sm font-medium text-dark bg-brand px-5 py-2 rounded-full hover:opacity-90 transition-opacity">Parliamone</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="pt-32 pb-16 md:pt-40 md:pb-20">
+    <div class="max-w-[1200px] mx-auto px-[5vw]">
+      <span class="font-body text-xs uppercase tracking-[3px] text-brand mb-4 block">Blog</span>
+      <h1 class="font-display text-4xl md:text-6xl font-medium leading-[0.9] text-white mb-6">
+        Strategie, idee<br>e <span class="italic text-brand">risultati</span><span class="text-brand">.</span>
+      </h1>
+      <p class="font-body text-white/90 text-lg max-w-[500px]">Consigli pratici dal nostro team per far crescere il tuo business con il marketing digitale.</p>
+    </div>
+  </section>
+
+  <!-- Articles Grid -->
+  <section class="pb-24">
+    <div class="max-w-[1200px] mx-auto px-[5vw]">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="articlesGrid">
+
+        <!-- Article 1 — GreenFuel Case Study -->
+        <a href="blog/greenfuel-meta-ads-fotovoltaico.html" class="article-card block">
+          <div class="thumb flex items-center justify-center relative" style="background: linear-gradient(135deg, #0a0a0a, rgba(245,184,0,0.08) 40%, rgba(34,139,34,0.06) 60%, #0a0a0a);">
+            <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 35%, rgba(245,184,0,0.12), transparent 60%);"></div>
+            <div class="relative z-10 bg-white rounded-xl shadow-2xl flex items-center justify-center" style="padding: 14px 24px;">
+              <img src="images/greenfuel-logo-cropped.png" alt="GreenFuel Corporation" class="h-12 md:h-16">
+            </div>
+            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.4) 35%, transparent 60%);"></div>
+          </div>
+          <div class="p-6">
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+              <span class="tag-pill">Case Study</span>
+              <span class="tag-pill">Meta Ads</span>
+              <span class="font-body text-white/70 text-xs">8 Apr 2026 · 7 min</span>
+            </div>
+            <h2 class="font-display text-xl font-medium text-white mb-3 leading-snug">Da €20 a €3,78 per lead: come abbiamo costruito il motore commerciale di un'azienda fotovoltaica</h2>
+            <p class="font-body text-white/90 text-sm leading-relaxed">559 lead generati in 4 mesi con Meta Ads. Il caso GreenFuel Corporation: dal CPL di mercato alla saturazione del reparto commerciale.</p>
+          </div>
+        </a>
+
+        <!-- Article 2 — Come trovare clienti con Meta Ads -->
+        <a href="blog/come-trovare-clienti-meta-ads.html" class="article-card block">
+          <div class="thumb flex items-center justify-center relative" style="background: #0d0d0d;">
+            <div class="absolute inset-0" style="background: radial-gradient(ellipse at 30% 50%, rgba(245,184,0,0.12), transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(59,130,246,0.08), transparent 50%);"></div>
+            <div class="relative z-10 flex items-center justify-center gap-4 md:gap-6">
+              <div class="text-center">
+                <div class="text-3xl md:text-4xl mb-1">&#x1F4F1;</div>
+                <div class="font-body text-white/90 text-[9px] md:text-[10px] font-medium">Facebook</div>
+              </div>
+              <div class="text-brand text-xl md:text-2xl font-display font-medium select-none">+</div>
+              <div class="text-center">
+                <div class="text-3xl md:text-4xl mb-1">&#x1F4E3;</div>
+                <div class="font-body text-white/90 text-[9px] md:text-[10px] font-medium">Strategia</div>
+              </div>
+              <div class="text-brand text-xl md:text-2xl font-display font-medium select-none">=</div>
+              <div class="text-center">
+                <div class="text-3xl md:text-4xl mb-1">&#x1F4B0;</div>
+                <div class="font-body text-white/90 text-[9px] md:text-[10px] font-medium">Clienti</div>
+              </div>
+            </div>
+            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.4) 35%, transparent 60%);"></div>
+          </div>
+          <div class="p-6">
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+              <span class="tag-pill">Guida</span>
+              <span class="tag-pill">Meta Ads</span>
+              <span class="font-body text-white/70 text-xs">13 Apr 2026 · 12 min</span>
+            </div>
+            <h2 class="font-display text-xl font-medium text-white mb-3 leading-snug">Come trovare nuovi clienti con Meta Ads: non è questione di budget, è questione di metodo</h2>
+            <p class="font-body text-white/90 text-sm leading-relaxed">La guida completa per imprenditori che vogliono risultati reali. Targeting, creatività, ottimizzazione — senza giri di parole.</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-16 border-t border-white/[0.06]">
+    <div class="max-w-[1200px] mx-auto px-[5vw] text-center">
+      <p class="font-body text-white/90 text-lg mb-6">Vuoi risultati concreti per il tuo business?</p>
+      <a href="index.html#contatti" class="inline-flex items-center gap-2 font-body text-sm font-medium text-dark bg-brand px-8 py-3 rounded-full hover:opacity-90 transition-opacity">
+        Parliamone
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/[0.06] py-8">
+    <div class="max-w-[1200px] mx-auto px-[5vw] flex flex-col md:flex-row items-center justify-between gap-4">
+      <p class="font-body text-white/70 text-xs">&copy; 2026 Giesse. Tutti i diritti riservati. — P.IVA 06019120879</p>
+      <div class="flex items-center gap-4">
+        <a href="privacy.html" class="font-body text-white/70 text-xs hover:text-brand transition-colors">Privacy Policy</a>
+        <span class="text-white/40">|</span>
+        <a href="cookie.html" class="font-body text-white/70 text-xs hover:text-brand transition-colors">Cookie Policy</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

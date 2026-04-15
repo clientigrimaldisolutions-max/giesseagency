@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /reels/
+
+Sitemap: https://www.giesseagency.com/sitemap.xml
