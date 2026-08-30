@@ -25,7 +25,7 @@
   <meta property="og:site_name" content="Giesse Agency">
   <meta name="twitter:image" content="https://www.giesseagency.com/og-cover.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="assets/consenso.css?v=202608301752">
+  <link rel="stylesheet" href="assets/consenso.css?v=202608301759">
   <!-- Dati strutturati: dicono a Google e ai motori generativi CHI siamo,
        cosa facciamo e dove operiamo. Niente indirizzo civico: un dato
        sbagliato qui fa piu danno che non averlo. -->
@@ -4124,7 +4124,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/motion.css?v=202608301752">
+  <link rel="stylesheet" href="assets/motion.css?v=202608301759">
 </head>
 <body>
   <span id="top" aria-hidden="true"></span>
@@ -5745,6 +5745,15 @@
         new FormData(form).forEach((v, k) => corpo.append(k, v)); // append: tiene tutte le scelte multiple
         corpo.append('origine', location.hostname || 'locale');
 
+        /* Da dove arriva chi sta scrivendo. Senza questo, sul foglio arrivano
+           venti nomi e nessuno sa quali li ha portati la pubblicita' e quali
+           la ricerca: e' la differenza fra sapere quanto costa un cliente e
+           tirare a indovinare. */
+        if (window.GiesseProvenienza) {
+          const p = window.GiesseProvenienza.perModulo();
+          Object.keys(p).forEach(k => { if (p[k]) corpo.append(k, p[k]); });
+        }
+
         return fetch(ENDPOINT_MODULO, { method: 'POST', body: corpo })
           .then(r => r.json())
           .then(dati => {
@@ -5770,6 +5779,12 @@
         });
         // La bozza si cancella SOLO a invio riuscito: se la rete cade, i dati
         // del visitatore restano nel browser e non si perde il contatto.
+        // il canale finisce anche negli eventi: cosi in Analytics e in Meta
+        // si filtrano le conversioni per provenienza senza incroci a mano
+        const canale = window.GiesseProvenienza ? window.GiesseProvenienza.canale() : 'sconosciuto';
+        if (typeof gtag !== 'undefined') gtag('event', 'lead_canale', { canale: canale });
+        if (typeof fbq !== 'undefined') fbq('trackCustom', 'LeadCanale', { canale: canale });
+
         inviaAlFoglio(form)
           .then(esito => {
             console.log('[modulo] inviato al foglio:', esito);
@@ -5894,9 +5909,13 @@
       });
     })();
   </script>
-  <script src="assets/motion.js?v=202608301752" defer></script>
+  <script src="assets/motion.js?v=202608301759" defer></script>
   <!-- Consenso cookie: unico punto da cui partono GA4 e Meta Pixel.
        Non reincollare gli snippet nelle pagine: sfuggirebbero al consenso. -->
-  <script src="assets/consenso.js?v=202608301752" defer></script>
+  <!-- Da dove arriva chi scrive. Non e' profilazione: sta in localStorage
+       e non esce dal browser finche' non si preme "invia". Per questo va
+       anche a cookie rifiutati. -->
+  <script src="assets/provenienza.js?v=202608301759" defer></script>
+  <script src="assets/consenso.js?v=202608301759" defer></script>
 </body>
 </html>
