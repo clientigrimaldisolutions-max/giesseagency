@@ -25,7 +25,7 @@
   <meta property="og:site_name" content="Giesse Agency">
   <meta name="twitter:image" content="https://www.giesseagency.com/og-cover.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="assets/consenso.css?v=202608301748">
+  <link rel="stylesheet" href="assets/consenso.css?v=202608301752">
   <!-- Dati strutturati: dicono a Google e ai motori generativi CHI siamo,
        cosa facciamo e dove operiamo. Niente indirizzo civico: un dato
        sbagliato qui fa piu danno che non averlo. -->
@@ -4124,7 +4124,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/motion.css?v=202608301748">
+  <link rel="stylesheet" href="assets/motion.css?v=202608301752">
 </head>
 <body>
   <span id="top" aria-hidden="true"></span>
@@ -5287,31 +5287,41 @@
       return true;
     }
 
-    // Le sorgenti si attaccano a ondate: 20 richieste tutte insieme
-    // rallentano il primo disegno anche se i file sono piccoli.
+    /* PARTENZA DEI VIDEO — rifatta il 30/08/2026
+       Prima si aspettava l'evento `load` piu' una requestIdleCallback, e poi
+       si attaccavano le sorgenti a ondate da 5 con 350ms di pausa. Misurato
+       sul sito vero: il primo video veniva chiesto a 353ms e l'ULTIMO a
+       1413ms — piu' il tempo di scaricarlo. Da telefono si vedevano venti
+       fotogrammi fermi per qualche secondo, poi partivano. Sembrava rotto.
+
+       Quella prudenza aveva senso quando i file erano quelli interi da
+       3,8 MB l'uno. Adesso un mini pesa 137 KB, tutti e venti fanno 2,7 MB,
+       e il sito e' su HTTP/2, che le richieste parallele le gestisce bene.
+
+       Ora: si parte al primo disegno (non a `load`), in due ondate ravvicinate.
+       La prima ondata copre gia' quello che si vede, la seconda arriva dopo
+       120ms. Tutto richiesto entro ~250ms invece che entro 1400.
+
+       Se un domani i file tornassero pesanti, questa scelta va rifatta. */
     function attaccaVideo() {
       if (!vuoleVideo()) return;
       const lista = Array.from(cards);
-      const ONDATA = 5;
-      (function ondata(i) {
-        lista.slice(i, i + ONDATA).forEach(card => {
-          const v = card.querySelector('video');
-          if (v.src) return;
-          v.preload = 'auto';
-          v.src = SORGENTE_MINI + card.dataset.reel + '.webm';
-        });
-        if (i + ONDATA < lista.length) setTimeout(() => ondata(i + ONDATA), 350);
-      })(0);
+      const PRIMA_ONDATA = 12;
+      const attacca = card => {
+        const v = card.querySelector('video');
+        if (v.src) return;
+        v.preload = 'auto';
+        v.src = SORGENTE_MINI + card.dataset.reel + '.webm';
+      };
+      lista.slice(0, PRIMA_ONDATA).forEach(attacca);
+      setTimeout(() => lista.slice(PRIMA_ONDATA).forEach(attacca), 120);
     }
 
-    // Mai prima del primo disegno: i video non devono competere con font,
-    // CSS e poster per la banda iniziale.
-    function dopoIlCarico(fn) {
-      const avvia = () => (window.requestIdleCallback || setTimeout)(fn, { timeout: 2500 });
-      if (document.readyState === 'complete') avvia();
-      else window.addEventListener('load', avvia, { once: true });
-    }
-    dopoIlCarico(attaccaVideo);
+    // Subito dopo il primo disegno: due rAF bastano a lasciar passare la
+    // prima pittura, e i poster sono gia' arrivati (misurati a 67ms).
+    requestAnimationFrame(function () {
+      requestAnimationFrame(attaccaVideo);
+    });
 
     if (!reduce) {
       let last = performance.now();
@@ -5884,9 +5894,9 @@
       });
     })();
   </script>
-  <script src="assets/motion.js?v=202608301748" defer></script>
+  <script src="assets/motion.js?v=202608301752" defer></script>
   <!-- Consenso cookie: unico punto da cui partono GA4 e Meta Pixel.
        Non reincollare gli snippet nelle pagine: sfuggirebbero al consenso. -->
-  <script src="assets/consenso.js?v=202608301748" defer></script>
+  <script src="assets/consenso.js?v=202608301752" defer></script>
 </body>
 </html>
