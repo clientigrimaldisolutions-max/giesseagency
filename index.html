@@ -24,7 +24,7 @@
   <meta property="og:site_name" content="Giesse Agency">
   <meta name="twitter:image" content="https://www.giesseagency.com/og-cover.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="assets/consenso.css?v=202608301732">
+  <link rel="stylesheet" href="assets/consenso.css?v=202608301742">
   <!-- Dati strutturati: dicono a Google e ai motori generativi CHI siamo,
        cosa facciamo e dove operiamo. Niente indirizzo civico: un dato
        sbagliato qui fa piu danno che non averlo. -->
@@ -4123,7 +4123,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/motion.css?v=202608301732">
+  <link rel="stylesheet" href="assets/motion.css?v=202608301742">
 </head>
 <body>
   <span id="top" aria-hidden="true"></span>
@@ -5649,8 +5649,32 @@
         target.classList.add('is-active');
         current = n;
         if (n <= TOTAL_STEPS) progressBar.style.width = (n / TOTAL_STEPS * 100) + '%';
-        // Scroll fluido alla card
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        portaAllaCard();
+      }
+
+      /* Prima era card.scrollIntoView({ block: 'center' }): CENTRAVA la card
+         nello schermo. Sui passaggi corti funziona, ma il pannello di
+         ringraziamento e' piu' alto di un telefono, e centrarlo vuol dire
+         lasciarne fuori la testa: si arrivava a meta' del messaggio, senza
+         vedere ne' la spunta ne' la prima riga.
+         Ora la card si posa SOTTO LA NAV, dall'inizio, come tutte le altre
+         ancore del sito. La posizione si calcola con la catena degli
+         offsetTop: e' quella di impaginazione, che le trasformazioni del
+         reveal e della parallasse non spostano. */
+      function portaAllaCard() {
+        var nav = document.querySelector('.nav');
+        var altezzaNav = nav ? Math.max(nav.getBoundingClientRect().height, 64) : 72;
+        var y = 0, el = card;
+        while (el) { y += el.offsetTop; el = el.offsetParent; }
+        y = Math.max(0, Math.round(y - altezzaNav - 20));
+        var pigro = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        window.scrollTo({ top: y, behavior: pigro ? 'auto' : 'smooth' });
+        // Rete di sicurezza: se lo scorrimento morbido non parte (succede nei
+        // pannelli di anteprima e nelle schede in secondo piano) ci si arriva
+        // comunque, invece di restare fermi dove si era.
+        setTimeout(function () {
+          if (Math.abs(window.pageYOffset - y) > 60) window.scrollTo(0, y);
+        }, 700);
       }
       function validateStep(n){
         const stepEl = form.querySelector('[data-step="' + n + '"]');
@@ -5859,9 +5883,9 @@
       });
     })();
   </script>
-  <script src="assets/motion.js?v=202608301732" defer></script>
+  <script src="assets/motion.js?v=202608301742" defer></script>
   <!-- Consenso cookie: unico punto da cui partono GA4 e Meta Pixel.
        Non reincollare gli snippet nelle pagine: sfuggirebbero al consenso. -->
-  <script src="assets/consenso.js?v=202608301732" defer></script>
+  <script src="assets/consenso.js?v=202608301742" defer></script>
 </body>
 </html>
