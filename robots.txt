@@ -1,5 +1,25 @@
 User-agent: *
 Allow: /
-Disallow: /reels/
+# I video pesanti non servono all'indicizzazione. I fotogrammi si', perche
+# Google renderizza la pagina e senza vedrebbe una hero vuota.
+Disallow: /reels/mini/
+Disallow: /reels/compressed/
+Allow: /reels/posters/
+
+# Crawler dei motori generativi: ammessi di proposito. Servono a farsi citare
+# nelle risposte di ChatGPT, Perplexity e simili. Per escluderli basta
+# cambiare Allow in Disallow qui sotto.
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
 
 Sitemap: https://www.giesseagency.com/sitemap.xml

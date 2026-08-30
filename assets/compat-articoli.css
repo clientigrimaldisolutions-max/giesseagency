@@ -1,0 +1,133 @@
+/* ==========================================================================
+   GIESSE — LIVELLO DI COMPATIBILITA PER GLI ARTICOLI DEL BLOG
+   Usato SOLO da blog/*.html.
+
+   PERCHE ESISTE
+   I tre articoli sono nati con Tailwind. Nel rebranding del 22/08/2026 il
+   CSS e passato a brand.css, ma il markup dell'intestazione ha conservato le
+   utility Tailwind (pt-36, max-w-[800px], grid-cols-2, text-3xl, mb-12...).
+   Tailwind non c'e piu: quelle 120 classi erano SENZA ALCUNA REGOLA.
+   In produzione significava: nessuna larghezza massima, nessuna spaziatura e
+   soprattutto niente padding in alto, quindi il titolo finiva sotto la nav fissa.
+
+   Non se n'era accorto nessuno perche il PANNELLO DI ANTEPRIMA INIETTA un
+   foglio Tailwind che nel sito vero non esiste: l'HTML servito ha 2 blocchi
+   <style>, il DOM ne mostrava 3. La verifica del 22/08 e passata su una bugia.
+   Come si smaschera: fetch della pagina e conteggio dei <style> nel testo
+   servito, confrontato con document.querySelectorAll('style').length.
+
+   Qui sotto sono implementate SOLO le utility realmente usate dai tre
+   articoli. Non e Tailwind: e la lista chiusa di quello che serve.
+   Quando gli articoli verranno riscritti con classi proprie, questo file
+   si cancella e si toglie il <link> dalle tre pagine.
+   Scala e quella di Tailwind (1 unita = 0.25rem), per non cambiare la resa.
+   ========================================================================== */
+
+/* --- posizionamento --- */
+.relative { position: relative; }
+.absolute { position: absolute; }
+.inset-0  { inset: 0; }
+.z-10     { z-index: 10; }
+.overflow-hidden { overflow: hidden; }
+.min-h-screen    { min-height: 100vh; }
+
+/* --- contenitore --- */
+.mx-auto        { margin-left: auto; margin-right: auto; }
+.max-w-\[800px\]{ max-width: 800px; }
+.px-\[5vw\]     { padding-left: 5vw; padding-right: 5vw; }
+
+/* Padding in alto dell'articolo: deve stare SOTTO la nav fissa.
+   Senza questa regola il titolo finiva coperto dalla barra. */
+.pt-36 { padding-top: 9rem; }
+.pb-24 { padding-bottom: 6rem; }
+.p-6   { padding: 1.5rem; }
+.my-8  { margin-top: 2rem; margin-bottom: 2rem; }
+
+/* --- flex e grid --- */
+.flex           { display: flex; }
+.flex-wrap      { flex-wrap: wrap; }
+.items-center   { align-items: center; }
+.justify-center { justify-content: center; }
+.grid           { display: grid; }
+.grid-cols-2    { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3    { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+
+/* --- margini --- */
+.mb-2  { margin-bottom: 0.5rem; }
+.mb-3  { margin-bottom: 0.75rem; }
+.mb-6  { margin-bottom: 1.5rem; }
+.mb-8  { margin-bottom: 2rem; }
+.mb-12 { margin-bottom: 3rem; }
+
+/* --- tipografia --- */
+.font-display, .font-body { font-family: 'Clash Display', sans-serif; }
+.font-medium   { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.text-xs  { font-size: 0.75rem;  line-height: 1rem; }
+.text-sm  { font-size: 0.875rem; line-height: 1.25rem; }
+.text-lg  { font-size: 1.125rem; line-height: 1.75rem; }
+.text-xl  { font-size: 1.25rem;  line-height: 1.75rem; }
+.text-2xl { font-size: 1.5rem;   line-height: 2rem; }
+.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+.text-5xl { font-size: 3rem;     line-height: 1; }
+.leading-\[1\.1\]   { line-height: 1.1; }
+.leading-relaxed    { line-height: 1.625; }
+.tracking-wider     { letter-spacing: 0.05em; }
+.uppercase          { text-transform: uppercase; }
+.text-center        { text-align: center; }
+.select-none        { -webkit-user-select: none; user-select: none; }
+
+/* --- colori ---
+   text-white/80 e /90 erano grigi trasparenti. Regola tipografica del brand:
+   nei testi lunghi il bianco e SEMPRE pieno. Qui valgono tutti #FFFFFF. */
+.text-white, .text-white\/80, .text-white\/90 { color: #FFFFFF; }
+.bg-white { background-color: #FFFFFF; }
+.text-brand {
+  background: var(--gradient-diag);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  padding-right: 0.14em; margin-right: -0.14em;
+}
+
+/* --- bordi, raggi, ombre, misure --- */
+.border-white\/\[0\.06\] { border-color: rgba(255,255,255,0.06); }
+.rounded-2xl { border-radius: 1rem; }
+.shadow-2xl  { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); }
+.h-20 { height: 5rem; }
+
+/* --- varianti da 768px in su (il "md:" di Tailwind) --- */
+@media (min-width: 768px) {
+  .md\:pt-44       { padding-top: 11rem; }
+  .md\:gap-10      { gap: 2.5rem; }
+  .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .md\:text-sm     { font-size: 0.875rem; line-height: 1.25rem; }
+  .md\:text-5xl    { font-size: 3rem;   line-height: 1; }
+  .md\:text-7xl    { font-size: 4.5rem; line-height: 1; }
+  .md\:h-28        { height: 7rem; }
+}
+
+/* Su telefono i corpi grandi vanno ridotti, altrimenti il titolo sfonda. */
+@media (max-width: 520px) {
+  .text-3xl { font-size: 1.6rem; line-height: 1.2; }
+  .pt-36    { padding-top: 7.5rem; }
+  .px-\[5vw\] { padding-left: 24px; padding-right: 24px; }
+}
+
+/* --- marcatore di sezione ---
+   Erano emoji (rocket, warning, palette...): fuori palette e disegnate in modo
+   diverso da ogni sistema operativo. Ora sono SVG a tratto col gradiente brand
+   dentro una tile di vetro, come le icone del portfolio.
+   La classe .section-icon era usata nel markup ma non aveva NESSUNA regola. */
+.section-icon {
+  width: 46px; height: 46px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 0 14px;
+  border-radius: 13px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+.section-icon svg { width: 24px; height: 24px; display: block; }

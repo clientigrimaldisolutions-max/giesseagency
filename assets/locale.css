@@ -1,0 +1,86 @@
+/* ==========================================================================
+   GIESSE — PAGINE LOCALI
+   Usata da agenzia-marketing-caltagirone.html e dalle sorelle.
+   Si appoggia a brand.css (nav, footer, token, .wrap) e motion.css.
+   ========================================================================== */
+
+.loc-hero { padding: 170px 0 60px; position: relative; }
+.loc-hero::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 520px; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0%, rgba(101,0,255,0.22), transparent 65%);
+}
+.loc-hero > * { position: relative; z-index: 1; }
+.loc-tag {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 9px 18px; margin-bottom: 22px;
+  border-radius: 9999px; border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.04);
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #FFFFFF;
+}
+.loc-tag::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gradient-diag); flex-shrink: 0;
+}
+.loc-titolo {
+  font-weight: 700; letter-spacing: -0.02em; line-height: 1.0;
+  font-size: clamp(2.4rem, 6.5vw, 4.6rem); text-transform: uppercase;
+  color: #FFFFFF; margin: 0 0 22px; padding-bottom: 0.08em;
+}
+.loc-sommario {
+  font-size: clamp(1.02rem, 1.6vw, 1.2rem); font-weight: 400; line-height: 1.6;
+  color: #FFFFFF; max-width: 720px; margin: 0 0 34px;
+}
+.loc-azioni { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.loc-sezione { padding: 56px 0; border-top: 1px solid var(--line); }
+.loc-sezione h2 {
+  font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em;
+  font-size: clamp(1.6rem, 3.4vw, 2.5rem); line-height: 1.06;
+  color: #FFFFFF; margin: 0 0 20px;
+}
+.loc-sezione p { font-size: 1.02rem; line-height: 1.65; color: #FFFFFF; margin: 0 0 16px; max-width: 760px; }
+.loc-sezione p:last-child { margin-bottom: 0; }
+
+.loc-griglia { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 8px; }
+@media (max-width: 760px) { .loc-griglia { grid-template-columns: 1fr; } }
+.loc-card {
+  padding: 26px 26px 24px; border-radius: 18px;
+  background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.10);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.loc-card:hover { transform: translateY(-4px); border-color: rgba(110,28,255,0.42); }
+.loc-card h3 { font-size: 1.12rem; font-weight: 700; color: #FFFFFF; margin: 0 0 8px; }
+.loc-card p  { font-size: 0.95rem; line-height: 1.55; color: #FFFFFF; margin: 0; }
+
+.loc-vicine { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 10px; padding: 0; list-style: none; }
+.loc-vicine li {
+  padding: 9px 16px; border-radius: 9999px;
+  background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.10);
+  font-size: 0.86rem; color: #FFFFFF;
+}
+
+.loc-scheda {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;
+  padding: 26px; border-radius: 20px; margin-top: 6px;
+  background: linear-gradient(135deg, rgba(0,166,255,0.07), rgba(101,0,255,0.11));
+  border: 1px solid rgba(0,166,255,0.22);
+}
+.loc-scheda dt {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+  color: #FFFFFF; opacity: 0.7; margin-bottom: 5px;
+}
+.loc-scheda dd { font-size: 1rem; font-weight: 500; color: #FFFFFF; margin: 0; line-height: 1.4; }
+.loc-scheda a { color: #FFFFFF; text-decoration: underline; text-underline-offset: 3px; }
+
+@media (max-width: 900px) { .loc-hero { padding: 140px 0 46px; } .loc-sezione { padding: 44px 0; } }
+
+/* Telefono ed email nella scheda contatti: sono link che la gente tocca
+   davvero, quindi devono avere l'area minima. Le etichette erano a 11,2px,
+   sotto la soglia di leggibilita. */
+.loc-scheda dt { font-size: 12px; letter-spacing: 0.14em; }
+.loc-scheda a {
+  display: inline-flex; align-items: center;
+  min-height: 44px; padding: 2px 0;
+}

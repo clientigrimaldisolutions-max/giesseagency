@@ -1,0 +1,474 @@
+/* ==========================================================================
+   GIESSE AGENCY — BRAND CSS CONDIVISO
+   Usato da: blog.html, blog/*.html, privacy.html, cookie.html
+   La homepage (index.html) ha il suo CSS inline.
+   Aggiornato: 22/08/2026 — rebranding Clash Display + palette blu/viola
+   ========================================================================== */
+
+/* ============ FONT — Clash Display self-hosted ============ */
+@font-face { font-family: 'Clash Display'; src: url('../fonts/ClashDisplay-Extralight.woff2') format('woff2'); font-weight: 200; font-display: swap; }
+@font-face { font-family: 'Clash Display'; src: url('../fonts/ClashDisplay-Light.woff2')      format('woff2'); font-weight: 300; font-display: swap; }
+@font-face { font-family: 'Clash Display'; src: url('../fonts/ClashDisplay-Regular.woff2')    format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Clash Display'; src: url('../fonts/ClashDisplay-Medium.woff2')     format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Clash Display'; src: url('../fonts/ClashDisplay-Semibold.woff2')   format('woff2'); font-weight: 600; font-display: swap; }
+@font-face { font-family: 'Clash Display'; src: url('../fonts/ClashDisplay-Bold.woff2')       format('woff2'); font-weight: 700; font-display: swap; }
+
+/* ============ TOKEN ============ */
+:root {
+  --blu-1: #00A6FF;
+  --blu-2: #2E4CFF;
+  --viola: #6500FF;
+  --dark:  #0A0A0A;
+  --white: #FAFAFA;
+  --gradient-diag: linear-gradient(135deg, var(--blu-1) 0%, var(--blu-2) 50%, var(--viola) 100%);
+  --line: rgba(255,255,255,0.08);
+  --maxw: 1200px;
+}
+
+/* ============ BASE ============ */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Clash Display', -apple-system, BlinkMacSystemFont, sans-serif; }
+html {
+  scroll-behavior: smooth;
+  /* La nav e fixed: senza questo ogni ancora (indice degli articoli, menu
+     mobile, link #form) atterra col titolo nascosto sotto la barra. */
+  scroll-padding-top: 100px;
+}
+@media (max-width: 900px) { html { scroll-padding-top: 92px; } }
+html, body { background: var(--dark); color: var(--white); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+img, video { display: block; max-width: 100%; }
+::selection { background: var(--viola); color: #fff; }
+
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 40px; }
+@media (max-width: 900px) { .wrap { padding: 0 24px; } }
+
+/* em + punteggiatura restano sulla stessa riga */
+.nb { white-space: nowrap; }
+
+.grad-text {
+  background: var(--gradient-diag);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  /* il corsivo sborda a destra: senza padding il clip taglia l'ultima lettera.
+     clone = ogni riga riceve il padding, così il testo puo ancora andare a capo */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding-right: 0.14em;
+  margin-right: -0.14em;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+/* ============ NAV (coerente con la homepage) ============ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,10,10,0.85);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner {
+  max-width: 1600px; margin: 0 auto; padding: 0 40px;
+  height: 80px; display: flex; align-items: center; justify-content: space-between;
+}
+@media (max-width: 900px) { .nav-inner { padding: 0 24px; } }
+.nav-logo { display: inline-flex; align-items: flex-end; gap: 4px; }
+.nav-logo img { height: 22px; width: auto; }
+.nav-logo .dot {
+  width: 6px; height: 6.5px; border-radius: 1.5px;
+  background: var(--gradient-diag); margin-bottom: 6px;
+  box-shadow: 0 0 12px rgba(101,0,255,0.55);
+}
+.nav-right { display: flex; align-items: center; gap: 30px; }
+.nav-menu { display: flex; }
+.nav-menu a {
+  color: #fff; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px; padding: 0 24px;
+  transition: opacity 0.2s ease;
+}
+/* hover e voce corrente: vedi il blocco in fondo al file */
+@media (max-width: 900px) { .nav-menu { display: none; } }
+
+.btn-nav {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--gradient-diag); color: #fff !important; font-weight: 700;
+  padding: 13px 30px; border-radius: 999px;
+  font-size: 12px; letter-spacing: 2.6px; text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,0.22);
+  background-size: 200% 200%; background-position: 0% 50%;
+  transition: transform 0.2s ease, background-position 0.35s ease, box-shadow 0.25s ease;
+  box-shadow: 0 10px 30px -8px rgba(101,0,255,0.55);
+}
+.btn-nav:hover { transform: translateY(-2px); background-position: 100% 50%; box-shadow: 0 18px 40px -8px rgba(101,0,255,0.75); }
+
+/* ============ PILL / TAG ============ */
+.pill {
+  display: inline-block; padding: 5px 14px; border-radius: 999px;
+  font-size: 0.66rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.6px;
+  background: rgba(101,0,255,0.14); color: #b79bff;
+  border: 1px solid rgba(101,0,255,0.28);
+}
+.eyebrow {
+  display: block; font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 3px;
+  margin-bottom: 18px;
+}
+
+/* ============ BOTTONE CTA ============ */
+.btn-cta {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--gradient-diag); color: #fff !important;
+  font-weight: 700; font-size: 13px; letter-spacing: 2.4px; text-transform: uppercase;
+  padding: 17px 34px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background-size: 200% 200%; background-position: 0% 50%;
+  transition: transform 0.2s ease, background-position 0.35s ease, box-shadow 0.25s ease;
+  box-shadow: 0 14px 40px -10px rgba(101,0,255,0.6);
+}
+.btn-cta:hover { transform: translateY(-2px); background-position: 100% 50%; box-shadow: 0 22px 55px -10px rgba(101,0,255,0.8); }
+.btn-cta svg { transition: transform 0.25s ease; }
+.btn-cta:hover svg { transform: translateX(5px); }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+  color: #FFFFFF; transition: color 0.2s ease, gap 0.2s ease;
+}
+.back-link:hover { color: #fff; gap: 14px; }
+
+/* ============ PAGE HEAD ============ */
+.page-head { padding: 180px 0 70px; position: relative; }
+.page-head::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 520px; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0%, rgba(101,0,255,0.22), transparent 65%);
+}
+.page-head > * { position: relative; z-index: 1; }
+.page-title {
+  font-weight: 700; letter-spacing: -0.02em; line-height: 0.98;
+  font-size: clamp(2.6rem, 7vw, 5.4rem); text-transform: uppercase;
+  padding-bottom: 0.1em;
+}
+.page-title em { font-style: italic; }
+.page-sub {
+  font-weight: 400; font-size: clamp(1rem, 1.6vw, 1.2rem); line-height: 1.6;
+  color: #FFFFFF; max-width: 620px; margin-top: 24px;
+}
+@media (max-width: 900px) { .page-head { padding: 140px 0 50px; } }
+
+/* ============ CARD ARTICOLO (indice blog) ============ */
+.articles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; padding-bottom: 110px; }
+@media (max-width: 1000px) { .articles-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 660px)  { .articles-grid { grid-template-columns: 1fr; } }
+
+.article-card {
+  display: block; overflow: hidden; border-radius: 22px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--line);
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+.article-card:hover {
+  border-color: rgba(101,0,255,0.45);
+  transform: translateY(-5px);
+  box-shadow: 0 26px 60px -22px rgba(101,0,255,0.55);
+}
+.article-card .thumb {
+  aspect-ratio: 16/9; position: relative; display: flex;
+  align-items: center; justify-content: center; overflow: hidden;
+}
+.article-card .thumb::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.35) 40%, transparent 65%);
+}
+.article-card .thumb > * { position: relative; z-index: 1; }
+.article-card .body { padding: 26px 24px 30px; }
+.article-card .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 16px; }
+.article-card .meta .date { font-size: 0.74rem; font-weight: 400; color: #FFFFFF; }
+.article-card h2 {
+  font-size: 1.22rem; font-weight: 600; line-height: 1.25; margin-bottom: 12px;
+}
+.article-card p { font-size: 0.9rem; font-weight: 400; line-height: 1.65; color: #FFFFFF; }
+.article-card .more {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 20px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+  color: #b79bff; transition: gap 0.2s ease;
+}
+.article-card:hover .more { gap: 13px; }
+
+/* ============ PROSA (articoli + pagine legali) ============ */
+.prose { max-width: 760px; margin: 0 auto; padding-bottom: 110px; }
+.prose > * + * { margin-top: 1.15em; }
+.prose h2 {
+  font-size: clamp(1.7rem, 3.2vw, 2.3rem); font-weight: 700; line-height: 1.15;
+  margin-top: 2.8em; margin-bottom: 0.8em; letter-spacing: -0.02em; color: #fff;
+  /* sottolineatura rossa a mano libera — stessa della homepage */
+  display: block; width: fit-content; max-width: 100%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 20' preserveAspectRatio='none'><path d='M4,14 C40,7 80,17 130,10 C180,4 220,16 296,8' stroke='%23ff3b3b' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 0.20em;
+  padding-bottom: 0.16em; padding-right: 0.06em;
+}
+.prose h3 {
+  font-size: clamp(1.2rem, 2.1vw, 1.42rem); font-weight: 700; line-height: 1.3;
+  margin-top: 2.1em; margin-bottom: 0.55em; color: #fff;
+}
+.prose p, .prose li {
+  font-size: 1.04rem; font-weight: 400; line-height: 1.8;
+  color: #FFFFFF;
+}
+.prose strong { color: #fff; font-weight: 700; }
+.prose ul, .prose ol { padding-left: 1.4rem; }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose li + li { margin-top: 0.5em; }
+.prose a { color: #8ea8ff; text-decoration: underline; text-underline-offset: 3px; transition: color 0.2s ease; }
+.prose a:hover { color: #b79bff; }
+.prose blockquote {
+  border-left: 2px solid var(--viola);
+  padding: 6px 0 6px 24px; margin: 2em 0;
+  font-size: 1.18rem; font-weight: 400; font-style: italic; color: #FFFFFF;
+}
+.prose img { border-radius: 18px; margin: 2em 0; }
+.prose hr { border: 0; border-top: 1px solid var(--line); margin: 3em 0; }
+
+/* Le tabelle su mobile sono piu larghe dello schermo: scorrono nel loro
+   contenitore invece di essere tagliate da overflow-x:hidden del body. */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 2em 0;
+  border-radius: 14px;
+}
+.table-scroll table { margin: 0; min-width: 520px; }
+.prose table { width: 100%; border-collapse: collapse; margin: 2em 0; font-size: 0.9rem; }
+.article-body table { max-width: 100%; }
+.prose th, .prose td {
+  text-align: left; padding: 14px 16px; border-bottom: 1px solid var(--line);
+  font-weight: 400; color: #FFFFFF;
+}
+.prose th {
+  font-weight: 600; color: #fff; font-size: 0.72rem;
+  text-transform: uppercase; letter-spacing: 1.6px;
+}
+
+.note {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--line);
+  border-radius: 18px; padding: 26px 28px; margin: 2.2em 0;
+}
+.note p { margin: 0; }
+
+/* ============ CTA DI CHIUSURA ============ */
+.closing-cta { border-top: 1px solid var(--line); padding: 90px 0; text-align: center; position: relative; }
+.closing-cta::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 100%, rgba(101,0,255,0.18), transparent 65%);
+}
+.closing-cta > * { position: relative; z-index: 1; }
+.closing-cta h3 {
+  font-size: clamp(1.9rem, 4.5vw, 3.2rem); font-weight: 700; line-height: 1.12;
+  text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 30px;
+  padding-bottom: 0.08em;
+}
+
+/* ============ FOOTER ============ */
+.footer { border-top: 1px solid var(--line); padding: 70px 0 40px; position: relative; }
+.footer-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+.footer-logo img { height: 46px; width: auto; opacity: 0.92; }
+.footer-social { display: flex; gap: 10px; }
+.footer-social a {
+  width: 42px; height: 42px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--line); color: #FFFFFF;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+}
+.footer-social a:hover { background: var(--gradient-diag); color: #fff; transform: translateY(-3px); border-color: transparent; }
+.footer-social svg { width: 19px; height: 19px; }
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  border-top: 1px solid var(--line); margin-top: 44px; padding-top: 26px;
+  font-size: 0.76rem; font-weight: 400; color: #FFFFFF;
+}
+.footer-bottom .links { display: flex; gap: 22px; }
+.footer-bottom a { transition: color 0.2s ease; }
+.footer-bottom a:hover { color: #fff; }
+
+/* ============ REVEAL ============ */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1); transition-delay: calc(var(--i, 0) * 70ms); }
+.reveal.is-revealed { opacity: 1; transform: translate3d(0, var(--py, 0px), 0); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ============================================================
+   AREA DI TOCCO SU TELEFONO (28/08/2026)
+   Minimo 44x44px per ogni elemento toccabile, come chiedono le linee
+   guida iOS e Android. Si agisce sul padding, non sul corpo del testo.
+   ============================================================ */
+@media (max-width: 900px) {
+  /* Testi minuti: sotto i 12px su telefono non si leggono. Si alza il corpo
+     e si stringe il tracking, cosi l'ingombro resta lo stesso. */
+  .pill                    { font-size: 0.75rem; letter-spacing: 1.1px; }
+  .article-card .meta .date{ font-size: 0.78rem; }
+  .article-card .more      { font-size: 12px; letter-spacing: 1.4px; }
+  .eyebrow                 { font-size: 12px; letter-spacing: 2px; }
+
+  /* Bersagli tap: 44px pieni, larghezza inclusa (i link corti tipo "Home"
+     erano larghi 35px). */
+  .btn-nav { min-height: 44px !important; display: inline-flex; align-items: center; }
+  .footer-bottom a { min-width: 44px; justify-content: center; }
+
+  .footer-bottom .links { gap: 8px 20px; flex-wrap: wrap; }
+  .footer-bottom a { display: inline-flex; align-items: center; min-height: 44px; }
+  .nav-logo { padding: 11px 6px; margin: -11px -6px; }
+  .nav-menu a { display: inline-flex; align-items: center; min-height: 44px; }
+  .footer-social a { min-width: 44px; min-height: 44px; }
+  .cat-strip a { min-height: 44px; }
+  .back-link { display: inline-flex; align-items: center; min-height: 44px; }
+}
+
+/* ============================================================================
+   CTA CHE PULSANO OVUNQUE (30/08/2026)
+   Il battito e il riflesso stavano solo nella home, scritti dentro il suo
+   <style>. Nelle altre 16 pagine i pulsanti verso il modulo erano fermi:
+   chi arriva da Google su un articolo o su una categoria del portfolio vedeva
+   un sito piu spento proprio dove deve convertire.
+   Qui vale per tutte le pagine che caricano brand.css.
+
+   Il battito e' sul BOX-SHADOW, non su transform: transform e gia usato
+   dall'hover e dai bottoni magnetici di motion.js (--mx/--my), e sovrascriverlo
+   con un'animazione li spegnerebbe.
+   ========================================================================== */
+@keyframes ctaBattito {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,166,255,0.55), 0 12px 32px -10px rgba(101,0,255,0.7); }
+  50%      { box-shadow: 0 0 0 14px rgba(101,0,255,0), 0 18px 44px -8px rgba(101,0,255,0.95); }
+}
+@keyframes ctaRiflesso {
+  0%, 58%   { left: -60%; }
+  90%, 100% { left: 130%; }
+}
+
+.btn-nav, .btn-cta, .faq-cta, .cta-forte {
+  position: relative;
+  overflow: hidden;
+  animation: ctaBattito 2.9s ease-in-out infinite;
+}
+/* Il riflesso che attraversa il pulsante ogni tanto. Su .cta-forte l'::after
+   c'e' gia (definito nella home): questa regola non lo tocca. */
+.btn-nav::after, .btn-cta::after, .faq-cta::after {
+  content: ''; position: absolute; top: 0; left: -60%;
+  width: 45%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.32), transparent);
+  animation: ctaRiflesso 4.6s ease-in-out infinite;
+  pointer-events: none;
+}
+/* il contenuto deve stare sopra il riflesso */
+.btn-nav > *, .btn-cta > *, .faq-cta > * { position: relative; z-index: 2; }
+
+/* Sotto il puntatore il battito si ferma: se continua mentre uno sta per
+   cliccare, il bersaglio si muove. */
+.btn-nav:hover, .btn-cta:hover, .faq-cta:hover, .cta-forte:hover { animation-play-state: paused; }
+.btn-nav:hover::after, .btn-cta:hover::after, .faq-cta:hover::after { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-nav, .btn-cta, .faq-cta, .cta-forte,
+  .btn-nav::after, .btn-cta::after, .faq-cta::after { animation: none; }
+}
+
+/* ============================================================================
+   HOVER DELLE VOCI DI MENU (30/08/2026)
+   Prima passavano da bianco a opacity 0.55: sul nero legge come un grigio
+   spento, cioe' il colore di una voce DISATTIVATA. Il segnale era rovesciato.
+   Ora passano al gradiente del brand.
+
+   Come: il gradiente sta sempre li, ritagliato sul testo (background-clip),
+   e sopra ci sta il riempimento bianco. In hover il riempimento diventa
+   trasparente e sotto compare il gradiente. Si transita -webkit-text-fill-color,
+   che e' un colore e quindi si anima: background-image no.
+   Dove background-clip:text non c'e', il testo resta bianco. Nessun danno.
+   ========================================================================== */
+.nav-menu a, .nav-panel-links a {
+  background-image: linear-gradient(92deg, #00A6FF 0%, #2E4CFF 48%, #6E1CFF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: #FFFFFF;
+  transition: -webkit-text-fill-color 0.28s ease, opacity 0.2s ease;
+}
+.nav-menu a:hover, .nav-menu a:focus-visible,
+.nav-panel-links a:hover, .nav-panel-links a:focus-visible {
+  -webkit-text-fill-color: transparent;
+  opacity: 1;
+}
+/* La voce della pagina in cui ci si trova e' gia' colorata: e' un'informazione
+   ("sei qui"), non uno stato spento. */
+.nav-menu a.is-current { -webkit-text-fill-color: transparent; opacity: 1; }
+
+/* Stessa logica nelle colonne del footer: da bianco al gradiente, non a un
+   bianco leggermente diverso. */
+.footer-col a {
+  background-image: linear-gradient(92deg, #00A6FF 0%, #2E4CFF 48%, #6E1CFF 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: #FFFFFF;
+  transition: -webkit-text-fill-color 0.28s ease, transform 0.25s ease;
+}
+.footer-col a:hover { -webkit-text-fill-color: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-menu a, .nav-panel-links a, .footer-col a { transition: none; }
+}
+
+/* ============================================================================
+   TUTTO CIO' CHE SI CLICCA REAGISCE (30/08/2026)
+   Passata finale: quattro elementi cliccabili non avevano nessuno stato hover.
+   Un link che non risponde al puntatore sembra testo morto.
+   ============================================================================ */
+
+/* Testo che diventa gradiente: stessa tecnica del menu (si transita
+   -webkit-text-fill-color, che e' un colore e quindi si anima). */
+/* Gli indici degli articoli erano alti 37px: sono link fitti uno sull'altro,
+   proprio il caso in cui il pollice sbaglia bersaglio. */
+.toc-link { display: flex; align-items: center; min-height: 44px; }
+
+.toc-link, .zone-link, .footer-bottom a, .back-link {
+  background-image: linear-gradient(92deg, #00A6FF 0%, #2E4CFF 48%, #6E1CFF 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: #FFFFFF;
+  transition: -webkit-text-fill-color 0.28s ease, opacity 0.2s ease, transform 0.25s ease;
+}
+.toc-link:hover, .zone-link:hover, .footer-bottom a:hover, .back-link:hover {
+  -webkit-text-fill-color: transparent;
+  opacity: 1;
+}
+
+
+/* I due logotipi erano inerti. Un filo di luce basta. */
+.nav-logo, .footer-logo {
+  transition: filter 0.3s ease, transform 0.3s ease;
+  display: inline-flex;
+}
+.nav-logo:hover, .footer-logo:hover {
+  filter: drop-shadow(0 0 18px rgba(46,76,255,0.85));
+  transform: translateY(-1px);
+}
+
+/* Le card recensione portano a Google: devono dire che si possono toccare. */
+.rec-card {
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.rec-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(110,28,255,0.45);
+  box-shadow: 0 24px 50px -22px rgba(101,0,255,0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-link, .zone-link, .footer-bottom a, .cat-strip a, .back-link,
+  .nav-logo, .footer-logo, .rec-card { transition: none; }
+  .cat-strip a:hover { background: rgba(110,28,255,0.16); }
+}
+
+/* La striscia delle categorie: pillole, non testo nudo. Qui il gradiente va
+   sullo SFONDO — sul testo non attaccherebbe, perche' la shorthand
+   `background` di .cat-strip a azzera background-clip. */
+.cat-strip a:hover {
+  background: linear-gradient(120deg, rgba(0,166,255,0.28), rgba(110,28,255,0.34));
+  border-color: rgba(110,28,255,0.6);
+}

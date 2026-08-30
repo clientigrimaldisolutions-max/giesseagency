@@ -1,0 +1,144 @@
+/* ==========================================================================
+   GIESSE — BANNER CONSENSO COOKIE
+   Caricato da tutte le pagine. Il markup lo costruisce assets/consenso.js.
+
+   Perche esiste: GA4 e Meta Pixel partivano da soli al caricamento, su ogni
+   pagina, senza chiedere niente. Con il modulo che raccoglie dati personali e
+   le campagne in partenza non e sostenibile: i tracker non essenziali vanno
+   caricati DOPO il consenso, non prima.
+   ========================================================================== */
+
+.ck-banner {
+  position: fixed;
+  left: 16px; right: 16px; bottom: 16px;
+  z-index: 2000;
+  max-width: 560px;
+  padding: 24px 24px 20px;
+  border-radius: 22px;
+  background: rgba(14, 14, 18, 0.92);
+  backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.8);
+  color: #FFFFFF;
+  font-family: 'Clash Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  transform: translateY(14px);
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ck-banner.is-in { opacity: 1; transform: none; }
+/* filo in gradiente sul bordo alto, come le card del sito */
+.ck-banner::before {
+  content: ''; position: absolute; left: 24px; right: 24px; top: 0; height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #00A6FF, #2E4CFF 50%, #6500FF);
+}
+
+.ck-titolo {
+  font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em;
+  margin: 0 0 8px; color: #FFFFFF;
+}
+.ck-testo {
+  font-size: 0.92rem; font-weight: 400; line-height: 1.5;
+  margin: 0 0 18px; color: #FFFFFF;
+}
+.ck-testo a { color: #FFFFFF; text-decoration: underline; text-underline-offset: 3px; }
+.ck-testo a:hover { opacity: 0.75; }
+
+/* Due pulsanti, stessa larghezza e stessa altezza. "Accetta" ha il gradiente
+   del brand, "Rifiuta" il bordo: e' una differenza di colore, non di peso.
+   Renderlo piu' piccolo o nasconderlo dietro un link e' lo schema che il
+   Garante sanziona — oltre a essere il motivo per cui la gente si insospettisce
+   e va a cercare proprio quel bottone. */
+.ck-azioni { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ck-btn {
+  min-height: 50px; padding: 0 18px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 9999px;
+  font-family: inherit; font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 1.4px; text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.25s ease, border-color 0.25s ease;
+}
+
+/* "Scegli quali" e' un terzo livello: chi vuole personalizzare lo trova,
+   chi vuole solo togliersi il banner non ci inciampa. */
+.ck-scegli {
+  /* min-height 44: e un comando, non una nota a pie' di pagina. */
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 44px; margin: 8px 0 0; padding: 0;
+  background: none; border: 0; cursor: pointer;
+  font-family: inherit; font-size: 0.8rem; font-weight: 500;
+  color: #FFFFFF; opacity: 0.7; text-decoration: underline; text-underline-offset: 3px;
+  transition: opacity 0.2s ease;
+}
+.ck-scegli:hover { opacity: 1; }
+.ck-scegli.is-salva {
+  opacity: 1; font-weight: 700; text-decoration: none;
+  min-height: 46px; border-radius: 9999px; margin-top: 14px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
+}
+.ck-btn:active { transform: scale(0.98); }
+.ck-accetta {
+  background: linear-gradient(135deg, #00A6FF, #2E4CFF 55%, #6500FF);
+  color: #FFFFFF;
+  box-shadow: 0 14px 34px -12px rgba(101, 0, 255, 0.75);
+}
+.ck-rifiuta, .ck-personalizza {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+}
+.ck-rifiuta:hover, .ck-personalizza:hover { background: rgba(255, 255, 255, 0.12); }
+
+/* --- pannello preferenze --- */
+.ck-dettaglio { display: none; margin: 4px 0 18px; }
+.ck-dettaglio.is-aperto { display: block; }
+.ck-voce {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+.ck-voce h4 { font-size: 0.92rem; font-weight: 600; margin: 0 0 3px; color: #FFFFFF; }
+.ck-voce p  { font-size: 0.82rem; font-weight: 400; line-height: 1.45; margin: 0; color: #FFFFFF; opacity: 0.8; }
+.ck-voce .ck-corpo { flex: 1 1 auto; min-width: 0; }
+
+/* interruttore */
+.ck-switch { position: relative; flex-shrink: 0; width: 46px; height: 27px; margin-top: 2px; }
+.ck-switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.ck-switch span {
+  position: absolute; inset: 0; border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.16);
+  transition: background 0.25s ease;
+  pointer-events: none;
+}
+.ck-switch span::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 21px; height: 21px; border-radius: 50%;
+  background: #FFFFFF;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ck-switch input:checked + span { background: linear-gradient(135deg, #00A6FF, #6500FF); }
+.ck-switch input:checked + span::after { transform: translateX(19px); }
+.ck-switch input:disabled + span { opacity: 0.5; }
+.ck-switch input:focus-visible + span { outline: 2px solid #00A6FF; outline-offset: 2px; }
+
+@media (max-width: 560px) {
+  .ck-banner { left: 10px; right: 10px; bottom: 10px; padding: 20px 18px 18px; border-radius: 18px; }
+  .ck-banner::before { left: 18px; right: 18px; }
+  .ck-titolo { font-size: 1.05rem; }
+  /* I due pulsanti restano affiancati anche su telefono: entrambi raggiungibili
+     col pollice, nessuno dei due piu' comodo dell'altro. */
+  .ck-azioni { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ck-btn { font-size: 0.76rem; letter-spacing: 1px; padding: 0 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ck-banner { transition: none; transform: none; }
+  .ck-switch span, .ck-switch span::after { transition: none; }
+}
+
+/* I due link dentro il testo del banner erano alti 17px: sono link in linea
+   dentro una frase, quindi l'eccezione WCAG li ammette, ma qui la gente li
+   tocca davvero. Un po' di padding allarga l'area sensibile senza scomporre
+   il paragrafo. */
+.ck-testo a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1px; }

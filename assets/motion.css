@@ -1,0 +1,397 @@
+/* ==========================================================================
+   GIESSE — MOTION & ATMOSFERA
+   Condiviso da tutte le pagine (homepage inclusa).
+   1. Orb gradiente animate sugli sfondi neri
+   2. Reveal a scorrimento (fade-up, mask, stagger)
+   3. Barra di avanzamento scroll
+   4. Bottoni e tag con shine + magnetico
+   ========================================================================== */
+
+/* ============ 1. ORB DI SFONDO ============ */
+.has-orbs:not(body) { position: relative; isolation: isolate; }
+.has-orbs:not(body) > .bg-orbs { z-index: 0; }
+/* I figli devono stare sopra il livello delle orb. Escluso il body: li' i figli
+   hanno gia' un loro posizionamento (la nav e' fixed) e forzare relative lo romperebbe. */
+.has-orbs:not(body) > *:not(.bg-orbs) { position: relative; z-index: 1; }
+
+/* Variante fissa: per le pagine lunghe di solo testo (articoli, legali).
+   Le orb restano ancorate alla viewport e continuano a muoversi mentre si scorre,
+   invece di stare ferme in cima a un contenitore alto migliaia di pixel.
+   z-index -1 + sfondo spostato su <html> = le orb stanno sotto al contenuto
+   senza dover toccare il posizionamento di nessun figlio del body. */
+html { background: #0A0A0A; }
+body.has-orbs { position: relative; background: transparent; }
+body.has-orbs > .bg-orbs--fixed { position: fixed; inset: 0; z-index: -1; }
+
+.bg-orbs {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden;
+  mix-blend-mode: screen;
+  contain: strict;
+}
+.bg-orbs .o {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(110px);
+  will-change: transform;
+  transform: translate3d(0,0,0);
+}
+/* viola */
+.bg-orbs .o1 {
+  width: 44vw; height: 44vw; min-width: 360px; min-height: 360px;
+  background: radial-gradient(circle, #6500FF 0%, rgba(101,0,255,0.45) 45%, transparent 70%);
+  top: -14%; left: -10%; opacity: 0.5;
+  animation: orbDriftA 34s ease-in-out infinite;
+}
+/* fuxia */
+.bg-orbs .o2 {
+  width: 40vw; height: 40vw; min-width: 320px; min-height: 320px;
+  background: radial-gradient(circle, #E01E8F 0%, rgba(224,30,143,0.42) 45%, transparent 70%);
+  top: 22%; right: -12%; opacity: 0.42;
+  animation: orbDriftB 42s ease-in-out infinite;
+}
+/* rosso */
+.bg-orbs .o3 {
+  width: 32vw; height: 32vw; min-width: 260px; min-height: 260px;
+  background: radial-gradient(circle, #FF3B3B 0%, rgba(255,59,59,0.38) 45%, transparent 70%);
+  bottom: -16%; left: 32%; opacity: 0.3;
+  animation: orbDriftC 38s ease-in-out infinite;
+}
+/* blu elettrico */
+.bg-orbs .o4 {
+  width: 38vw; height: 38vw; min-width: 300px; min-height: 300px;
+  background: radial-gradient(circle, #00A6FF 0%, rgba(0,166,255,0.42) 45%, transparent 70%);
+  bottom: 4%; right: 18%; opacity: 0.4;
+  animation: orbDriftD 46s ease-in-out infinite;
+}
+@keyframes orbDriftA {
+  0%,100% { transform: translate3d(0,0,0) scale(1); }
+  33%     { transform: translate3d(14vw, 9vh, 0) scale(1.18); }
+  66%     { transform: translate3d(5vw, 20vh, 0) scale(0.92); }
+}
+@keyframes orbDriftB {
+  0%,100% { transform: translate3d(0,0,0) scale(1); }
+  40%     { transform: translate3d(-16vw, 12vh, 0) scale(1.22); }
+  70%     { transform: translate3d(-6vw, -8vh, 0) scale(0.9); }
+}
+@keyframes orbDriftC {
+  0%,100% { transform: translate3d(0,0,0) scale(1); }
+  50%     { transform: translate3d(-12vw, -14vh, 0) scale(1.3); }
+}
+@keyframes orbDriftD {
+  0%,100% { transform: translate3d(0,0,0) scale(1); }
+  35%     { transform: translate3d(-10vw, -10vh, 0) scale(1.15); }
+  75%     { transform: translate3d(8vw, -4vh, 0) scale(0.88); }
+}
+/* Su mobile meno orb e blur più leggero: il blur grande è il costo maggiore */
+@media (max-width: 768px) {
+  .bg-orbs .o { filter: blur(70px); }
+  .bg-orbs .o3 { display: none; }
+}
+
+/* ============ 2. REVEAL A SCORRIMENTO ============ */
+.m-up, .m-mask, .m-scale, .m-left, .m-right {
+  transition-property: opacity, transform, clip-path;
+  transition-duration: 0.85s;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(min(var(--i, 0), 6) * 70ms);
+  will-change: opacity, transform;
+}
+.m-up    { opacity: 0; transform: translateY(38px); }
+/* Versione leggera per i paragrafi degli articoli: si nota, non distrae */
+.m-soft {
+  opacity: 0; transform: translateY(14px);
+  transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+}
+.m-soft.is-in { opacity: 1; transform: none; }
+.m-scale { opacity: 0; transform: translateY(24px) scale(0.965); }
+.m-left  { opacity: 0; transform: translateX(-38px); }
+.m-right { opacity: 0; transform: translateX(38px); }
+
+.m-up.is-in, .m-scale.is-in, .m-left.is-in, .m-right.is-in {
+  opacity: 1; transform: none;
+}
+
+/* ---- ENTRATA DALL'ALTO (30/08/2026) ---------------------------------------
+   Scorrendo verso l'ALTO gli elementi entrano dal bordo superiore, ma
+   l'animazione li faceva comunque salire da sotto: sembravano scattare nel
+   verso sbagliato, e la pagina risalita non era mai simmetrica a quella
+   scesa. Con .m-dalto la posa di partenza si specchia, cosi il movimento
+   segue sempre la direzione da cui l'elemento e' arrivato.
+   La classe la mette motion.js un fotogramma prima di .is-in. */
+.m-up.m-dalto    { transform: translateY(-38px); }
+.m-scale.m-dalto { transform: translateY(-24px) scale(0.965); }
+.m-title.m-dalto { transform: translateY(-24px); }
+.m-soft.m-dalto  { transform: translateY(-14px); }
+.m-mask.m-dalto > .m-mask-i { transform: translateY(-105%); }
+
+/* Titoli: entrano a fuoco. Sfocati e leggermente in basso -> nitidi. */
+.m-title {
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(24px);
+  transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1),
+              filter 0.9s cubic-bezier(0.22,1,0.36,1),
+              transform 0.9s cubic-bezier(0.22,1,0.36,1);
+  transition-delay: calc(min(var(--i, 0), 6) * 70ms);
+  will-change: opacity, filter, transform;
+}
+.m-title.is-in { opacity: 1; filter: none; transform: none; }
+
+/* Mask reveal per i titoli: la riga sale da dietro un bordo invisibile */
+.m-mask { display: block; overflow: hidden; }
+.m-mask > .m-mask-i {
+  display: block;
+  transform: translateY(105%);
+  transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(min(var(--i, 0), 6) * 80ms);
+  will-change: transform;
+}
+.m-mask.is-in > .m-mask-i { transform: none; }
+
+/* Parallasse leggera: mossa via JS con --py */
+.m-par { transform: translate3d(0, var(--py, 0px), 0); will-change: transform; }
+
+/* Numeri in salita — evita il salto di larghezza mentre contano */
+.counting { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  .m-up, .m-scale, .m-left, .m-right, .m-title, .m-soft,
+  .m-up.m-dalto, .m-scale.m-dalto, .m-title.m-dalto, .m-soft.m-dalto { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+  .m-mask > .m-mask-i { transform: none !important; transition: none !important; }
+  .m-par { transform: none !important; }
+  .bg-orbs .o { animation: none !important; }
+}
+
+/* ============ 3. BARRA DI AVANZAMENTO SCROLL ============ */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; height: 2px; width: 100%;
+  transform: scaleX(var(--p, 0)); transform-origin: 0 50%;
+  background: linear-gradient(90deg, #00A6FF, #6500FF 45%, #E01E8F 75%, #FF3B3B);
+  z-index: 200; pointer-events: none;
+  will-change: transform;
+}
+
+/* ============ 4. BOTTONI E TAG ============ */
+/* Shine che attraversa il bottone al passaggio */
+.btn-cta, .btn-nav, .hero-cta, .footer-cta-btn, .footer-mega-cta,
+.step-nav .btn-next, .step-nav .btn-submit, .wa-cta, .service-toggle {
+  position: relative;
+  overflow: hidden;
+  transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
+}
+.btn-cta::after, .btn-nav::after, .hero-cta::after, .footer-cta-btn::after,
+.footer-mega-cta::after, .step-nav .btn-next::after, .step-nav .btn-submit::after,
+.wa-cta::after, .service-toggle::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0; left: -140%;
+  width: 60%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.42), transparent);
+  transform: skewX(-18deg);
+  pointer-events: none;
+  transition: left 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-cta:hover::after, .btn-nav:hover::after, .hero-cta:hover::after,
+.footer-cta-btn:hover::after, .footer-mega-cta:hover::after,
+.step-nav .btn-next:hover::after, .step-nav .btn-submit:hover::after,
+.wa-cta:hover::after, .service-toggle:hover::after { left: 140%; }
+
+/* Il contenuto deve stare sopra lo shine */
+.btn-cta > *, .btn-nav > *, .hero-cta > *, .footer-cta-btn > * { position: relative; z-index: 1; }
+
+/* Pressione al click — feedback tattile */
+.btn-cta:active, .btn-nav:active, .hero-cta:active,
+.footer-cta-btn:active, .footer-mega-cta:active,
+.step-nav .btn-next:active, .step-nav .btn-submit:active {
+  transform: translate3d(var(--mx, 0px), var(--my, 0px), 0) scale(0.97);
+  transition-duration: 0.08s;
+}
+
+/* Tag / pill: bordo che si accende */
+.pill, .tag-pill {
+  position: relative;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+}
+.pill:hover, .tag-pill:hover {
+  color: #fff;
+  border-color: rgba(101,0,255,0.65);
+  background: rgba(101,0,255,0.24);
+  transform: translateY(-2px);
+}
+
+/* Link freccia: la freccia scatta in avanti */
+.article-card .more span, .back-link span, .related-link span { transition: transform 0.25s cubic-bezier(0.22,1,0.36,1); }
+.article-card:hover .more span, .back-link:hover span, .related-link:hover span { transform: translateX(5px); }
+
+
+/* ============ 5. SPOTLIGHT SULLE CARD ============
+   Un alone che segue il cursore. --sx/--sy sono impostate da motion.js.
+   Nomi diversi da --mx/--my usate dai bottoni magnetici. */
+.cat-card, .team-card, .article-card, .metric, .stat-card, .service {
+  position: relative;
+}
+.cat-card::before, .team-card::before, .article-card::before,
+.metric::before, .stat-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(240px circle at var(--sx, 50%) var(--sy, 50%),
+              rgba(139, 92, 255, 0.22), transparent 70%);
+  z-index: 0;
+}
+.cat-card:hover::before, .team-card:hover::before, .article-card:hover::before,
+.metric:hover::before, .stat-card:hover::before { opacity: 1; }
+/* il contenuto resta sopra l'alone */
+.cat-card > *, .team-card > *, .article-card > *, .metric > *, .stat-card > * {
+  position: relative; z-index: 1;
+}
+
+/* Card: sollevamento e bordo che si accende */
+.cat-card, .team-card, .stat-card, .metric {
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+.cat-card:hover, .team-card:hover, .stat-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(101,0,255,0.55);
+  box-shadow: 0 28px 60px -24px rgba(101,0,255,0.65);
+}
+
+/* Freccia della card categoria */
+.cat-card .cat-more span { display: inline-block; transition: transform 0.28s cubic-bezier(0.22,1,0.36,1); }
+.cat-card:hover .cat-more span { transform: translateX(6px); }
+
+/* ==========================================================================
+   MENU MOBILE (28/08/2026)
+   Il markup lo costruisce motion.js clonando le voci della .nav-menu, cosi
+   tutte le pagine lo ereditano senza toccarle una per una.
+   Sotto i 900px la .nav-menu resta nascosta e comanda questo.
+   ========================================================================== */
+
+/* Pulsante hamburger — 44x44 pieni, come chiedono le linee guida tocco */
+.nav-burger {
+  display: none;
+  position: relative;
+  width: 44px; height: 44px;
+  padding: 0; margin: 0 -6px 0 4px;
+  border: 0; background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-burger span {
+  position: absolute; left: 11px;
+  width: 22px; height: 2px; border-radius: 2px;
+  background: #FFFFFF;
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.2s ease;
+}
+.nav-burger span:nth-child(1) { top: 18px; }
+.nav-burger span:nth-child(2) { top: 25px; }
+.nav-burger.is-open span:nth-child(1) { transform: translateY(3.5px) rotate(45deg); }
+.nav-burger.is-open span:nth-child(2) { transform: translateY(-3.5px) rotate(-45deg); }
+
+@media (max-width: 900px) { .nav-burger { display: block; } }
+
+/* Pannello a tutto schermo */
+.nav-panel {
+  position: fixed; inset: 0;
+  z-index: 99;                     /* sotto la nav (100): la barra resta cliccabile */
+  display: flex; align-items: center; justify-content: flex-start;
+  padding: 120px 32px 48px;
+  background: rgba(10,10,10,0.86);
+  backdrop-filter: blur(26px); -webkit-backdrop-filter: blur(26px);
+  opacity: 0;
+  transition: opacity 0.32s ease;
+}
+.nav-panel::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 50% at 12% 22%, rgba(0,166,255,0.20), transparent 62%),
+    radial-gradient(ellipse 70% 55% at 88% 82%, rgba(101,0,255,0.24), transparent 62%);
+}
+.nav-panel.is-open { opacity: 1; }
+.nav-panel[hidden] { display: none; }
+
+.nav-panel-links {
+  position: relative;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  width: 100%;
+}
+.nav-panel-links a {
+  display: block; width: 100%;
+  padding: 14px 0;
+  font-family: 'Clash Display', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.9rem, 9vw, 2.7rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  opacity: 0; transform: translateY(18px);
+  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+  transition-delay: calc(var(--i, 0) * 55ms + 60ms);
+}
+.nav-panel.is-open .nav-panel-links a { opacity: 1; transform: none; }
+.nav-panel-links a.is-current {
+  background: var(--gradient-diag, linear-gradient(135deg, #00A6FF, #2E4CFF 50%, #6500FF));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  padding-right: 0.14em;
+}
+
+/* La CTA torna a essere un bottone, non una voce di elenco */
+.nav-panel-links .nav-panel-cta {
+  margin-top: 30px; width: auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 56px; padding: 0 34px;
+  border: 0; border-radius: 9999px;
+  background: var(--gradient-diag, linear-gradient(135deg, #00A6FF, #2E4CFF 50%, #6500FF));
+  box-shadow: 0 18px 44px -14px rgba(101,0,255,0.75);
+  font-size: 0.86rem; font-weight: 700;
+  letter-spacing: 2.4px; text-transform: uppercase;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF;
+}
+
+/* Blocca lo scorrimento della pagina sotto al pannello */
+body.menu-aperto { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-panel, .nav-panel-links a, .nav-burger span { transition: none !important; }
+  .nav-panel-links a { opacity: 1; transform: none; }
+}
+
+/* La barra su telefono ospita logo + CTA + hamburger: con i valori da
+   desktop il bottone Consulenza andava a coprire il logo. Si stringe
+   il bottone, non si nasconde: e il principale punto di conversione. */
+@media (max-width: 900px) {
+  .nav-right { gap: 12px !important; }
+  .btn-nav { padding: 11px 16px !important; font-size: 12px !important; letter-spacing: 1.4px !important; min-height: 44px; }
+}
+@media (max-width: 420px) {
+  .btn-nav { padding: 11px 12px !important; letter-spacing: 0.9px !important; }
+  .nav-right { gap: 8px !important; }
+}
+
+/* Le orb su telefono erano INVISIBILI: 44vw con min-width 360px su uno schermo
+   da 375 significa una macchia piu larga dello schermo, sfocata 70px e al 40%
+   di opacita — una velatura uniforme senza contrasto, quindi niente da vedere.
+   Su desktop funziona perche 44vw di 1440px lascia buio tutto intorno.
+   Qui si rimpiccioliscono, si sfoca meno e si alza l'opacita: tornano macchie
+   di colore riconoscibili che si muovono sul nero. */
+@media (max-width: 768px) {
+  .bg-orbs .o { filter: blur(46px); }
+  .bg-orbs .o1 { width: 62vw; height: 62vw; min-width: 0; min-height: 0; opacity: 0.72; top: -6%;  left: -18%; }
+  .bg-orbs .o2 { width: 56vw; height: 56vw; min-width: 0; min-height: 0; opacity: 0.62; top: 26%;  right: -20%; }
+  .bg-orbs .o3 { display: block; width: 48vw; height: 48vw; min-width: 0; min-height: 0; opacity: 0.5; bottom: -8%; left: 22%; }
+  .bg-orbs .o4 { width: 54vw; height: 54vw; min-width: 0; min-height: 0; opacity: 0.6;  bottom: 6%; right: 8%; }
+}
+
+/* "Leggi anche" negli articoli: restava a 41px, sotto il minimo di 44. */
+@media (max-width: 900px) {
+  .related-link { min-height: 44px; display: inline-flex; align-items: center; }
+}

@@ -1,0 +1,531 @@
+/* ==========================================================================
+   GIESSE AGENCY — PORTFOLIO CSS
+   Usato da: portfolio/*.html (8 pagine categoria)
+   Si appoggia a brand.css (token, nav, footer, .wrap, .page-head, .closing-cta)
+   e a motion.css. Qui dentro solo cio che e' specifico del portfolio.
+   ========================================================================== */
+
+/* Il portfolio respira piu' del blog: griglia di lavori, non di testo. */
+.wrap-wide { max-width: 1440px; margin: 0 auto; padding: 0 40px; }
+@media (max-width: 900px) { .wrap-wide { padding: 0 24px; } }
+
+/* ============ STRISCIA CATEGORIE ============
+   Chi atterra su una categoria da Google deve vedere subito le altre 7. */
+.cat-strip {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  padding: 0 0 56px;
+}
+.cat-strip a {
+  display: inline-flex; align-items: center;
+  padding: 9px 18px;
+  border-radius: 9999px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.03);
+  font-size: 0.82rem; font-weight: 500;
+  color: #FFFFFF;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.cat-strip a:hover {
+  color: #fff; transform: translateY(-2px);
+  border-color: rgba(110,28,255,0.5);
+  background: rgba(110,28,255,0.10);
+}
+.cat-strip a.is-current {
+  color: #fff;
+  border-color: transparent;
+  background: var(--gradient-diag);
+  box-shadow: 0 12px 30px -12px rgba(101,0,255,0.7);
+}
+
+/* ============ GRIGLIA LAVORI ============ */
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  padding-bottom: 110px;
+}
+@media (max-width: 1200px) { .works-grid { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
+@media (max-width: 820px)  { .works-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+@media (max-width: 460px)  { .works-grid { grid-template-columns: 1fr; } }
+
+/* Card verticale 9:16 — il formato nativo dei reel */
+.work-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #0d0d0d;
+  aspect-ratio: 9 / 16;
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.work-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(110,28,255,0.45);
+  box-shadow: 0 30px 60px -22px rgba(101,0,255,0.5);
+}
+.work-card video,
+.work-card img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Velo scuro in basso: senza, i nomi cliente su clip chiare spariscono. */
+.work-card::after {
+  content: '';
+  position: absolute; inset: auto 0 0 0; height: 55%;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+  pointer-events: none;
+}
+.work-meta {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 18px 18px 16px;
+  z-index: 2;
+}
+.work-client {
+  font-size: 1rem; font-weight: 600; color: #FFFFFF;
+  line-height: 1.2; letter-spacing: -0.01em;
+}
+.work-tag {
+  display: block; margin-top: 5px;
+  font-size: 0.66rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: #FFFFFF;
+}
+
+/* Placeholder mostrato finche' il video non e' stato caricato */
+.work-card .ph {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(46,76,255,0.20), transparent 60%),
+    radial-gradient(ellipse at 70% 80%, rgba(101,0,255,0.18), transparent 60%),
+    #0d0d0d;
+}
+
+/* ============ CARD CASE STUDY (formato largo, per i lavori con numeri) ==== */
+.case-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; padding-bottom: 110px; }
+@media (max-width: 900px) { .case-grid { grid-template-columns: 1fr; } }
+
+.case-card {
+  display: block; border-radius: 22px; overflow: hidden;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.03);
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.case-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(110,28,255,0.45);
+  box-shadow: 0 30px 60px -22px rgba(101,0,255,0.5);
+}
+.case-card .case-thumb {
+  position: relative; height: 220px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #0a0a0a 0%, rgba(46,76,255,0.16) 45%, rgba(101,0,255,0.14) 70%, #0a0a0a 100%);
+}
+.case-card .case-body { padding: 26px 28px 30px; }
+.case-card h2 { font-size: 1.3rem; font-weight: 700; line-height: 1.25; color: #FFFFFF; margin-bottom: 10px; }
+.case-card p  { font-size: 0.95rem; font-weight: 400; color: #FFFFFF; opacity: 1; line-height: 1.5; }
+
+/* Riga numeri dentro la card case study */
+.case-nums { display: flex; gap: 28px; flex-wrap: wrap; margin: 20px 0 18px; }
+.case-nums div { line-height: 1.1; }
+.case-nums .n {
+  display: block; font-size: 1.7rem; font-weight: 700; letter-spacing: -0.02em;
+  background: var(--gradient-diag);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  padding-right: 0.12em; margin-right: -0.12em;
+}
+.case-nums .l {
+  display: block; margin-top: 4px;
+  font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em;
+  color: #FFFFFF;
+}
+.case-card .more {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em;
+  background: linear-gradient(90deg, #00A6FF, #6E1CFF);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.case-card .more span { color: #6E1CFF; -webkit-text-fill-color: initial; transition: transform 0.25s ease; }
+.case-card:hover .more span { transform: translateX(4px); }
+
+/* ============ STATO VUOTO ============
+   Categoria senza lavori caricati: si dice com'e', senza finti "coming soon". */
+.empty-state {
+  border: 1px dashed rgba(255,255,255,0.16);
+  border-radius: 22px;
+  padding: 72px 40px;
+  text-align: center;
+  margin-bottom: 110px;
+  background: rgba(255,255,255,0.02);
+}
+.empty-state .icon {
+  width: 62px; height: 62px; margin: 0 auto 22px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+}
+.empty-state h2 { font-size: 1.5rem; font-weight: 700; color: #FFFFFF; margin-bottom: 12px; }
+.empty-state p  { font-size: 1rem; color: #FFFFFF; opacity: 1; max-width: 520px; margin: 0 auto 28px; line-height: 1.55; }
+
+/* ============================================================================
+   GRIGLIA GRAFICHE (30/08/2026)
+   .work-card nasce 9:16, il formato dei reel. Le grafiche social sono 4:5 e i
+   volantini orizzontali: con aspect-ratio 9/16 e object-fit:cover venivano
+   tagliate a meta', e in una grafica il testo sta proprio nei bordi che il
+   crop mangia. Qui le proporzioni le detta il lavoro, non la griglia.
+   ========================================================================== */
+.works-grid--grafica { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 1000px) { .works-grid--grafica { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px)  { .works-grid--grafica { grid-template-columns: 1fr; } }
+
+.work-card--4x5  { aspect-ratio: 4 / 5; }
+/* Il volantino orizzontale si prende due colonne: rimpicciolito in una sola
+   diventava una striscia e non si leggeva piu' niente. */
+.work-card--wide { aspect-ratio: 1.41 / 1; grid-column: span 2; }
+@media (max-width: 560px) { .work-card--wide { grid-column: span 1; } }
+
+/* Le grafiche vanno mostrate INTERE: object-fit contain, non cover. */
+.work-card--intera img { object-fit: contain; background: #0d0d0d; }
+
+/* Cliccabili: si aprono a schermo pieno */
+.work-card--apri { cursor: zoom-in; border: 1px solid var(--line); padding: 0; background: #0d0d0d; display: block; width: 100%; }
+.work-card--apri:focus-visible { outline: 2px solid #00A6FF; outline-offset: 3px; }
+
+/* Il tag era 0,66rem = 10,5px: sotto la soglia leggibile su telefono. */
+.work-tag { font-size: 12px; letter-spacing: 0.12em; }
+
+/* ---- Lente: la grafica a schermo pieno ---------------------------------- */
+.lente {
+  position: fixed; inset: 0; z-index: 3000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 28px;
+  background: rgba(6, 6, 8, 0.94);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+.lente.is-aperta { opacity: 1; pointer-events: auto; }
+.lente img {
+  max-width: min(100%, 1000px); max-height: 100%;
+  object-fit: contain; border-radius: 14px;
+  box-shadow: 0 40px 90px -30px rgba(0,0,0,0.9);
+  transform: scale(0.97); transition: transform 0.32s cubic-bezier(0.22,1,0.36,1);
+}
+.lente.is-aperta img { transform: none; }
+.lente-didascalia {
+  position: absolute; left: 0; right: 0; bottom: 18px;
+  text-align: center; padding: 0 24px;
+  font-family: 'Clash Display', sans-serif; font-size: 0.9rem; color: #FFFFFF; opacity: 1;
+}
+.lente-chiudi {
+  position: absolute; top: 16px; right: 16px;
+  width: 46px; height: 46px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  color: #FFFFFF; cursor: pointer;
+  transition: background 0.2s ease;
+}
+.lente-chiudi:hover { background: rgba(255,255,255,0.2); }
+@media (prefers-reduced-motion: reduce) {
+  .lente, .lente img { transition: none; }
+}
+
+/* ---- Striscia dei totali (pagina lead generation) ----------------------- */
+.totali {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  margin: 0 0 46px;
+  border-radius: 18px; overflow: hidden;
+  background: rgba(255,255,255,0.09);
+}
+@media (max-width: 620px) { .totali { grid-template-columns: 1fr; } }
+.totali div {
+  background: #0b0b0d; padding: 26px 24px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.totali .n {
+  font-family: 'Clash Display', sans-serif; font-weight: 700;
+  font-size: clamp(1.9rem, 4.2vw, 2.6rem); line-height: 1;
+  background: linear-gradient(135deg, #00A6FF, #2E4CFF 50%, #6E1CFF);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.totali .l {
+  font-family: 'Clash Display', sans-serif; font-weight: 400;
+  font-size: 0.9rem; color: #FFFFFF; opacity: 1;
+}
+.totali-nota {
+  font-family: 'Clash Display', sans-serif; font-weight: 400;
+  font-size: 0.86rem; line-height: 1.55; color: #FFFFFF; opacity: 1;
+  margin: -30px 0 46px; max-width: 720px;
+}
+
+/* Etichetta del settore sulle card campagna, quando il nome non si puo' dare */
+.case-card .settore {
+  display: inline-flex; align-items: center;
+  font-family: 'Clash Display', sans-serif; font-weight: 600;
+  font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #FFFFFF; opacity: 1; margin-bottom: 10px;
+}
+.case-card .case-thumb { display: flex; align-items: center; justify-content: center; }
+
+/* Riga di contesto in cima a una categoria del portfolio */
+.portfolio-nota-cat {
+  font-family: 'Clash Display', sans-serif; font-weight: 400;
+  font-size: 0.95rem; line-height: 1.6; color: #FFFFFF; opacity: 1;
+  max-width: 720px; margin: 0 0 34px;
+  padding-left: 14px; border-left: 2px solid rgba(110,28,255,0.55);
+}
+@media (max-width: 640px) { .portfolio-nota-cat { font-size: 0.88rem; margin-bottom: 26px; } }
+
+/* Etichette sotto i numeri delle card campagna: erano 0,68rem = 10,9px.
+   Sono le parole che spiegano il numero, se non si leggono il numero resta
+   senza significato. La freccia del "leggi il caso" non e' testo, ma sta in
+   uno span dentro .more e finiva anche lei sotto la soglia. */
+.case-nums .l { font-size: 12px; letter-spacing: 0.1em; }
+.case-card .more span { font-size: 1rem; }
+
+/* La didascalia sopra la grafica copriva il lavoro: su Ottica Sara finiva
+   esattamente sull'ultima riga del claim. Su una pagina che esiste per far
+   vedere delle grafiche, coprirle e' il difetto peggiore. Qui il nome cliente
+   scende SOTTO l'immagine e il velo scuro sparisce. */
+.work-card--intera {
+  aspect-ratio: auto;
+  display: flex; flex-direction: column;
+  text-align: left;
+}
+.work-card--intera::after { display: none; }
+.work-card--intera .work-img {
+  display: block; width: 100%;
+  aspect-ratio: 4 / 5;
+  background: #0d0d0d;
+}
+.work-card--wide.work-card--intera .work-img { aspect-ratio: 1.41 / 1; }
+.work-card--intera .work-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.work-card--intera .work-meta {
+  position: static;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--line);
+}
+
+/* ============================================================================
+   SCHERMATE DELLE CAMPAGNE (30/08/2026)
+   Sono screenshot veri del gestore inserzioni Meta: bianchi, su un sito nero.
+   Il contrasto NON va addolcito. Uno screenshot che sembra uno screenshot vale
+   come prova; ricolorato o incorniciato di scuro sembra una grafica rifatta,
+   cioe' esattamente il contrario di quello che deve dimostrare.
+   ========================================================================== */
+.case-schermata {
+  display: block; width: 100%; padding: 0;
+  border: 0; border-bottom: 1px solid var(--line);
+  background: #EFF1F5;   /* la stessa aria chiara che hanno gli screenshot */
+  cursor: zoom-in;
+  position: relative;
+  text-align: left;
+}
+.case-schermata img {
+  display: block; width: 100%; height: auto;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.case-schermata:hover img { transform: scale(1.02); }
+.case-schermata:focus-visible { outline: 2px solid #00A6FF; outline-offset: -2px; }
+
+/* L'etichetta e' una STRISCIA sopra lo screenshot, non un adesivo appoggiato
+   sopra: in overlay copriva "Nuovi contatti" nell'angolo della scheda Meta, e
+   su una schermata presentata come prova coprire un pezzo e' il gesto
+   sbagliato anche quando il pezzo coperto non conta niente.
+   Stessa idea della barra del browser sulle schede dei siti. */
+.case-schermata-tag {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: #17171b;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-family: 'Clash Display', sans-serif; font-weight: 600;
+  font-size: 12px; letter-spacing: 0.06em;
+  color: #FFFFFF;
+}
+.case-schermata-tag::before {
+  content: ''; flex-shrink: 0;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gradient-diag, linear-gradient(135deg,#00A6FF,#6500FF));
+}
+@media (max-width: 480px) {
+  .case-schermata-tag { letter-spacing: 0.02em; padding: 9px 12px; }
+}
+
+/* La scheda non e' piu' un <a>: l'effetto di sollevamento va rimesso qui,
+   e il "leggi il caso" torna a essere un link vero e proprio. */
+.case-card:has(.case-schermata):hover {
+  transform: translateY(-6px);
+  border-color: rgba(110,28,255,0.45);
+  box-shadow: 0 30px 60px -22px rgba(101,0,255,0.5);
+}
+a.more { text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
+a.more:hover span { transform: translateX(4px); }
+
+/* ============================================================================
+   SITI E NEGOZI ONLINE (30/08/2026)
+   Una schermata di sito, messa nuda in una card, si legge come una grafica.
+   La cornice con i pallini e il dominio dice in mezzo secondo che quello e' un
+   sito vero e navigabile — e il dominio scritto li' e' verificabile da chi
+   legge, cosa che un mockup non e'.
+   ========================================================================== */
+.siti-lista { display: flex; flex-direction: column; gap: 34px; padding-bottom: 110px; }
+
+.sito {
+  display: grid; grid-template-columns: 1.15fr 1fr; gap: 0;
+  border: 1px solid var(--line); border-radius: 22px; overflow: hidden;
+  background: #0d0d0d;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.sito:hover { border-color: rgba(110,28,255,0.45); box-shadow: 0 30px 60px -22px rgba(101,0,255,0.45); }
+@media (max-width: 900px) { .sito { grid-template-columns: 1fr; } }
+
+.sito-schermo {
+  display: block; width: 100%; padding: 0; border: 0;
+  background: #17171b; cursor: zoom-in; text-align: left;
+}
+.sito-schermo:focus-visible { outline: 2px solid #00A6FF; outline-offset: -2px; }
+.sito-barra {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px;
+  background: #17171b; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sito-pallini { display: flex; gap: 6px; flex-shrink: 0; }
+.sito-pallini i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.18); }
+.sito-url {
+  flex: 1 1 auto; min-width: 0;
+  padding: 5px 12px; border-radius: 7px;
+  background: rgba(255,255,255,0.06);
+  font-family: 'Clash Display', sans-serif; font-weight: 400;
+  font-size: 12px; color: #FFFFFF; opacity: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sito-img { display: block; overflow: hidden; }
+.sito-img img {
+  display: block; width: 100%; height: auto;
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.sito-schermo:hover .sito-img img { transform: scale(1.03); }
+
+.sito-info { padding: 34px 34px 32px; display: flex; flex-direction: column; align-items: flex-start; }
+@media (max-width: 620px) { .sito-info { padding: 26px 22px 26px; } }
+.sito-info h2 {
+  font-family: 'Clash Display', sans-serif; font-weight: 700;
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem); line-height: 1.2;
+  color: #FFFFFF; margin: 0 0 12px; letter-spacing: -0.02em;
+}
+.sito-info > .settore { margin-bottom: 12px; }
+.sito-info p {
+  font-family: 'Clash Display', sans-serif; font-weight: 400;
+  font-size: 0.98rem; line-height: 1.6; color: #FFFFFF; opacity: 1;
+  margin: 0 0 20px;
+}
+.sito-punti { list-style: none; margin: 0 0 26px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.sito-punti li {
+  position: relative; padding-left: 20px;
+  font-family: 'Clash Display', sans-serif; font-weight: 400;
+  font-size: 0.92rem; line-height: 1.5; color: #FFFFFF; opacity: 1;
+}
+.sito-punti li::before {
+  content: ''; position: absolute; left: 0; top: 0.55em;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gradient-diag, linear-gradient(135deg,#00A6FF,#6500FF));
+}
+.sito-info .btn-cta { margin-top: auto; }
+
+/* La Rotonda ha un sito quasi tutto nero: la schermata, dentro una card nera,
+   spariva e sembrava un'immagine non caricata. Un filo chiaro attorno allo
+   schermo delimita sempre la superficie, anche quando il contenuto e' scuro.
+   outline invece di border: si disegna SOPRA l'immagine, senza spostarla. */
+.sito-img { position: relative; }
+.sito-img::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.10);
+}
+
+/* Le immagini portano width/height nell'HTML: prima, in loading="lazy" e senza
+   dimensione intrinseca, il contenitore collassava a 1px e si apriva di colpo
+   quando arrivava il file (tre schede su cinque, sulla lead generation).
+   Questa regola tiene le proporzioni giuste comunque, anche se un domani
+   qualcuno riscrive il markup senza gli attributi. */
+/* NON includere qui .work-card--intera .work-img img: quello ha height:100%
+   dentro un box con aspect-ratio, e height:auto glielo romperebbe. */
+.case-schermata img, .sito-img img {
+  height: auto;
+}
+/* Il "leggi il caso" veniva 42px: min-height perdeva contro .case-card .more,
+   che ha una classe in piu. */
+.case-card a.more { min-height: 44px; }
+
+/* 0,72rem = 11,5px: sotto la soglia. E' un comando, va letto. */
+.case-card .more { font-size: 12px; }
+
+/* Gruppi per cliente dentro una categoria (pagina foto). Dodici scatti di
+   mondi diversi in una griglia unica sembrano uno stock: divisi per servizio
+   si legge che sono tre lavori distinti. */
+.gruppo { margin-bottom: 54px; }
+.gruppo:last-of-type { margin-bottom: 0; }
+.gruppo-testa {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 16px;
+  margin: 0 0 20px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.gruppo-testa h2 {
+  font-family: 'Clash Display', sans-serif; font-weight: 700;
+  font-size: clamp(1.25rem, 2.4vw, 1.65rem); line-height: 1.15;
+  letter-spacing: -0.02em; color: #FFFFFF; margin: 0;
+}
+.gruppo-testa span {
+  font-family: 'Clash Display', sans-serif; font-weight: 500;
+  font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #FFFFFF; opacity: 1;
+}
+.gruppo .works-grid { padding-bottom: 0; }
+
+/* ---- Video nel portfolio ------------------------------------------------
+   Nella griglia c'e' solo il poster: sei clip fanno 51 MB, caricarle
+   all'apertura renderebbe la pagina inusabile da telefono. Il triangolo dice
+   che sotto c'e' un video e non una foto. */
+.work-play {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 62px; height: 62px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10,10,12,0.55);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.35);
+  color: #FFFFFF;
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), background 0.3s ease;
+  pointer-events: none;
+}
+.work-play svg { width: 26px; height: 26px; margin-left: 3px; }
+.work-card--apri:hover .work-play { transform: translate(-50%,-50%) scale(1.12); background: rgba(101,0,255,0.72); }
+.work-card--intera .work-img { position: relative; }
+/* col video il cursore non e' una lente d'ingrandimento */
+.work-card--apri[data-lente-video] { cursor: pointer; }
+
+.lente-video {
+  max-width: min(100%, 560px); max-height: 100%;
+  border-radius: 14px; background: #000;
+  box-shadow: 0 40px 90px -30px rgba(0,0,0,0.9);
+}
+.lente img[hidden], .lente video[hidden] { display: none; }
+
+/* Tavole di progetto: sono 16:9 (pagine di PDF), non verticali come i post.
+   Due per riga: a tre diventavano illeggibili, e una tavola che non si legge
+   nella griglia costringe ad aprirle tutte per capire cosa c'e' dentro. */
+.works-grid--tavole { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 700px) { .works-grid--tavole { grid-template-columns: 1fr; } }
+.work-card--tavola .work-img { aspect-ratio: 16 / 9; background: #FFFFFF; }
+.work-card--tavola { aspect-ratio: auto; }
+
+.gruppo-intro {
+  font-family: 'Clash Display', sans-serif; font-weight: 400;
+  font-size: 0.98rem; line-height: 1.62; color: #FFFFFF; opacity: 1;
+  max-width: 760px; margin: -6px 0 26px;
+}
+@media (max-width: 640px) { .gruppo-intro { font-size: 0.9rem; } }
