@@ -472,3 +472,42 @@ img, video { display: block; max-width: 100%; }
   background: linear-gradient(120deg, rgba(0,166,255,0.28), rgba(110,28,255,0.34));
   border-color: rgba(110,28,255,0.6);
 }
+
+/* ============================================================================
+   ULTIMO ARTICOLO IN RISALTO (30/08/2026)
+   Gli articoli escono ogni lunedi mattina: il piu' recente deve vedersi
+   subito, non essere una card uguale alle altre in mezzo al mucchio.
+   La prima card della griglia si prende tutta la riga e diventa orizzontale.
+   Non serve toccare niente a mano: e' sempre la prima, e il generatore
+   inserisce l'articolo nuovo in cima.
+   ========================================================================== */
+.articles-grid > .article-card:first-child {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  align-items: stretch;
+}
+.articles-grid > .article-card:first-child .thumb { height: 100%; min-height: 260px; }
+.articles-grid > .article-card:first-child .body { padding: 40px 38px 42px; display: flex; flex-direction: column; justify-content: center; }
+.articles-grid > .article-card:first-child h2 { font-size: clamp(1.4rem, 2.6vw, 2rem); line-height: 1.18; }
+.articles-grid > .article-card:first-child p { font-size: 1.02rem; }
+
+/* L'etichetta che dice perche' e' grande. Sta nella riga dei tag, prima
+   degli altri, e usa il gradiente del brand invece del viola smorto. */
+.articles-grid > .article-card:first-child .meta::before {
+  content: 'Ultimo articolo';
+  order: -1;
+  padding: 5px 13px; border-radius: 999px;
+  background: linear-gradient(120deg, #00A6FF, #2E4CFF 55%, #6E1CFF);
+  color: #FFFFFF;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+
+/* Sotto i 900px torna verticale come le altre: affiancare immagine e testo
+   dentro 375px vuol dire due colonne strette e illeggibili. */
+@media (max-width: 900px) {
+  .articles-grid > .article-card:first-child { grid-template-columns: 1fr; }
+  .articles-grid > .article-card:first-child .thumb { min-height: 200px; }
+  .articles-grid > .article-card:first-child .body { padding: 26px 24px 30px; }
+}
