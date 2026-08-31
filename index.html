@@ -25,7 +25,7 @@
   <meta property="og:site_name" content="Giesse Agency">
   <meta name="twitter:image" content="https://www.giesseagency.com/og-cover.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="assets/consenso.css?v=202608301809">
+  <link rel="stylesheet" href="assets/consenso.css?v=202608311106">
   <!-- Dati strutturati: dicono a Google e ai motori generativi CHI siamo,
        cosa facciamo e dove operiamo. Niente indirizzo civico: un dato
        sbagliato qui fa piu danno che non averlo. -->
@@ -3669,7 +3669,13 @@
        Le card comparivano di colpo mentre il browser stava ancora impaginando:
        si vedeva lo scatto del primo fotogramma. Ora il campo entra in dissolvenza
        e il primo tick della rAF viene fatto passare a vuoto (dt = 0). */
-    .diag-field { opacity: 0; transition: opacity 0.9s ease; }
+    /* Il fondu era 0,9s partendo da opacita' ZERO: aprendo il sito la hero
+       restava vuota per quasi un secondo e sembrava che non partisse.
+       Serviva a nascondere lo scatto del primo fotogramma, ma quello e' gia'
+       risolto alla radice (il primo tick della rAF vale dt=0, vedi il JS piu'
+       sotto): qui basta un velo che si toglie in fretta.
+       Si parte da 0,35 e non da 0: qualcosa si vede SUBITO. */
+    .diag-field { opacity: 0.35; transition: opacity 0.28s ease; }
     .diag-field.is-pronto { opacity: 1; }
     @media (prefers-reduced-motion: reduce) { .diag-field { opacity: 1; transition: none; } }
 
@@ -4124,7 +4130,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/motion.css?v=202608301809">
+  <link rel="stylesheet" href="assets/motion.css?v=202608311106">
 </head>
 <body>
   <span id="top" aria-hidden="true"></span>
@@ -5909,13 +5915,13 @@
       });
     })();
   </script>
-  <script src="assets/motion.js?v=202608301809" defer></script>
+  <script src="assets/motion.js?v=202608311106" defer></script>
   <!-- Consenso cookie: unico punto da cui partono GA4 e Meta Pixel.
        Non reincollare gli snippet nelle pagine: sfuggirebbero al consenso. -->
   <!-- Da dove arriva chi scrive. Non e' profilazione: sta in localStorage
        e non esce dal browser finche' non si preme "invia". Per questo va
        anche a cookie rifiutati. -->
-  <script src="assets/provenienza.js?v=202608301809" defer></script>
-  <script src="assets/consenso.js?v=202608301809" defer></script>
+  <script src="assets/provenienza.js?v=202608311106" defer></script>
+  <script src="assets/consenso.js?v=202608311106" defer></script>
 </body>
 </html>
