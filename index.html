@@ -26,7 +26,7 @@
   <meta property="og:site_name" content="Giesse Agency">
   <meta name="twitter:image" content="https://www.giesseagency.com/og-cover.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="assets/consenso.css?v=202608311113">
+  <link rel="stylesheet" href="assets/consenso.css?v=202608311133">
   <!-- Dati strutturati: dicono a Google e ai motori generativi CHI siamo,
        cosa facciamo e dove operiamo. Niente indirizzo civico: un dato
        sbagliato qui fa piu danno che non averlo. -->
@@ -3993,43 +3993,11 @@
     @media (prefers-reduced-motion: reduce) {
       .cat-anteprima img { transition: none; transform: none; }
     }
-    .cat-anteprima img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-      opacity: 0.62;
-      transform: scale(1.02);
-      transition: opacity 0.45s ease, transform 0.7s cubic-bezier(0.22,1,0.36,1);
-    }
-    /* Velo: scuro pieno in basso dove sta il testo, quasi niente in alto dove
-       sta l'icona. Cosi l'anteprima si vede ma il testo non ci finisce sopra. */
-    .cat-anteprima::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top,
-        rgba(10,10,12,0.96) 0%,
-        rgba(10,10,12,0.90) 30%,
-        rgba(10,10,12,0.46) 52%,
-        rgba(10,10,12,0.10) 78%,
-        rgba(10,10,12,0.04) 100%);
-    }
-    .cat-card:hover .cat-anteprima img { opacity: 0.9; transform: scale(1.09); }
-
-    /* Il contenuto deve stare SOPRA l'anteprima: la card ha gia
-       isolation:isolate, quindi basta uno z-index locale. */
-    .cat-card .cat-icon,
+    /* Il testo sta SOTTO la miniatura, non sopra: qui basta tenerlo in un
+       piano suo perche' la card ha isolation:isolate. */
     .cat-card .cat-name,
     .cat-card .cat-desc,
     .cat-card .cat-more { position: relative; z-index: 2; }
-
-    /* Con una foto dietro, la tile dell'icona su vetro spariva. Le si da un
-       fondo suo e un filo di bordo. */
-    .cat-card .cat-icon {
-      background: rgba(10,10,12,0.62);
-      border-color: rgba(255,255,255,0.18);
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .cat-anteprima img { transition: none; transform: none; }
-    }
 
     /* ============================================================================
        TUTTO CIO' CHE SI CLICCA REAGISCE (30/08/2026)
@@ -4131,7 +4099,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/motion.css?v=202608311113">
+  <link rel="stylesheet" href="assets/motion.css?v=202608311133">
 </head>
 <body>
   <span id="top" aria-hidden="true"></span>
@@ -5916,13 +5884,13 @@
       });
     })();
   </script>
-  <script src="assets/motion.js?v=202608311113" defer></script>
+  <script src="assets/motion.js?v=202608311133" defer></script>
   <!-- Consenso cookie: unico punto da cui partono GA4 e Meta Pixel.
        Non reincollare gli snippet nelle pagine: sfuggirebbero al consenso. -->
   <!-- Da dove arriva chi scrive. Non e' profilazione: sta in localStorage
        e non esce dal browser finche' non si preme "invia". Per questo va
        anche a cookie rifiutati. -->
-  <script src="assets/provenienza.js?v=202608311113" defer></script>
-  <script src="assets/consenso.js?v=202608311113" defer></script>
+  <script src="assets/provenienza.js?v=202608311133" defer></script>
+  <script src="assets/consenso.js?v=202608311133" defer></script>
 </body>
 </html>
