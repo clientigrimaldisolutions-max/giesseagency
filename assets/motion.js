@@ -469,7 +469,7 @@
 
   // marcatore di versione: serve a capire al volo se il browser sta girando
   // questo file o una copia vecchia in cache
-  window.GiesseMotion = { versione: 3 };
+  window.GiesseMotion = { versione: 5 };
 
   /* ---------- 8. LENTE SULLE GRAFICHE ---------------------------------
      Le grafiche del portfolio vanno guardate intere: nella griglia stanno a
@@ -605,40 +605,62 @@
       if (typeof gtag !== 'undefined') gtag('event', 'whatsapp_click', { location: 'fisso' });
     });
 
-    var INGOMBRANTI = '.form-card, .ck-banner';
-    var BERSAGLI    = '.cta-forte, .btn-cta, .faq-cta, .footer-mega-cta, .wa-cta,' +
-                      '.giu, .footer-col a, .footer-bottom a, .service-more, .back-link';
+    /* CHI C'E' SOTTO IL BOTTONE — rifatto il 02/09/2026
+       La prima versione elencava le classi da non coprire. Ha fallito subito:
+       il pulsante della hero si chiama `.hero-cta`, non era in elenco, e il
+       bottone gli finiva sopra al primo colpo d'occhio del sito. Enumerare le
+       classi e' una rincorsa che si perde sempre — basta una classe nuova.
 
-    function menuAperto()    { return !!document.querySelector('.nav-panel.is-open'); }
-    function passataLaHero() { return window.scrollY > window.innerHeight * 0.6; }
+       Ora non si enumera: si CHIEDE AL BROWSER. `elementsFromPoint` restituisce
+       la pila di elementi sotto un punto, gia' calcolata dal motore di
+       rendering. Si sondano nove punti attorno al bottone e si guarda se sotto
+       c'e' qualcosa di cliccabile. Nove sondaggi costano molto meno di leggere
+       il rettangolo di ogni pulsante della pagina, e non c'e' nessuna lista da
+       tenere aggiornata.
 
-    // si legge dal vivo invece di ricostruirlo dalle costanti CSS: resta giusto
-    // anche cambiando padding, etichetta o ancoraggio. I 12px sono aria:
-    // sfiorare un pulsante conta gia' come coprirlo.
-    function riquadro() {
-      var r = fab.getBoundingClientRect(), m = 12;
-      return { left: r.left - m, right: r.right + m, top: r.top - m, bottom: r.bottom + m };
-    }
+       Resta la distinzione di taglia: un bersaglio conta finche' e' PICCOLO.
+       Un contenitore alto mezzo schermo (le card del portfolio sono link larghi
+       quanto lo schermo) puo' essere sfiorato, ci si tocca lo stesso. Senza
+       questa soglia il bottone spariva per tutta la sezione portfolio. */
+    function menuAperto() { return !!document.querySelector('.nav-panel.is-open'); }
 
-    function tocca(nodo, r, soloSePiccolo) {
-      var b = nodo.getBoundingClientRect();
-      if (!b.width && !b.height) return false;
-      if (b.bottom < 0 || b.top > window.innerHeight) return false;
-      if (soloSePiccolo && b.height > window.innerHeight * 0.35) return false;
-      return b.right > r.left && b.left < r.right && b.bottom > r.top && b.top < r.bottom;
-    }
+    var CLICCABILI = 'a, button, input, textarea, select, label, .form-card';
 
-    function copreQualcosa() {
-      var r = riquadro(), i;
-      var g = document.querySelectorAll(INGOMBRANTI);
-      for (i = 0; i < g.length; i++) if (tocca(g[i], r, false)) return true;
-      var p = document.querySelectorAll(BERSAGLI);
-      for (i = 0; i < p.length; i++) if (tocca(p[i], r, true)) return true;
+    function sottoCiSonoBersagli() {
+      // il banner dei cookie sta SOPRA il bottone nell'impilamento, quindi non
+      // comparirebbe come ostacolo: si controlla a parte
+      if (document.querySelector('.ck-banner')) return true;
+      if (!document.elementsFromPoint) return false;
+
+      var r = fab.getBoundingClientRect(), m = 10;
+      var cx = (r.left + r.right) / 2, cy = (r.top + r.bottom) / 2;
+      var punti = [
+        [r.left - m, r.top - m],   [cx, r.top - m],    [r.right + m, r.top - m],
+        [r.left - m, cy],          [cx, cy],           [r.right + m, cy],
+        [r.left - m, r.bottom + m],[cx, r.bottom + m], [r.right + m, r.bottom + m]
+      ];
+
+      for (var i = 0; i < punti.length; i++) {
+        var x = punti[i][0], y = punti[i][1];
+        if (x < 0 || y < 0 || x > window.innerWidth || y > window.innerHeight) continue;
+        var pila = document.elementsFromPoint(x, y);
+        for (var k = 0; k < pila.length; k++) {
+          var el = pila[k];
+          if (el === fab || fab.contains(el)) continue;   // il bottone stesso non conta
+          var bersaglio = el.closest ? el.closest(CLICCABILI) : null;
+          if (bersaglio) {
+            if (bersaglio.classList.contains('form-card')) return true;  // sempre
+            var b = bersaglio.getBoundingClientRect();
+            if (b.height <= window.innerHeight * 0.35) return true;      // piccolo: conta
+          }
+          break;   // guardiamo solo cio' che sta immediatamente sotto
+        }
+      }
       return false;
     }
 
     function aggiorna() {
-      var mostra = passataLaHero() && !menuAperto() && !copreQualcosa();
+      var mostra = !menuAperto() && !sottoCiSonoBersagli();
       if (mostra) fab.classList.add('is-in'); else fab.classList.remove('is-in');
       fab.setAttribute('aria-hidden', mostra ? 'false' : 'true');
       fab.tabIndex = mostra ? 0 : -1;
