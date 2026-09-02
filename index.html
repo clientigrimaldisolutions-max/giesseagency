@@ -5181,9 +5181,10 @@
       card.dataset.size = sizeFactor.toFixed(3);
       // La card nasce col solo POSTER: nessuna sorgente video, preload="none".
       // La sorgente viene attaccata dopo, e solo a poche card (vedi sotto).
-      // L'attributo autoplay resta: appena si assegna .src il video parte da
-      // solo, mentre play() da script viene rifiutato nelle pagine considerate
-      // nascoste (pannelli di anteprima, webview, tab in secondo piano).
+      // L'attributo autoplay resta come prima difesa, ma NON ci si conta:
+      // basta un pause() prima che la sorgente arrivi e resta morto per sempre.
+      // Chi avvia davvero e' il play() esplicito in attacca(), piu' i tentativi
+      // su loadeddata e canplay. Vedi la nota estesa li' sotto.
       card.dataset.reel = name;
       card.innerHTML =
         '<video muted loop playsinline autoplay preload="none" ' +
@@ -5284,6 +5285,25 @@
         if (v.src) return;
         v.preload = 'auto';
         v.src = SORGENTE_MINI + card.dataset.reel + '.webm';
+
+        /* NON ci si affida all'attributo `autoplay` (02/09/2026).
+           Il codice dava per scontato che assegnando .src il video partisse da
+           solo. E' vero SOLO finche' nessuno ha chiamato pause() su
+           quell'elemento: al primo pause() il browser spegne il "can autoplay
+           flag" e l'attributo resta morto per sempre.
+           Ed e' proprio quello che succedeva: l'osservatore che mette in pausa
+           la hero fuori schermo esegue una chiamata anche all'apertura, quando
+           i video non hanno ancora sorgente, e se quella prima chiamata dice
+           "non sei in vista" mette in pausa tutti e venti. Da li' la hero
+           restava sui poster finche' non si scendeva e si risaliva, cosa che
+           faceva rientrare la hero e chiamare play() per davvero.
+           Ora play() lo chiamiamo noi, subito e di nuovo appena c'e' abbastanza
+           da riprodurre: se uno dei due tentativi viene rifiutato, l'altro
+           arriva comunque. */
+        const parti = () => { v.play().catch(() => {}); };
+        parti();
+        v.addEventListener('loadeddata', parti, { once: true });
+        v.addEventListener('canplay',    parti, { once: true });
       };
       lista.slice(0, PRIMA_ONDATA).forEach(attacca);
       setTimeout(() => lista.slice(PRIMA_ONDATA).forEach(attacca), 120);
@@ -5350,27 +5370,78 @@
       document.addEventListener(ev, primoGesto, { passive: true });
     });
 
+    /* GUARDIA DEI PRIMI SECONDI (02/09/2026)
+       Le reti qui sopra scattano una volta sola. Ma il rifiuto di partire puo'
+       arrivare DOPO: la sorgente ci mette un attimo, iOS in risparmio
+       energetico rifiuta il primo tentativo, il browser dentro l'app scopre
+       solo piu' tardi di essere in primo piano. In tutti questi casi la hero
+       resta sui poster e nessuna rete se ne accorge, perche' hanno gia' fatto
+       il loro giro.
+       Qui si ritenta ogni 700ms per i primi 12 secondi, e si smette appena
+       tutti girano. Un play() su un video che sta gia' andando non fa niente,
+       e uno rifiutato viene ignorato: costa quanto un controllo. */
+    var tentativi = 0;
+    var guardia = setInterval(function () {
+      tentativi++;
+      var fermi = 0;
+      cards.forEach(function (c) {
+        var v = c.querySelector('video');
+        if (v && v.src && v.paused) { fermi++; v.play().catch(function () {}); }
+      });
+      // si smette quando non c'e' piu' niente di fermo, o dopo 12 secondi
+      if (fermi === 0 || tentativi > 17) clearInterval(guardia);
+    }, 700);
+
     if (!reduce) {
       let last = performance.now();
       let running = true;
       let primo = true;   // il primo frame arriva dopo il layout: dt enorme
+      let ultimoTick = 0; // quando rAF ha girato l'ultima volta
+      let riserva = null; // motore a timer, acceso solo se rAF non parte
 
-      function tick(now) {
-        // Fra performance.now() e il primo callback puo' passare mezzo secondo
-        // (font, CSS, prima pittura): usarlo come dt fa avanzare tutte le card
-        // insieme di uno scatto. Il primo giro non muove niente.
-        const dt = primo ? 0 : Math.min(0.05, (now - last) / 1000);
-        primo = false;
-        last = now;
+      function muovi(dt) {
         cards.forEach(card => {
           let p = parseFloat(card.dataset.progress) + SPEED * dt;
           if (p > 1) p -= 1;
           card.dataset.progress = p.toString();
           applyPose(card, p);
         });
+      }
+
+      function tick(now) {
+        ultimoTick = now;
+        // rAF e' tornato a girare: si spegne la riserva, altrimenti le card
+        // avanzerebbero il doppio, mosse da due motori insieme
+        if (riserva) { clearInterval(riserva); riserva = null; }
+        // Fra performance.now() e il primo callback puo' passare mezzo secondo
+        // (font, CSS, prima pittura): usarlo come dt fa avanzare tutte le card
+        // insieme di uno scatto. Il primo giro non muove niente.
+        const dt = primo ? 0 : Math.min(0.05, (now - last) / 1000);
+        primo = false;
+        last = now;
+        muovi(dt);
         if (running) requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
+
+      /* MOTORE DI RISERVA (02/09/2026)
+         Se dopo 400ms rAF non ha girato NEMMENO UNA VOLTA, il mosaico resta
+         fermo: succede nei browser dentro le app, dove la pagina si vede ma il
+         browser la considera nascosta. Con le campagne Meta attive e' da li'
+         che arriva quasi tutto il traffico, quindi non e' un caso di nicchia.
+         Il timer e' meno preciso di rAF, ma un mosaico che scorre un po' meno
+         fluido e' incomparabilmente meglio di un mosaico fermo. */
+      function accendiRiserva() {
+        if (riserva) return;
+        let ultimo = performance.now();
+        riserva = setInterval(function () {
+          const ora = performance.now();
+          const dt = Math.min(0.05, (ora - ultimo) / 1000);
+          ultimo = ora;
+          if (running) muovi(dt);
+        }, 33);
+      }
+      setTimeout(function () { if (!ultimoTick) accendiRiserva(); }, 400);
 
       // Pause loop when tab hidden
       document.addEventListener('visibilitychange', () => {
@@ -5387,8 +5458,16 @@
       new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           const videos = entry.target.querySelectorAll('video');
-          if (entry.isIntersecting) videos.forEach(v => v.paused && v.play().catch(() => {}));
-          else videos.forEach(v => v.pause());
+          if (entry.isIntersecting) {
+            videos.forEach(v => { if (v.src && v.paused) v.play().catch(() => {}); });
+          } else if (heroAvviata) {
+            /* La condizione `heroAvviata` e' il punto: senza, la PRIMA chiamata
+               dell'osservatore — che arriva all'apertura, prima che i video
+               abbiano una sorgente — metteva in pausa venti elementi vuoti e
+               con cio' spegneva il loro autoplay per sempre. Si mette in pausa
+               solo cio' che e' stato davvero avviato. */
+            videos.forEach(v => { if (v.src) v.pause(); });
+          }
         });
       }, { threshold: 0 }).observe(hero);
     }
