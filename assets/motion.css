@@ -395,3 +395,75 @@ body.menu-aperto { overflow: hidden; }
 @media (max-width: 900px) {
   .related-link { min-height: 44px; display: inline-flex; align-items: center; }
 }
+
+
+/* ==========================================================================
+   BOTTONE WHATSAPP FISSO — su TUTTE le pagine (31/08/2026)
+   Il markup lo costruisce motion.js, come per il menu del telefono: cosi'
+   le 18 pagine lo ereditano senza toccarne una per una, e i percorsi
+   relativi delle sottocartelle non c'entrano (il link e' assoluto).
+   Sta QUI e non in brand.css perche' la home brand.css non lo carica.
+   ========================================================================== */
+/* ==================================================================
+   BOTTONE WHATSAPP FISSO (31/08/2026)
+   Mobile first: e' la scorciatoia principale di chi arriva da Instagram,
+   dove scrivere in chat e' un gesto piu' naturale che compilare un modulo.
+
+   REGOLA DI CONVIVENZA — non deve coprire NIENTE:
+   - resta nascosto finche' si e' sulla prima schermata (le frecce che
+     portano al modulo stanno li' e vengono prima)
+   - sparisce mentre c'e' il banner dei cookie (che su telefono occupa
+     tutta la larghezza in basso)
+   - sparisce col menu del telefono aperto
+   - sparisce quando il modulo e' in vista: li' l'invio e' il gesto
+     giusto, e il bottone starebbe proprio sopra i campi
+   La logica sta in JS piu' sotto, qui c'e' solo la resa.
+   ================================================================== */
+.wa-fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 90;                      /* sotto la nav (100) e sotto il banner (2000) */
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 56px; padding: 0 20px 0 16px;
+  border-radius: 9999px;
+  background: #25D366;              /* il verde ufficiale: si riconosce senza leggere */
+  color: #0A0A0A;
+  font-family: 'Clash Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em;
+  text-decoration: none;
+  box-shadow: 0 14px 34px -10px rgba(37, 211, 102, 0.55),
+              0 2px 10px rgba(0, 0, 0, 0.35);
+  /* nascosto di partenza: lo accende il JS */
+  opacity: 0; transform: translateY(14px) scale(0.94); pointer-events: none;
+  transition: opacity 0.32s ease, transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.25s ease;
+}
+.wa-fab.is-in { opacity: 1; transform: none; pointer-events: auto; }
+.wa-fab svg { width: 26px; height: 26px; flex-shrink: 0; display: block; }
+.wa-fab:hover { box-shadow: 0 18px 42px -10px rgba(37, 211, 102, 0.7),
+                            0 2px 10px rgba(0, 0, 0, 0.35); }
+.wa-fab:active { transform: scale(0.97); }
+.wa-fab:focus-visible { outline: 3px solid #FFFFFF; outline-offset: 3px; }
+
+/* Il respiro e' sul BOX-SHADOW, non su transform: transform e' gia' usato
+   dall'entrata e dall'active, animarlo li' spegnerebbe l'uno o l'altro.
+   Stessa scelta gia' fatta per le CTA del sito. */
+@keyframes waBattito {
+  0%, 100% { box-shadow: 0 14px 34px -10px rgba(37,211,102,0.55), 0 0 0 0 rgba(37,211,102,0.42); }
+  55%      { box-shadow: 0 14px 34px -10px rgba(37,211,102,0.55), 0 0 0 14px rgba(37,211,102,0); }
+}
+.wa-fab.is-in { animation: waBattito 2.8s ease-out infinite; }
+.wa-fab:hover, .wa-fab:focus-visible { animation-play-state: paused; }
+
+/* Sotto i 420px l'etichetta esce e resta il solo tondo: a quelle larghezze
+   una pillola larga 150px si mangia un quinto dello schermo. Il tondo resta
+   56x56, ben oltre il minimo di 44 per il tocco. */
+@media (max-width: 420px) {
+  .wa-fab { padding: 0; width: 56px; justify-content: center; gap: 0; }
+  .wa-fab-eti { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wa-fab { transition: opacity 0.2s ease; animation: none; }
+  .wa-fab.is-in { transform: none; animation: none; }
+}

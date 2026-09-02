@@ -26,7 +26,7 @@
   <meta property="og:site_name" content="Giesse Agency">
   <meta name="twitter:image" content="https://www.giesseagency.com/og-cover.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="assets/consenso.css?v=202608311133">
+  <link rel="stylesheet" href="assets/consenso.css?v=202609021202">
   <!-- Dati strutturati: dicono a Google e ai motori generativi CHI siamo,
        cosa facciamo e dove operiamo. Niente indirizzo civico: un dato
        sbagliato qui fa piu danno che non averlo. -->
@@ -4099,7 +4099,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/motion.css?v=202608311133">
+  <link rel="stylesheet" href="assets/motion.css?v=202609021202">
 </head>
 <body>
   <span id="top" aria-hidden="true"></span>
@@ -5231,9 +5231,6 @@
     // disegnate: prima si vedeva il primo fotogramma piazzarsi di colpo mentre
     // il browser stava ancora impaginando. Due rAF = pose calcolate al frame 1,
     // dissolvenza avviata al frame 2, niente salto.
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () { field.classList.add('is-pronto'); });
-    });
 
     // ---- Video della hero -------------------------------------------------
     // STORIA: le 20 card usavano i webm interi di reels/compressed (3,8 MB
@@ -5292,10 +5289,65 @@
       setTimeout(() => lista.slice(PRIMA_ONDATA).forEach(attacca), 120);
     }
 
-    // Subito dopo il primo disegno: due rAF bastano a lasciar passare la
-    // prima pittura, e i poster sono gia' arrivati (misurati a 67ms).
-    requestAnimationFrame(function () {
-      requestAnimationFrame(attaccaVideo);
+    /* AVVIO DELLA HERO — rifatto il 31/08/2026
+       IL DIFETTO: l'avvio era appeso a due requestAnimationFrame e a nient'altro.
+       Nei browser dentro le app (Instagram, Facebook, WhatsApp) e nelle schede
+       aperte in secondo piano la pagina nasce "hidden": rAF NON gira, quindi il
+       campo restava a opacita' 0.35 con venti fotogrammi fermi finche' qualcuno
+       non toccava lo schermo. Al tocco rAF si sbloccava e partiva tutto: da qui
+       il sintomo "la hero parte al tocco e non da sola".
+       Con le campagne Meta attive e' proprio dal browser interno a Instagram che
+       arriva la gente, quindi era il primo colpo d'occhio di quasi tutti.
+
+       ORA: tre reti indipendenti. La prima che scatta avvia, le altre trovano
+       gia' fatto e non fanno niente (guardia `heroAvviata`).
+       E' la stessa trappola gia' documentata per i mini reel e per le frecce
+       che portano al modulo: qui mancava la rete. */
+    let heroAvviata = false;
+    function avviaHero() {
+      if (heroAvviata) return;
+      heroAvviata = true;
+      field.classList.add('is-pronto');
+      attaccaVideo();
+    }
+
+    /* I video possono restare fermi ANCHE dopo l'avvio, per due motivi che non
+       dipendono da noi: iOS in risparmio energetico blocca l'autoplay perfino
+       sui video muti, e ogni browser mette in pausa i media quando la pagina va
+       in secondo piano. Questa funzione li rimette in moto ed e' innocua se
+       stanno gia' girando. */
+    function riprendiVideo() {
+      cards.forEach(function (c) {
+        const v = c.querySelector('video');
+        if (v && v.src && v.paused) v.play().catch(function () {});
+      });
+    }
+
+    // rete 1 — strada normale: due rAF, cosi' le pose sono gia' disegnate e
+    // la dissolvenza non parte mentre il browser sta ancora impaginando
+    requestAnimationFrame(function () { requestAnimationFrame(avviaHero); });
+
+    // rete 2 — se rAF non gira, dopo 300ms si parte lo stesso. Le pose sono
+    // gia' state applicate qui sopra in modo sincrono, quindi niente salto.
+    setTimeout(avviaHero, 300);
+
+    // rete 3 — appena la pagina diventa visibile (arrivo da scheda in secondo
+    // piano, o browser in-app che rivela la pagina dopo il caricamento)
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) { avviaHero(); riprendiVideo(); }
+    });
+
+    // rete 4 — il primo gesto dell'utente e' l'unico momento in cui iOS in
+    // risparmio energetico lascia partire un video. Serve una volta sola.
+    function primoGesto() {
+      avviaHero();
+      riprendiVideo();
+      ['touchstart', 'pointerdown', 'keydown'].forEach(function (ev) {
+        document.removeEventListener(ev, primoGesto);
+      });
+    }
+    ['touchstart', 'pointerdown', 'keydown'].forEach(function (ev) {
+      document.addEventListener(ev, primoGesto, { passive: true });
     });
 
     if (!reduce) {
@@ -5569,17 +5621,23 @@
       });
     });
 
-    // --- 9. Video engagement (reel dell'hero — quali colpiscono di più) ---
-    document.querySelectorAll('.hero video, .footer-motion video').forEach((v, i) => {
-      let played = false;
-      v.addEventListener('play', () => {
-        if (!played && once('video_play_' + i)) {
-          played = true;
-          fbEvent('VideoPlay', { custom: true, video_index: i });
-          gaEvent('video_play', { video_index: i });
-        }
-      });
-    });
+    /* --- 9. Video della hero: NON si tracciano (tolto il 31/08/2026) ---
+       C'era un evento `video_play` (e un `VideoPlay` verso Meta) su ogni video
+       della hero, nato per capire "quali reel colpiscono di piu'".
+
+       Non misurava quello. I venti reel della hero partono da soli come sfondo:
+       nessuno sceglie di guardarli, quindi l'evento diceva soltanto che la
+       pagina si era aperta — ventuno volte. Misurato il 31/08 su una visita
+       sola: 21 `video_play` su 24 eventi totali. Ogni sessione mandava a Meta
+       ventuno eventi personalizzati che non distinguono un visitatore
+       dall'altro: rumore che copre i segnali veri (form_start, Lead, Contact)
+       e che sporca le audience proprio ora che le campagne sono partite.
+
+       Il selettore comprendeva anche `.footer-motion video`, che nel markup
+       non esiste: e' rimasto dalla versione precedente del footer.
+
+       Se un domani si vuole misurare davvero l'interesse per i video, il posto
+       giusto sono le lenti del portfolio, dove il video parte per un clic. */
 
     // --- 10. Exit intent (mouse verso barra chiusura) → audience "in fuga" ---
     let exitFired = false;
@@ -5884,13 +5942,14 @@
       });
     })();
   </script>
-  <script src="assets/motion.js?v=202608311133" defer></script>
+  <script src="assets/motion.js?v=202609021202" defer></script>
   <!-- Consenso cookie: unico punto da cui partono GA4 e Meta Pixel.
        Non reincollare gli snippet nelle pagine: sfuggirebbero al consenso. -->
   <!-- Da dove arriva chi scrive. Non e' profilazione: sta in localStorage
        e non esce dal browser finche' non si preme "invia". Per questo va
        anche a cookie rifiutati. -->
-  <script src="assets/provenienza.js?v=202608311133" defer></script>
-  <script src="assets/consenso.js?v=202608311133" defer></script>
+  <script src="assets/provenienza.js?v=202609021202" defer></script>
+  <script src="assets/consenso.js?v=202609021202" defer></script>
+
 </body>
 </html>

@@ -469,7 +469,7 @@
 
   // marcatore di versione: serve a capire al volo se il browser sta girando
   // questo file o una copia vecchia in cache
-  window.GiesseMotion = { versione: 2 };
+  window.GiesseMotion = { versione: 3 };
 
   /* ---------- 8. LENTE SULLE GRAFICHE ---------------------------------
      Le grafiche del portfolio vanno guardate intere: nella griglia stanno a
@@ -554,6 +554,117 @@
     });
   }
 
+
+  /* ==========================================================================
+     BOTTONE WHATSAPP FISSO (31/08/2026)
+     Costruito qui, come il menu del telefono: cosi' tutte le pagine che
+     caricano motion.js lo ereditano senza doverle toccare una per una.
+
+     REGOLA — "non deve coprire nulla". Non si elencano i casi (dopo la hero,
+     non sul modulo, non col banner): e' una rincorsa, ogni sezione nuova ne
+     aggiunge uno. Si MISURA: a ogni aggiornamento si confronta il rettangolo
+     del bottone con quello di cio' che non va coperto.
+
+     Due liste, perche' "coprire" pesa diverso secondo la taglia:
+     - INGOMBRANTI: da evitare sempre (la scheda del modulo, col banner sotto
+       ci sono i campi; il banner dei cookie, che su telefono prende tutta la
+       larghezza in basso).
+     - BERSAGLI: pulsanti e link, ma solo finche' sono PICCOLI. Un bottone da
+       50px coperto a meta' e' inservibile; un contenitore alto mezzo schermo
+       no, gli si copre un angolo e ci si tocca lo stesso. Senza questa
+       distinzione il bottone spariva per tutta la sezione portfolio, dove su
+       telefono ogni card e' larga quanto lo schermo (misurato: 19 posizioni
+       su 50 lo nascondevano; con la distinzione, 6 su 50).
+     ========================================================================== */
+  function setupWhatsApp() {
+    if (document.getElementById('waFab')) return;      // gia' presente nel markup
+    if (document.body.hasAttribute('data-senza-whatsapp')) return;
+
+    var NUMERO = '393273939836';
+    var TESTO  = 'Ciao Giesse! Vengo dal sito e vorrei parlare di un progetto.';
+
+    var fab = document.createElement('a');
+    fab.id = 'waFab';
+    fab.className = 'wa-fab';
+    fab.href = 'https://wa.me/' + NUMERO + '?text=' + encodeURIComponent(TESTO);
+    fab.target = '_blank';
+    fab.rel = 'noopener noreferrer';
+    fab.setAttribute('aria-label', 'Scrivici su WhatsApp');
+    fab.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
+      '<path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47s1.06 2.87 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.2-.57-.35z"/>' +
+      '<path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.02h-.01c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.82c0 4.54-3.69 8.23-8.22 8.23z"/>' +
+      '</svg><span class="wa-fab-eti">Scrivici</span>';
+    document.body.appendChild(fab);
+
+    /* Il tracciamento va messo qui e non lasciato al gestore generico sui link
+       wa.me della home: quello gira mentre la pagina viene letta, cioe' PRIMA
+       che questo bottone esista, e non lo vedrebbe mai. */
+    fab.addEventListener('click', function () {
+      if (typeof fbq !== 'undefined') fbq('track', 'Contact', { method: 'whatsapp', location: 'fisso' });
+      if (typeof gtag !== 'undefined') gtag('event', 'whatsapp_click', { location: 'fisso' });
+    });
+
+    var INGOMBRANTI = '.form-card, .ck-banner';
+    var BERSAGLI    = '.cta-forte, .btn-cta, .faq-cta, .footer-mega-cta, .wa-cta,' +
+                      '.giu, .footer-col a, .footer-bottom a, .service-more, .back-link';
+
+    function menuAperto()    { return !!document.querySelector('.nav-panel.is-open'); }
+    function passataLaHero() { return window.scrollY > window.innerHeight * 0.6; }
+
+    // si legge dal vivo invece di ricostruirlo dalle costanti CSS: resta giusto
+    // anche cambiando padding, etichetta o ancoraggio. I 12px sono aria:
+    // sfiorare un pulsante conta gia' come coprirlo.
+    function riquadro() {
+      var r = fab.getBoundingClientRect(), m = 12;
+      return { left: r.left - m, right: r.right + m, top: r.top - m, bottom: r.bottom + m };
+    }
+
+    function tocca(nodo, r, soloSePiccolo) {
+      var b = nodo.getBoundingClientRect();
+      if (!b.width && !b.height) return false;
+      if (b.bottom < 0 || b.top > window.innerHeight) return false;
+      if (soloSePiccolo && b.height > window.innerHeight * 0.35) return false;
+      return b.right > r.left && b.left < r.right && b.bottom > r.top && b.top < r.bottom;
+    }
+
+    function copreQualcosa() {
+      var r = riquadro(), i;
+      var g = document.querySelectorAll(INGOMBRANTI);
+      for (i = 0; i < g.length; i++) if (tocca(g[i], r, false)) return true;
+      var p = document.querySelectorAll(BERSAGLI);
+      for (i = 0; i < p.length; i++) if (tocca(p[i], r, true)) return true;
+      return false;
+    }
+
+    function aggiorna() {
+      var mostra = passataLaHero() && !menuAperto() && !copreQualcosa();
+      if (mostra) fab.classList.add('is-in'); else fab.classList.remove('is-in');
+      fab.setAttribute('aria-hidden', mostra ? 'false' : 'true');
+      fab.tabIndex = mostra ? 0 : -1;
+    }
+
+    /* Freno: lo scorrimento manda decine di eventi al secondo e ogni giro legge
+       una trentina di rettangoli. NON si usa requestAnimationFrame, per quanto
+       sarebbe la scelta naturale: con la pagina "hidden" rAF non gira e il
+       bottone resterebbe fermo sull'ultimo stato. E' la stessa trappola che
+       teneva bloccata la hero. */
+    var inCoda = false;
+    function chiedi() {
+      if (inCoda) return;
+      inCoda = true;
+      setTimeout(function () { inCoda = false; aggiorna(); }, 60);
+    }
+
+    window.addEventListener('scroll', chiedi, { passive: true });
+    window.addEventListener('resize', chiedi, { passive: true });
+    if ('MutationObserver' in window) {
+      new MutationObserver(chiedi).observe(document.body, { childList: true });
+    }
+    document.addEventListener('click', function () { setTimeout(aggiorna, 80); }, true);
+    aggiorna();
+  }
+
   function init() {
     paintOrbs();
     wrapTables();
@@ -567,6 +678,7 @@
     setupMenuMobile();
     setupAncore();
     setupLente();
+    setupWhatsApp();
   }
 
   if (document.readyState === 'loading') {
