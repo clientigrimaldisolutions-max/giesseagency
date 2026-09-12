@@ -511,3 +511,28 @@ img, video { display: block; max-width: 100%; }
   .articles-grid > .article-card:first-child .thumb { min-height: 200px; }
   .articles-grid > .article-card:first-child .body { padding: 26px 24px 30px; }
 }
+
+
+/* ==========================================================================
+   STRISCIA DEI LAVORI NEL PIE' DI PAGINA
+   Le pagine portfolio risultavano "Rilevata, ma attualmente non indicizzata"
+   su Search Console: Google le conosceva solo dalla sitemap e non le aveva
+   mai scansionate. Un link vero da ogni pagina del sito e' il modo con cui
+   si risolve, e per il lettore e' comunque una scorciatoia utile.
+   ========================================================================== */
+.footer-lavori { border-top: 1px solid rgba(255,255,255,0.10); padding: 28px 0 4px; }
+.footer-lavori h4 {
+  font-family: 'Clash Display', sans-serif;
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  font-weight: 700; color: #FFFFFF; margin: 0 0 12px; line-height: 1;
+}
+.footer-lavori nav { display: flex; flex-wrap: wrap; gap: 10px 24px; }
+.footer-lavori a {
+  color: rgba(255,255,255,0.62);
+  font-family: 'Clash Display', sans-serif;
+  font-size: clamp(0.92rem, 1.1vw, 1rem);
+  font-weight: 400; text-decoration: none;
+  transition: color 0.2s ease;
+}
+.footer-lavori a:hover { color: #FFFFFF; }
+@media (max-width: 560px) { .footer-lavori nav { gap: 12px 18px; } }

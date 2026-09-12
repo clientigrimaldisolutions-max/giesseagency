@@ -26,7 +26,7 @@
   <meta property="og:site_name" content="Giesse Agency">
   <meta name="twitter:image" content="https://www.giesseagency.com/og-cover.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="assets/consenso.css?v=202609021215">
+  <link rel="stylesheet" href="assets/consenso.css?v=202609121139">
   <!-- Dati strutturati: dicono a Google e ai motori generativi CHI siamo,
        cosa facciamo e dove operiamo. Niente indirizzo civico: un dato
        sbagliato qui fa piu danno che non averlo. -->
@@ -835,6 +835,27 @@
       box-shadow: 0 10px 26px -4px rgba(37,211,102,0.7);
     }
     .footer-col .arrow-link .icon-wa svg { width: 18px; height: 18px; }
+
+    /* Striscia dei lavori in fondo. Non e' decorazione: le pagine portfolio
+       erano "Rilevate ma non indicizzate" su Search Console, cioe' Google le
+       conosceva solo dalla sitemap e non le aveva mai scansionate. Un link
+       vero da ogni pagina del sito e' il modo con cui si risolve. */
+    .footer-lavori { border-top: 1px solid rgba(255,255,255,0.10); padding: 34px 0 6px; }
+    .footer-lavori h4 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+      font-weight: 700; color: #FFFFFF; margin: 0 0 14px; line-height: 1;
+    }
+    .footer-lavori nav { display: flex; flex-wrap: wrap; gap: 10px 26px; }
+    .footer-lavori a {
+      color: rgba(255,255,255,0.62);
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+      font-weight: 400; text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .footer-lavori a:hover { color: #FFFFFF; }
+    @media (max-width: 560px) { .footer-lavori nav { gap: 12px 20px; } }
 
     /* Social icons circolari stile Certo */
     .footer-social {
@@ -4099,7 +4120,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/motion.css?v=202609021215">
+  <link rel="stylesheet" href="assets/motion.css?v=202609121139">
 </head>
 <body>
   <span id="top" aria-hidden="true"></span>
@@ -5080,6 +5101,20 @@
         </div>
       </div>
 
+      <div class="footer-lavori">
+        <h4>I nostri lavori</h4>
+        <nav aria-label="Portfolio">
+          <a href="portfolio/lead-generation.html">Lead Generation</a>
+          <a href="portfolio/siti-web.html">Siti web</a>
+          <a href="portfolio/ecommerce.html">E-commerce</a>
+          <a href="portfolio/brand-identity.html">Brand Identity</a>
+          <a href="portfolio/loghi.html">Loghi</a>
+          <a href="portfolio/grafica.html">Grafica</a>
+          <a href="portfolio/video.html">Video</a>
+          <a href="portfolio/foto.html">Foto</a>
+        </nav>
+      </div>
+
       <div class="footer-mega">
         <div class="footer-waves" aria-hidden="true">
           <div class="wave wave-1"></div>
@@ -6023,14 +6058,14 @@
       });
     })();
   </script>
-  <script src="assets/motion.js?v=202609021215" defer></script>
+  <script src="assets/motion.js?v=202609121139" defer></script>
   <!-- Consenso cookie: unico punto da cui partono GA4 e Meta Pixel.
        Non reincollare gli snippet nelle pagine: sfuggirebbero al consenso. -->
   <!-- Da dove arriva chi scrive. Non e' profilazione: sta in localStorage
        e non esce dal browser finche' non si preme "invia". Per questo va
        anche a cookie rifiutati. -->
-  <script src="assets/provenienza.js?v=202609021215" defer></script>
-  <script src="assets/consenso.js?v=202609021215" defer></script>
+  <script src="assets/provenienza.js?v=202609121139" defer></script>
+  <script src="assets/consenso.js?v=202609121139" defer></script>
 
 </body>
 </html>
