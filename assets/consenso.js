@@ -69,6 +69,43 @@
     return g;
   }
 
+  /* ------------------------------------------------- traffico interno ---
+     Il 79% degli eventi di GA4 lo generavamo NOI navigando il sito: 55
+     sessioni "Direct" con 79 eventi ciascuna, contro le 13 di chi arriva da
+     Google. Ogni media era calcolata su quel rumore.
+
+     GA4 permette di escludere per INDIRIZZO IP, ma l'IP di casa e dell'ufficio
+     cambia e va aggiornato a mano: la prima volta che cambia si ricomincia a
+     sporcare i dati senza accorgersene. Qui si usa un interruttore nel
+     browser, che non scade e viaggia col dispositivo.
+
+     COME SI ACCENDE, una volta per ogni dispositivo e ogni browser:
+         https://www.giesseagency.com/?interno=1
+     Per spegnerlo (es. su un computer prestato):
+         https://www.giesseagency.com/?interno=0
+     Per sapere com'e' messo: GiesseConsenso.interno() in console.
+
+     Da acceso: a GA4 si manda traffic_type 'internal' — il filtro dati di GA4
+     scarta quelle righe — e Clarity NON parte proprio, perche' li' non esiste
+     un equivalente del filtro e le registrazioni nostre coprirebbero quelle
+     dei visitatori veri. */
+  var CHIAVE_INTERNO = 'giesse-interno';
+
+  function eInterno() {
+    try {
+      var q = new URLSearchParams(location.search);
+      if (q.has('interno')) {
+        var acceso = q.get('interno') !== '0';
+        if (acceso) localStorage.setItem(CHIAVE_INTERNO, '1');
+        else localStorage.removeItem(CHIAVE_INTERNO);
+      }
+      return localStorage.getItem(CHIAVE_INTERNO) === '1';
+    } catch (e) {
+      // modalita' anonima o storage bloccato: si tratta come visitatore vero
+      return false;
+    }
+  }
+
   // -------------------------------------------------------------- tracker ---
   var avviati = { statistiche: false, marketing: false };
 
@@ -82,12 +119,15 @@
     s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4;
     document.head.appendChild(s);
     window.gtag('js', new Date());
-    window.gtag('config', GA4, { anonymize_ip: true });
+    var interno = eInterno();
+    window.gtag('config', GA4, interno
+      ? { anonymize_ip: true, traffic_type: 'internal' }
+      : { anonymize_ip: true });
 
     // Microsoft Clarity: registra la sessione, quindi sta fra le statistiche
     // e non parte senza consenso. Di suo maschera gia' il contenuto dei campi
     // di testo, quindi quello che si scrive nel modulo non finisce nei video.
-    if (CLARITY) {
+    if (CLARITY && !interno) {
       (function (c, l, a, r, i, t, y) {
         c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
         t = l.createElement(r); t.async = 1; t.src = 'https://www.clarity.ms/tag/' + i;
@@ -243,6 +283,7 @@
   }
 
   window.GiesseConsenso = {
+    interno: eInterno,
     conversioneAds: conversioneAds,
     apri: function () { costruisci(leggi()); },
     stato: leggi,
