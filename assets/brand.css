@@ -536,3 +536,70 @@ img, video { display: block; max-width: 100%; }
 }
 .footer-lavori a:hover { color: #FFFFFF; }
 @media (max-width: 560px) { .footer-lavori nav { gap: 12px 18px; } }
+
+
+/* ==========================================================================
+   RICHIAMO A META' ARTICOLO
+   Gli articoli avevano una sola chiamata all'azione, in fondo: ci arriva una
+   minoranza di chi apre la pagina. Questo blocco sta a meta' lettura, quando
+   uno ha appena capito che sappiamo di cosa parliamo.
+   Due strade, non una: WhatsApp per chi vuole chiedere subito (un tocco, gia'
+   sul telefono) e il modulo per chi preferisce scrivere. Il modulo sta sulla
+   home, quindi per quella strada c'e' comunque un caricamento di pagina in
+   mezzo: WhatsApp e' il percorso corto, ed e' messo per primo apposta.
+   ========================================================================== */
+.cta-meta {
+  margin: 44px 0;
+  padding: 26px 26px 24px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-left: 3px solid #6500FF;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(101,0,255,0.10), rgba(101,0,255,0.02));
+}
+.cta-meta p {
+  margin: 0 0 18px;
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: #FFFFFF;
+}
+.cta-meta p strong { font-weight: 600; }
+.cta-meta .cta-meta-azioni {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+/* .article-body .cta-meta a e non .cta-meta a: compat-articoli.css si carica
+   DOPO brand.css e a parita' di specificita' vincerebbe lui, rimettendo la
+   sottolineatura dei link di testo sui due bottoni. */
+.article-body .cta-meta a,
+.cta-meta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 20px;
+  border-radius: 999px;
+  font-family: 'Clash Display', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+.article-body .cta-meta a:hover,
+.cta-meta a:hover { transform: translateY(-2px); }
+.article-body .cta-meta .cta-wa,
+.cta-meta .cta-wa { background: #25D366; color: #06210F; text-decoration: none; }
+.cta-meta .cta-wa:hover { filter: brightness(1.08); }
+.article-body .cta-meta .cta-form,
+.cta-meta .cta-form {
+  border: 1px solid rgba(255,255,255,0.28);
+  color: #FFFFFF;
+  text-decoration: none;
+}
+.cta-meta .cta-form:hover { border-color: #FFFFFF; }
+.cta-meta svg { width: 18px; height: 18px; flex: none; }
+@media (max-width: 520px) {
+  .cta-meta { padding: 22px 18px 20px; margin: 34px 0; }
+  .cta-meta .cta-meta-azioni { flex-direction: column; }
+  .cta-meta a { justify-content: center; }
+}
