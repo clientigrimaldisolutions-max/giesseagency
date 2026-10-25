@@ -1,0 +1,306 @@
+/* ==========================================================================
+   MARKETING FOTOVOLTAICO — stili della landing
+   Creato il 25/10/2026, su richiesta di Gaetano: piu' dolore, elenchi
+   puntati, rosso per sottolineare.
+
+   IL ROSSO E' QUELLO DEL BRAND, NON UNO NUOVO
+   #FF3B3B e' gia' il rosso della sottolineatura a mano libera della home
+   (.ul-red) e dell'orb o3 di motion.css. Qui serve a una cosa sola:
+   marcare il DOLORE. Nel resto della pagina il colore e' il gradiente blu
+   del brand. Se il rosso finisce anche sulle parti positive smette di
+   dire qualcosa.
+
+   TUTTO SCOPED SOTTO .fv-pagina
+   Questa pagina carica brand.css, locale.css, portfolio.css e motion.css
+   come tutte le altre: senza lo scope, una di queste regole uscirebbe sulle
+   altre 25 pagine.
+   ========================================================================== */
+
+.fv-pagina { --rosso: #FF3B3B; }
+
+/* --- la sottolineatura a mano libera, la stessa SVG della home --- */
+/* Va su uno <span> dentro il testo, mai sul blocco: altrimenti il tratto si
+   stira fino al bordo quando la frase occupa tutta la riga (gia' successo
+   sui nomi dei pack, vedi claude.md). */
+.fv-pagina .ul-rossa {
+  display: inline;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 20' preserveAspectRatio='none'><path d='M4,14 C40,7 80,17 130,10 C180,4 220,16 296,8' stroke='%23ff3b3b' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.2em;
+  /* clone, non padding: col padding la decorazione della riga N finisce
+     addosso alla riga N+1. L'interlinea la da' il contenitore. */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ------------------------------------------------- l'elenco del dolore --- */
+.fv-dolore { list-style: none; padding: 0; margin: 28px 0 0; }
+.fv-dolore li {
+  position: relative;
+  padding: 0 0 0 34px;
+  margin-bottom: 18px;
+  font-family: 'Clash Display', sans-serif;
+  font-size: 1.04rem; font-weight: 400; line-height: 1.7;
+  color: #FFFFFF;
+}
+/* il puntino rosso: quadrato, non disco. Un disco a questa dimensione
+   legge come un elenco qualunque. */
+.fv-dolore li::before {
+  content: '';
+  position: absolute; left: 0; top: 0.62em;
+  width: 11px; height: 11px; border-radius: 2px;
+  background: var(--rosso);
+  box-shadow: 0 0 14px rgba(255,59,59,0.55);
+}
+.fv-dolore li b, .fv-dolore li strong {
+  display: block; margin-bottom: 4px;
+  font-weight: 700; font-size: 1.1rem; line-height: 1.35; color: #FFFFFF;
+}
+
+/* ---------------------------------------- quanto costa non fare niente --- */
+.fv-costo {
+  margin-top: 34px; padding: 28px 30px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,59,59,0.34);
+  border-left: 3px solid var(--rosso);
+  background: linear-gradient(135deg, rgba(255,59,59,0.10), rgba(255,59,59,0.02));
+}
+.fv-costo h3 {
+  font-family: 'Clash Display', sans-serif;
+  font-weight: 700; font-size: 1.16rem; line-height: 1.3;
+  color: #FFFFFF; margin: 0 0 12px;
+}
+.fv-costo p {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 1.01rem; font-weight: 400; line-height: 1.72;
+  color: #FFFFFF; margin: 0 0 12px;
+}
+.fv-costo p:last-child { margin-bottom: 0; }
+
+/* ------------------------------------------------- l'elenco di cosa c'e' -- */
+/* Il contrario del dolore: stesso impianto, spunta in gradiente al posto
+   del quadratino rosso. */
+.fv-stack { list-style: none; padding: 0; margin: 26px 0 0; }
+.fv-stack li {
+  position: relative;
+  padding: 0 0 0 36px; margin-bottom: 16px;
+  font-family: 'Clash Display', sans-serif;
+  font-size: 1.01rem; font-weight: 400; line-height: 1.65; color: #FFFFFF;
+}
+.fv-stack li::before {
+  content: '';
+  position: absolute; left: 0; top: 0.3em;
+  width: 19px; height: 19px; border-radius: 6px;
+  background: var(--gradient-diag);
+  /* la spunta ritagliata dentro il quadrato in gradiente */
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / 15px 15px no-repeat;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / 15px 15px no-repeat;
+}
+.fv-stack li b, .fv-stack li strong {
+  display: block; margin-bottom: 3px;
+  font-weight: 700; font-size: 1.06rem; line-height: 1.35; color: #FFFFFF;
+}
+
+/* --------------------------------------------------- ha senso / non ha --- */
+/* Due colonne affiancate: la sinistra verde-neutra, la destra rossa.
+   Si legge in un colpo d'occhio chi deve andare avanti e chi no. */
+.fv-due { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 32px; }
+@media (min-width: 860px) { .fv-due { grid-template-columns: 1fr 1fr; gap: 20px; } }
+
+.fv-si, .fv-no {
+  padding: 28px 28px 24px; border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.035);
+}
+.fv-no { border-color: rgba(255,59,59,0.30); background: rgba(255,59,59,0.045); }
+.fv-si h3, .fv-no h3 {
+  font-family: 'Clash Display', sans-serif;
+  font-weight: 700; font-size: 1.12rem; color: #FFFFFF; margin: 0 0 16px;
+}
+.fv-si ul, .fv-no ul { list-style: none; padding: 0; margin: 0; }
+.fv-si li, .fv-no li {
+  position: relative; padding-left: 28px; margin-bottom: 11px;
+  font-family: 'Clash Display', sans-serif;
+  font-size: 0.98rem; font-weight: 400; line-height: 1.5; color: #FFFFFF;
+}
+.fv-si li::before, .fv-no li::before {
+  position: absolute; left: 0; top: -0.04em;
+  font-weight: 700; font-size: 1.05rem; line-height: 1.5;
+}
+.fv-si li::before { content: '+'; color: #4ADE80; }
+.fv-no li::before { content: '\00d7'; color: var(--rosso); }
+
+/* --------------------------------------------------------- la scarsita' -- */
+.fv-zona {
+  margin-top: 30px; padding: 26px 28px;
+  border-radius: 18px; text-align: center;
+  border: 1px solid rgba(255,59,59,0.30);
+  background: linear-gradient(135deg, rgba(255,59,59,0.09), rgba(101,0,255,0.06));
+}
+.fv-zona strong {
+  display: block; margin-bottom: 8px;
+  font-family: 'Clash Display', sans-serif;
+  font-weight: 700; font-size: clamp(1.1rem, 2.4vw, 1.4rem); color: #FFFFFF;
+}
+.fv-zona span {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 0.98rem; line-height: 1.6; color: #FFFFFF;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fv-si, .fv-no { transition: none; }
+}
+
+/* ==========================================================================
+   IL MODULO DELLA LANDING
+   Modulo UNICO di questa pagina: non manda al modulo generico della home.
+   Fa le stesse sei domande del modulo Meta della campagna, cosi' chi arriva
+   dall'annuncio e chi arriva dalla ricerca danno risposte confrontabili
+   nello stesso foglio.
+   ========================================================================== */
+.fv-form-sez { padding-bottom: 96px; }
+.fv-card {
+  max-width: 740px; margin: 34px auto 0;
+  padding: 32px 24px 28px; border-radius: 22px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: linear-gradient(180deg, rgba(0,166,255,0.06), rgba(10,10,10,0.25));
+}
+@media (min-width: 680px) { .fv-card { padding: 42px 40px 34px; } }
+
+.fv-barra { display: flex; gap: 6px; margin-bottom: 26px; }
+.fv-barra i { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.13); transition: background .3s ease; }
+.fv-barra i.is-on { background: var(--gradient-diag); }
+
+.fv-passo { display: none; }
+.fv-passo.is-active { display: block; }
+
+.fv-dom { margin-bottom: 24px; }
+.fv-dom > legend, .fv-dom > label {
+  display: block; padding: 0; margin: 0 0 12px;
+  font-family: 'Clash Display', sans-serif;
+  font-weight: 500; font-size: 1.02rem; line-height: 1.4; color: #FFFFFF;
+}
+.fv-dom { border: 0; }
+
+/* le risposte a scelta: pillole grandi, bersaglio pieno */
+.fv-scelte { display: grid; grid-template-columns: 1fr; gap: 9px; }
+@media (min-width: 560px) { .fv-scelte--due { grid-template-columns: 1fr 1fr; } }
+.fv-scelta {
+  display: flex; align-items: center; gap: 12px;
+  min-height: 52px; padding: 13px 17px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
+  background: rgba(255,255,255,0.025);
+  font-family: 'Clash Display', sans-serif; font-weight: 400; font-size: 0.97rem;
+  line-height: 1.4; color: #FFFFFF;
+  transition: border-color .2s ease, background .2s ease;
+}
+.fv-scelta:hover { border-color: rgba(0,166,255,0.5); }
+.fv-scelta input { flex: none; width: 18px; height: 18px; accent-color: #2E4CFF; }
+.fv-scelta:has(input:checked) { border-color: #00A6FF; background: rgba(0,166,255,0.09); }
+
+.fv-campo { margin-bottom: 16px; }
+.fv-campo label {
+  display: block; margin-bottom: 7px;
+  font-family: 'Clash Display', sans-serif;
+  font-weight: 500; font-size: 0.9rem; color: #FFFFFF;
+}
+.fv-campo input {
+  width: 100%; padding: 14px 16px;
+  font-family: 'Clash Display', sans-serif; font-size: 1rem; font-weight: 400; color: #FFFFFF;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
+  -webkit-appearance: none; appearance: none;
+  transition: border-color .2s ease, background .2s ease;
+}
+.fv-campo input::placeholder { color: rgba(255,255,255,0.42); }
+.fv-campo input:focus { outline: none; border-color: #00A6FF; background: rgba(0,166,255,0.06); }
+.fv-coppia { display: grid; grid-template-columns: 1fr; gap: 0 14px; }
+@media (min-width: 560px) { .fv-coppia { grid-template-columns: 1fr 1fr; } }
+
+.fv-privacy {
+  display: flex; align-items: flex-start; gap: 11px; margin: 6px 0 22px;
+  font-family: 'Clash Display', sans-serif; font-weight: 400;
+  font-size: 0.88rem; line-height: 1.5; color: #FFFFFF; cursor: pointer;
+}
+.fv-privacy input { flex: none; width: 18px; height: 18px; margin-top: 2px; accent-color: #2E4CFF; }
+.fv-privacy a { color: #8ea8ff; text-decoration: underline; text-underline-offset: 3px; }
+
+.fv-azioni { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.fv-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  min-height: 50px; padding: 14px 26px; border: 0; border-radius: 999px; cursor: pointer;
+  font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: 0.96rem;
+  color: #FFFFFF; background: var(--gradient-diag);
+  transition: transform .2s ease, filter .2s ease;
+}
+.fv-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.fv-btn-ghost { background: none; border: 1px solid rgba(255,255,255,0.26); }
+.fv-btn-ghost:hover { border-color: #FFFFFF; filter: none; }
+
+.fv-errore {
+  font-family: 'Clash Display', sans-serif; font-weight: 500; font-size: 0.88rem;
+  color: var(--rosso); margin: 12px 0 0;
+}
+.fv-nota {
+  font-family: 'Clash Display', sans-serif; font-weight: 400;
+  font-size: 0.84rem; line-height: 1.55; color: rgba(255,255,255,0.62); margin: 14px 0 0;
+}
+.fv-nota a { color: #8ea8ff; }
+
+.fv-grazie { text-align: center; padding: 16px 0 6px; }
+.fv-grazie h3 {
+  font-family: 'Clash Display', sans-serif; font-weight: 700;
+  font-size: clamp(1.3rem, 2.8vw, 1.9rem); line-height: 1.2; color: #FFFFFF; margin: 0 0 14px;
+}
+.fv-grazie p {
+  font-family: 'Clash Display', sans-serif; font-weight: 400; font-size: 1rem;
+  line-height: 1.68; color: #FFFFFF; margin: 0 auto 10px; max-width: 54ch;
+}
+.fv-grazie a { color: #8ea8ff; }
+
+/* il contatore sopra ogni domanda: dice a che punto sei, e quante ne mancano */
+.fv-conta {
+  font-family: 'Clash Display', sans-serif;
+  font-weight: 500; font-size: 0.76rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(255,255,255,0.55);
+  margin: 0 0 16px;
+}
+/* una domanda per schermata: la legenda e' il titolo della schermata */
+.fv-passo .fv-dom > legend {
+  font-size: clamp(1.1rem, 2.2vw, 1.35rem); font-weight: 600;
+  line-height: 1.3; margin-bottom: 18px;
+}
+
+/* ==========================================================================
+   LA STRISCIA D'AZIONE
+   Chiesto da Gaetano: "ogni 2 secondi azione". Dopo ogni sezione c'e' un
+   punto d'uscita verso il modulo, cosi' chi e' gia' convinto non deve
+   scorrere fino in fondo per trovare dove si clicca.
+   Non e' lo stesso bottone ripetuto: ogni striscia dice una cosa diversa,
+   legata alla sezione che la precede. Un bottone identico sette volte
+   legge come banner pubblicitario e si smette di vederlo.
+   ========================================================================== */
+.fv-azione {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px;
+  justify-content: space-between;
+  margin-top: 34px; padding: 22px 26px;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(0,166,255,0.07), rgba(101,0,255,0.07));
+}
+.fv-azione p {
+  flex: 1 1 260px; margin: 0;
+  font-family: 'Clash Display', sans-serif;
+  font-weight: 500; font-size: 1rem; line-height: 1.45; color: #FFFFFF;
+}
+.fv-azione .fv-btn { flex: none; }
+/* variante calda: va sotto le sezioni che parlano del problema */
+.fv-azione--caldo {
+  border-color: rgba(255,59,59,0.26);
+  background: linear-gradient(135deg, rgba(255,59,59,0.09), rgba(101,0,255,0.05));
+}
+@media (max-width: 620px) {
+  .fv-azione { padding: 20px; }
+  .fv-azione .fv-btn { width: 100%; justify-content: center; }
+}
