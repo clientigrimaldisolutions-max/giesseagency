@@ -437,6 +437,15 @@ a.more:hover span { transform: translateX(4px); }
 }
 .sito-info .btn-cta { margin-top: auto; }
 
+/* La regola globale e' "a { text-decoration: none; color: inherit }": un link
+   dentro un paragrafo restava bianco identico al testo e nessuno capiva di
+   poterci cliccare. Stesso azzurro dei link negli articoli (.prose a). */
+.portfolio-nota-cat a, .sito-info p a {
+  color: #8ea8ff; text-decoration: underline; text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+.portfolio-nota-cat a:hover, .sito-info p a:hover { color: #FFFFFF; }
+
 /* La Rotonda ha un sito quasi tutto nero: la schermata, dentro una card nera,
    spariva e sembrava un'immagine non caricata. Un filo chiaro attorno allo
    schermo delimita sempre la superficie, anche quando il contenuto e' scuro.
