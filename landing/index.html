@@ -1379,13 +1379,37 @@
     (function provenienza() {
       var q = new URLSearchParams(location.search);
       var chiavi = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','fbclid'];
-      var memoria = {};
-      try { memoria = JSON.parse(sessionStorage.getItem('lpProvenienza') || '{}'); } catch (err) {}
+
+      /* O TUTTO DAL CLIC NUOVO, O TUTTO DALLA MEMORIA — mai un misto.
+         Prima qui c'era `q.get(k) || memoria[k]`, che sceglieva campo per
+         campo: se il nuovo annuncio portava utm_campaign ma non utm_content,
+         il modulo spediva la campagna nuova con il CONTENUTO VECCHIO, e il
+         lead risultava arrivato da un'inserzione che quella persona non aveva
+         mai visto. Misurato dal vivo: un ingresso con solo utm_campaign si
+         portava dietro utm_content e fbclid di una visita precedente.
+         Con piu' annunci attivi sarebbe il modo piu' rapido per spegnere
+         l'inserzione sbagliata guardando numeri falsi.
+         Regola: se l'URL porta anche UNA sola di queste chiavi, e' un
+         ingresso nuovo e il blocco si sostituisce in pieno; se non ne porta
+         nessuna (ricarica, ritorno indietro, link interno) si tiene quello
+         della sessione, che e' il clic vero con cui e' entrato. */
+      var daUrl = {};
+      var urlHaProvenienza = false;
       chiavi.forEach(function (k) {
-        var v = q.get(k) || memoria[k] || '';
-        if (v) memoria[k] = v;
+        var v = q.get(k);
+        if (v) { daUrl[k] = v; urlHaProvenienza = true; }
+      });
+
+      var memoria = {};
+      if (urlHaProvenienza) {
+        memoria = daUrl;
+      } else {
+        try { memoria = JSON.parse(sessionStorage.getItem('lpProvenienza') || '{}'); } catch (err) {}
+      }
+
+      chiavi.forEach(function (k) {
         var campo = document.querySelector('input[name="' + k + '"]');
-        if (campo) campo.value = v;
+        if (campo) campo.value = memoria[k] || '';
       });
       try { sessionStorage.setItem('lpProvenienza', JSON.stringify(memoria)); } catch (err) {}
       var pag = document.querySelector('input[name="pagina"]');
