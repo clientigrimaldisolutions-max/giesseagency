@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- ==========================================================================
+       LANDING DI CAMPAGNA — LEAD GENERATION          BOZZA, non pubblicata
+       ==========================================================================
+       Non fa parte del sito: nessuna voce di menu, nessun link entrante, fuori
+       dalla sitemap, noindex. La vedono SOLO le persone che arrivano
+       dall'annuncio. Per questo non ha barra di navigazione ne' piede con link:
+       una pagina, un'uscita.
+
+       Struttura "landing spezzata di prequalifica": una schermata alla volta,
+       un solo messaggio o una sola domanda per schermata, e si alternano
+       domanda e prova. Ogni domanda qualifica, ogni prova scalda.
+
+       I settori ammessi sono tutti (attivita' locali, aziende, professionisti):
+       per questo la testata NON nomina nessun settore e parla della condizione
+       comune. Il settore entra dalla prima domanda, che serve a tre cose:
+       segmenta, qualifica, e decide quale prova mostrare subito dopo.
+
+       NON va messa in Disallow nel robots.txt: il robots.txt e' pubblico, e
+       soprattutto bloccando il crawler gli impedisci di leggere il noindex.
+       ========================================================================== -->
+
+  <title>Lead Generation per attivit&agrave; locali, aziende e professionisti &mdash; Giesse</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="icon" href="../giesse-icona.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="../giesse-icona-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../giesse-icona-180.png">
+
+  <link rel="stylesheet" href="../assets/brand.css">
+  <link rel="stylesheet" href="../assets/motion.css">
+  <link rel="stylesheet" href="../assets/portfolio.css">
+  <link rel="stylesheet" href="../assets/fotovoltaico.css">
+  <link rel="stylesheet" href="../assets/consenso.css">
+
+  <style>
+    /* Solo l'impaginazione di questa pagina. Tipografia, bottoni, pillole delle
+       risposte e card vengono dai fogli gia' esistenti, ereditati grazie a
+       .fv-pagina sul body. */
+    .lp-pagina { min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Il bottone WhatsApp fisso lo inietta motion.js su tutte le pagine.
+       Qui va spento: questa landing ha una sola uscita, il modulo. Non si
+       puo' togliere motion.js, che serve per le orb, il reveal e i numeri
+       che salgono. */
+    .wa-fab { display: none !important; }
+
+    .lp-testa { padding: 26px 24px 0; display: flex; justify-content: center; }
+    .lp-testa img { height: 26px; width: auto; }
+
+    .lp-scena {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 28px 20px 56px;
+    }
+    .lp-dentro { width: 100%; max-width: 760px; }
+
+    /* --- apertura ---------------------------------------------------------- */
+    /* Ritmo verticale: tre soli valori, usati ovunque. Prima ogni blocco aveva
+       il suo margine a occhio (18, 22, 24, 26...) e la colonna non respirava
+       in modo regolare. */
+    .lp-pagina { --sp-1: 14px; --sp-2: 24px; --sp-3: 38px; }
+
+    /* NIENTE OPACITA' SUL TESTO. Sul nero un bianco all'85% legge come
+       "disattivato": e' la regola del brand, vale anche qui. Dove serve far
+       scendere un testo di livello si usa la dimensione e il tracking. */
+    .lp-ammissione {
+      font-family: 'Clash Display', sans-serif; font-weight: 500;
+      font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: #FFFFFF; margin: 0 0 var(--sp-1); text-align: center;
+    }
+    /* La frase che dice "hai passato il filtro". NON e' un'etichetta, e'
+       una frase di sedici parole: con .lp-ammissione (maiuscolo + 0.22em di
+       tracking a 11,5px) occupava tre righe faticose, l'ultima con il solo
+       "OGGI.", ed era sotto il minimo di 12px del progetto. Qui resta tonda,
+       l'enfasi la porta il peso. */
+    .lp-ammessa {
+      font-family: 'Clash Display', sans-serif; font-weight: 500;
+      font-size: 0.95rem; line-height: 1.45; color: #FFFFFF;
+      text-align: center; max-width: 520px; text-wrap: balance;
+      margin: 0 auto var(--sp-2);
+    }
+    .lp-ammessa strong { font-weight: 700; }
+
+    /* Piede legale. La landing non ha nav ne' footer di proposito, ma i due
+       link obbligatori e il richiamo alle preferenze cookie devono esserci:
+       da qui in poi la pagina carica GA4, Pixel, Clarity e Google Ads. */
+    .lp-legale {
+      display: flex; flex-wrap: wrap; gap: 6px 22px;
+      align-items: center; justify-content: center;
+      padding: 30px 20px 40px; text-align: center;
+    }
+    .lp-legale a, .lp-legale button {
+      font-family: 'Clash Display', sans-serif; font-weight: 400;
+      font-size: 0.8rem; color: #FFFFFF; text-decoration: none;
+      background: none; border: 0; cursor: pointer;
+      padding: 15px 6px; line-height: 1.2;   /* 45px: il minimo del progetto e' 44 */
+    }
+    .lp-legale a:hover, .lp-legale button:hover { text-decoration: underline; }
+
+    .lp-titolo {
+      font-family: 'Clash Display', sans-serif; font-weight: 700;
+      text-transform: uppercase; text-align: center;
+      font-size: clamp(1.9rem, 5.2vw, 3.3rem); line-height: 1.04;
+      letter-spacing: -0.02em; color: #FFFFFF; margin: 0 0 var(--sp-2);
+      text-wrap: balance;
+    }
+    .lp-sotto {
+      text-align: center; color: #FFFFFF; max-width: 620px;
+      margin: 0 auto var(--sp-3); font-size: 1.02rem; line-height: 1.65;
+      text-wrap: pretty;
+    }
+    /* I quattro totali sono dati da Gaetano il 15/11/2026 e sono di ordine
+       diverso da quelli pubblicati nel portfolio (2.441 contatti su 5 campagne):
+       questi sono i totali di tutta l'attivita', quelli le sole campagne messe
+       online. NOTA PER CHI AGGIORNA: 300.000 / 30.000 fa 10 euro a contatto,
+       mentre il costo per cliente e' dichiarato 9 euro — un cliente non puo'
+       costare meno di un contatto. Da riallineare prima di pubblicare.
+       I numeri per singola campagna restano accanto alle schermate. */
+    .lp-numeri {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px; margin: 0 0 24px;
+    }
+    /* Il blocco dei 5 minuti ha due sole cifre: su quattro colonne
+       resterebbero due celle vuote. */
+    .lp-numeri--due { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* motion.js congela la larghezza del contatore prima di azzerarlo, per
+       evitare che il layout salti mentre il numero sale:
+         el.style.minWidth = el.getBoundingClientRect().width + 'px'
+       Ma il nostro <b> e' display:block, quindi quella misura e' la larghezza
+       del CONTENITORE, non del numero. Finche' la pagina non cambia larghezza
+       non si vede; se l'utente ruota il telefono, il min-width resta quello di
+       prima e i numeri sfondano la cella. Qui la cella ha gia' una larghezza
+       sua, quindi il blocco non serve: lo annulliamo.
+       motion.js NON si tocca: lo usano tutte le altre pagine del sito. */
+    .lp-num b { min-width: 0 !important; }
+    .lp-num {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px; padding: 16px 10px; text-align: center;
+    }
+    .lp-num b {
+      display: block; font-family: 'Clash Display', sans-serif; font-weight: 700;
+      font-size: clamp(1.15rem, 3.4vw, 1.7rem); color: #FFFFFF; line-height: 1;
+      margin-bottom: 6px; font-variant-numeric: tabular-nums;
+    }
+    .lp-num span {
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: #FFFFFF; line-height: 1.5; display: block;
+    }
+    /* Loghi dei partner. Le lastre sono BIANCHE per necessita', non per gusto:
+       diversi marchi (F.E.R., Kiran) sono scuri e su fondo nero sparirebbero.
+       E' la stessa scelta gia' fatta per i badge Google/Meta/TikTok. */
+    .lp-partner-intro {
+      text-align: center; color: #FFFFFF; font-size: 0.88rem; line-height: 1.6;
+      max-width: 600px; margin: 0 auto var(--sp-1); text-wrap: pretty;
+    }
+    .lp-partner {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 10px; margin: 0 0 var(--sp-2);
+    }
+    .lp-partner > * {
+      background: #FFFFFF; border-radius: 10px; height: 54px;
+      padding: 8px 14px; display: inline-flex; align-items: center;
+      justify-content: center; min-width: 96px;
+    }
+    /* Tetto alla larghezza: i wordmark orizzontali (Talea, Piluso) a parita' di
+       altezza diventano larghi il triplo degli altri e sbilanciano la fila. */
+    .lp-partner img { display: block; max-height: 100%; max-width: 140px; width: auto; object-fit: contain; }
+    /* segnaposto per i marchi di cui non abbiamo ancora il file */
+    .lp-partner b {
+      font-family: 'Clash Display', sans-serif; font-weight: 700;
+      font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase;
+      color: #0A0A0A; text-align: center; line-height: 1.2;
+    }
+
+    .lp-fiducia {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; flex-wrap: wrap; margin: 0 0 22px;
+    }
+    .lp-badge { background: #FFFFFF; border-radius: 10px; padding: 9px 13px; display: inline-flex; align-items: center; }
+    .lp-badge img { display: block; width: auto; }
+    .lp-badge--g img { height: 38px; }
+    .lp-badge--m img { height: 22px; }
+    .lp-badge--t img { height: 19px; }
+    .lp-google {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 9px 16px; border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.05);
+      color: #FFFFFF; font-size: 0.86rem;
+    }
+    .lp-google svg { width: 17px; height: 17px; display: block; }
+    .lp-google b { font-family: 'Clash Display', sans-serif; font-weight: 700; }
+    .lp-rassicura { text-align: center; color: #FFFFFF; font-size: 0.9rem; line-height: 1.55; margin: 0 0 var(--sp-2); }
+
+    /* I settori in chiaro gia' in apertura: servono a far capire in due secondi
+       "questo vale per me" o "non vale per me". La domanda subito dopo raccoglie
+       quale sia, cosi' la prova mostrata e' quella del suo mondo. */
+    /* I settori raggruppati nelle tre famiglie, non piu' una nuvola di nove
+       pillole tutte uguali. Il raggruppamento E' informazione: dice a chi
+       legge in quale mondo sta, invece di scaricargli addosso un elenco. */
+    .lp-settori-intro {
+      text-align: center; color: #FFFFFF; font-size: 0.88rem;
+      margin: 0 0 var(--sp-1); text-wrap: pretty;
+    }
+    .lp-famiglie {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px; background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.13); border-radius: 16px;
+      overflow: hidden; margin: 0 0 var(--sp-2);
+    }
+    .lp-famiglia { background: #0A0A0A; padding: 20px 18px; }
+    .lp-famiglia h3 {
+      font-family: 'Clash Display', sans-serif; font-weight: 700;
+      font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
+      margin: 0 0 13px;
+    }
+    .lp-famiglia ul { list-style: none; padding: 0; margin: 0; }
+    .lp-famiglia li {
+      color: #FFFFFF; font-size: 0.86rem; line-height: 1.45;
+      padding: 0 0 0 15px; margin-bottom: 9px; position: relative;
+    }
+    /* quadratino in gradiente, non un disco: a questa misura un disco legge
+       come un elenco puntato qualunque */
+    .lp-famiglia li::before {
+      content: ''; position: absolute; left: 0; top: 0.5em;
+      width: 5px; height: 5px; border-radius: 1px;
+      background: var(--gradient-diag);
+    }
+    .lp-famiglia li:last-child { margin-bottom: 0; }
+
+    /* --- schermate di prova ------------------------------------------------ */
+    /* I titoli delle schermate: UNA regola sola per domande e prove. Erano
+       due classi gemelle con valori leggermente diversi (3.8vw e 20px contro
+       3.6vw e 18px): scarto invisibile sulla singola schermata, ma il titolo
+       cambiava misura a ogni passo del percorso. I due nomi restano, cosi' il
+       markup non cambia e si legge ancora che tipo di schermata e'. */
+    .lp-domanda, .lp-prova-tit {
+      font-family: 'Clash Display', sans-serif; font-weight: 700;
+      text-transform: uppercase; font-size: clamp(1.3rem, 3.7vw, 2rem);
+      line-height: 1.1; color: #FFFFFF; margin: 0 0 var(--sp-2); text-wrap: balance;
+    }
+    .lp-schermata { border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); margin: 0 0 var(--sp-1); background: #0A0A0A; }
+    .lp-schermata img { display: block; width: 100%; height: auto; }
+    .lp-didascalia { color: #FFFFFF; font-size: 0.98rem; line-height: 1.6; margin: 0 0 var(--sp-1); text-wrap: pretty; }
+    /* 520px tengono la riga sotto i 66 caratteri. Vale per ogni blocco di
+       testo lungo della pagina: senza, su schermo largo si arrivava a 84. */
+    .lp-didascalia, .lp-soluzione, .lp-nota-forte { max-width: 520px; }
+    /* Dentro .fv-grazie vince la regola condivisa di fotovoltaico.css
+       (.fv-grazie p, piu' specifica) che porta max-width: 54ch: con Clash
+       Display un 'ch' vale 11px, quindi 597px e righe da 76 caratteri.
+       Il foglio condiviso NON si tocca, serve ad altre pagine: si sovrascrive
+       qui, con due classi per battere la specificita'. */
+    .fv-grazie .lp-didascalia, .fv-grazie .lp-soluzione, .fv-grazie .lp-nota-forte {
+      max-width: 520px; margin-left: auto; margin-right: auto;
+    }
+    /* La recensione era l'unico blocco rimasto senza tetto: 710px, 91
+       caratteri per riga, il piu' largo della pagina. */
+    .lp-recensione p { max-width: 520px; margin-left: auto; margin-right: auto; }
+    .lp-didascalia:last-of-type { margin-bottom: 0; }
+
+    /* --- "Sei in buone mani" (passo 4) -------------------------------------
+       Tre misure prese sulla pagina viva prima di toccarla:
+         - lo stacco fra l'ultima riga di testo e le lastre era 0px: .lp-partner
+           ha solo margin-bottom, e la didascalia :last-of-type azzera il suo,
+           cosi' i loghi partivano appiccicati alle lettere;
+         - le righe erano lunghe 84 caratteri, oltre la soglia in cui l'occhio
+           ritrova da solo l'inizio della riga dopo;
+         - la fila a flex-wrap centrata metteva la seconda riga (4 marchi) su un
+           asse diverso da titolo e testo, allineati a sinistra.
+       La griglia fissa a 5 colonne risolve l'ultimo punto da sola: 9 marchi
+       fanno 5 + 4 che partono dallo stesso bordo del testo. Su telefono 3
+       colonne danno 3 righe piene. */
+    .lp-passo[data-passo="4"] .lp-partner {
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+      margin-top: var(--sp-2); margin-bottom: 0;
+    }
+    /* Nella griglia la lastra non cresce piu' col contenuto: il tetto di
+       140px ereditato faceva sbordare i wordmark larghi (Piluso 134px e
+       Talea 140px su una colonna da 124px). Qui il tetto e' la lastra. */
+    .lp-passo[data-passo="4"] .lp-partner img { max-width: 100%; }
+    @media (max-width: 560px) {
+      .lp-passo[data-passo="4"] .lp-partner { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    /* Per i settori di cui non abbiamo ancora un caso, le cinque campagne
+       stavano a tutta larghezza una sotto l'altra: chi le guardava doveva
+       scorrere cinque schermate di aziende che non erano la sua. In riquadri
+       si leggono tutte insieme, e smettono di essere un elenco di estranei
+       per diventare la prova che il meccanismo regge in mondi diversi. */
+    .lp-casi {
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px; margin: 0 0 var(--sp-1);
+    }
+    .lp-caso {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px; padding: 16px 12px; text-align: center;
+    }
+    .lp-caso b {
+      display: block; font-family: 'Clash Display', sans-serif; font-weight: 700;
+      font-size: clamp(1.1rem, 3vw, 1.5rem); color: #FFFFFF; line-height: 1;
+      margin-bottom: 6px; font-variant-numeric: tabular-nums;
+    }
+    .lp-caso em {
+      display: block; font-style: normal; font-size: 0.82rem; color: #FFFFFF;
+      margin-bottom: 8px;
+    }
+    .lp-caso span {
+      display: block; font-size: 0.75rem; letter-spacing: 0.04em; color: #FFFFFF;
+      line-height: 1.4;
+    }
+    @media (max-width: 860px) { .lp-casi { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+    @media (max-width: 560px) { .lp-casi { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    .lp-nota-forte { border-left: 3px solid #FF3B3B; padding: 2px 0 2px 16px; color: #FFFFFF; font-size: 0.94rem; line-height: 1.6; margin: var(--sp-1) 0 0; }
+
+    /* I fotogrammi dei reel sono 9:16: tre affiancati leggono come una serie,
+       uno solo grande sfonderebbe la schermata. */
+    .lp-reel { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin: 0 0 var(--sp-1); }
+    /* I fotogrammi sono 9:16 e in verticale mangiavano mezza schermata.
+       Ritagliati a 3:4 restano riconoscibili come reel e lasciano respirare
+       la didascalia, che e' la parte che porta il numero. */
+    /* height: auto serve davvero: senza, l'attributo height="560" dell'<img>
+       fissa l'altezza e aspect-ratio non viene mai usato. */
+    .lp-reel img {
+      display: block; width: 100%; height: auto;
+      aspect-ratio: 3 / 4; object-fit: cover;
+      border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    /* la prova mostrata dipende dal settore scelto: il JS accende una sola
+       variante e spegne le altre. Senza scelta resta accesa quella generale. */
+    .lp-prova { display: none; }
+    .lp-prova.is-on { display: block; }
+
+    /* stessa meccanica per le varianti legate al canale dichiarato */
+    .lp-canale { display: none; }
+    .lp-canale.is-on { display: block; }
+    /* La riga della soluzione. Non usa .lp-nota-forte perche' quella ha il
+       bordo rosso, e su questa pagina il rosso marca SOLO il dolore: una
+       soluzione in rosso toglierebbe senso a tutti gli altri rossi. */
+    /* riga di aiuto sotto a un campo: spiega COSA scrivere, quindi sta
+       attaccata al campo e non va confusa con un errore. */
+    .fv-aiuto { color: #FFFFFF; font-size: 0.82rem; line-height: 1.5; margin: 6px 0 0; }
+    /* i tre passaggi della thank you page: numerati perche' sono davvero una
+       sequenza, non un elenco di vantaggi. */
+    .lp-passaggi { margin: var(--sp-2) 0 var(--sp-2); padding: 0 0 0 22px; }
+    .lp-passaggi li { color: #FFFFFF; font-size: 0.98rem; line-height: 1.6; margin: 0 0 12px; }
+    .lp-passaggi li:last-child { margin-bottom: 0; }
+    /* .fv-grazie centra tutto: un elenco numerato centrato stacca il numero
+       dalla sua riga e si legge male. Qui torna a sinistra, incolonnato. */
+    .fv-grazie .lp-passaggi { text-align: left; max-width: 480px; margin-left: auto; margin-right: auto; }
+    /* .fv-grazie centra il testo, ma .fv-azioni e' un flex allineato a
+       sinistra: i due pulsanti uscivano fuori asse rispetto a tutto il resto.
+       E il ghost, da solo nella riga, si allargava a tutta la colonna. */
+    .fv-grazie .fv-azioni { justify-content: center; }
+    .fv-grazie .fv-azioni .fv-btn { flex: 0 0 auto; }
+    /* Il secondario deve leggersi come secondario: resta pieno di contrasto
+       ma piu' piccolo del bottone che porta allo slot, che e' l'azione
+       principale di questa pagina. */
+    /* Il secondario: piu' respiro dentro (era stretto fra testo e bordo) e
+       la riga non si spezza fra "un" e "consulente" grazie al &nbsp;. */
+    .fv-grazie .fv-btn-ghost {
+      min-height: 46px; padding: 12px 20px; font-size: 0.9rem;
+      gap: 10px; line-height: 1.35; text-align: left;
+      /* Con l'icona accanto l'etichetta non ci stava piu': il bottone usciva
+         dal contenitore (359px dentro 343). Il tetto al 100% lo tiene dentro
+         e lascia andare il testo su due righe quando serve: e' un secondario,
+         due righe non sono un problema; uscire dallo schermo si'. */
+      max-width: 100%; white-space: normal; border-radius: 24px;
+    }
+    .ico-wa { width: 19px; height: 19px; flex: none; }
+    /* La regola su chi deve presentarsi alla call: non e' una nota di
+       servizio come le altre, e' una condizione. Riquadrata, non in corpo
+       minore, e con un tetto di lettura perche' sta dentro .fv-grazie. */
+    /* La riga sulle poche fasce: non e' una scusa, e' il motivo per cui il
+       calendario mostra solo tre giorni. Detto prima, chi apre il calendario
+       non pensa che sia vuoto. */
+    .lp-poche { font-size: 0.92rem; }
+    .fv-grazie .lp-regola {
+      max-width: 520px; margin: var(--sp-2) auto 0;
+      padding: 14px 18px; border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.04);
+      font-size: 0.92rem; line-height: 1.6;
+    }
+
+    /* Riquadro di guasto: rosso perche' qui il rosso e' al suo posto, e'
+       un problema vero. Resta nascosto finche' non serve. */
+    .lp-guasto {
+      margin-top: var(--sp-2); padding: 16px 18px; border-radius: 14px;
+      border: 1px solid rgba(255,59,59,0.5); background: rgba(255,59,59,0.08);
+    }
+    .lp-guasto[hidden] { display: none; }
+    .lp-guasto p { color: #FFFFFF; font-size: 0.94rem; line-height: 1.6; margin: 0 0 14px; }
+
+    /* Card del video: cornice 16:9 col formato gia' pronto, cosi' quando il
+       video arriva non si muove niente intorno. Lo stato vuoto e' dichiarato,
+       non un buco: chi guarda la pagina capisce che manca un pezzo. */
+    .lp-video { margin: var(--sp-3) auto 0; max-width: 480px; }
+    .lp-video-cornice {
+      position: relative; aspect-ratio: 16 / 9; border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.14);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 10px; overflow: hidden;
+      color: #FFFFFF;
+    }
+    .lp-video-cornice svg { width: 44px; height: 44px; }
+    .lp-video-cornice[data-vuoto] { border-style: dashed; }
+    .lp-video-cornice[data-vuoto] span {
+      font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    /* La copertina cliccabile: cerchio grande e richiamo sotto. Copre tutto
+       il riquadro, cosi' si puo' toccare ovunque e non solo sul cerchio. */
+    .lp-play {
+      position: absolute; inset: 0; z-index: 2; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 12px;
+      border: 0; padding: 0; color: #FFFFFF;
+      background: linear-gradient(180deg, rgba(10,10,10,0.18), rgba(10,10,10,0.52));
+    }
+    .lp-play[hidden] { display: none; }
+    .lp-play-cerchio {
+      width: 66px; height: 66px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--gradient-diag, linear-gradient(135deg, #00A6FF, #6500FF));
+      box-shadow: 0 10px 34px rgba(0,0,0,0.45);
+      animation: ctaBattito 2.9s ease-in-out infinite;
+    }
+    .lp-play-cerchio svg { width: 30px; height: 30px; margin-left: 3px; }
+    .lp-play-eti {
+      font-family: 'Clash Display', sans-serif; font-weight: 600;
+      font-size: 0.95rem; letter-spacing: 0.01em;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+    .lp-play:hover .lp-play-cerchio { transform: scale(1.05); }
+    @media (prefers-reduced-motion: reduce) { .lp-play-cerchio { animation: none; } }
+
+    .lp-video-cornice video, .lp-video-cornice iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; border: 0;
+    }
+    .lp-video figcaption {
+      color: #FFFFFF; font-size: 0.88rem; line-height: 1.5;
+      margin-top: var(--sp-1); text-align: center;
+    }
+    /* Il pulsante del calendario e' un <a>, non un <button>: eredita il colore
+       dei link (#8EA8FF) e restava azzurro chiaro sul fondo blu del bottone.
+       .fv-btn non lo prevedeva perche' finora era sempre stato un <button>. */
+    a.fv-btn, a.fv-btn:hover, a.fv-btn:visited { color: #FFFFFF; text-decoration: none; }
+    .lp-passaggi li::marker { color: #00A6FF; font-family: 'Clash Display', sans-serif; font-weight: 700; }
+    .lp-soluzione {
+      border-left: 3px solid #00A6FF; padding: 2px 0 2px 16px;
+      color: #FFFFFF; font-size: 1rem; line-height: 1.6;
+      margin: var(--sp-2) 0 0;
+    }
+
+    /* --- recensione -------------------------------------------------------- */
+    .lp-recensione {
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 16px;
+      padding: var(--sp-2); background: rgba(255,255,255,0.04); margin: 0 0 var(--sp-1);
+    }
+    .lp-recensione p { color: #FFFFFF; font-size: 1.02rem; line-height: 1.7; margin: 0 0 14px; }
+    .lp-recensione footer {
+      color: #FFFFFF; font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* --- domande ----------------------------------------------------------- */
+    .lp-barra { display: flex; gap: 5px; margin: 0 0 24px; }
+    /* [hidden] vale display:none, ma display:flex lo batte per specificita':
+       senza questa riga la barra resta visibile in apertura. */
+    .lp-barra[hidden] { display: none; }
+    .lp-barra i { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.14); transition: background 0.3s ease; }
+    .lp-barra i.is-on { background: linear-gradient(90deg, #6500FF, #00A6FF); }
+
+    /* Lo stacco prima e dopo il gruppo di risposte. Senza queste due righe
+       .fv-nota e il fieldset si toccavano (misurato: 0px sulle schermate 3 e
+       5), mentre su tutte le altre fra titolo e opzioni ci sono 24px. */
+    .lp-passo .fv-nota + .fv-dom { margin-top: var(--sp-2); }
+    .lp-passo .fv-dom + .fv-nota,
+    .lp-passo .fv-dom + .lp-nota-forte { margin-top: var(--sp-2); }
+
+    .lp-passo { display: none; }
+    .lp-passo.is-active { display: block; }
+    .lp-passo[data-passo="0"] .fv-azioni { justify-content: center; margin: 4px 0 28px; }
+
+    /* Il bottone che fa proseguire: staccato dal blocco sopra e col battito
+       del brand, cosi' si capisce che la pagina aspetta un gesto.
+       Riuso ctaBattito e ctaRiflesso di brand.css invece di scriverne altri.
+       Il battito e' sul BOX-SHADOW, non su transform: transform lo usano gia'
+       l'hover e i bottoni magnetici di motion.js, animarlo li spegnerebbe.
+       Sotto il puntatore si ferma: se il bersaglio si muove mentre uno sta
+       per cliccare, lo si manca. */
+    .lp-passo .fv-azioni { margin-top: var(--sp-3); }
+    .lp-passo .fv-btn {
+      position: relative; overflow: hidden;
+      animation: ctaBattito 2.9s ease-in-out infinite;
+    }
+    .lp-passo .fv-btn::after {
+      content: ''; position: absolute; top: 0; left: -60%;
+      width: 45%; height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,0.32), transparent);
+      animation: ctaRiflesso 4.6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .lp-passo .fv-btn:hover { animation-play-state: paused; }
+    @media (prefers-reduced-motion: reduce) {
+      .lp-passo .fv-btn, .lp-passo .fv-btn::after { animation: none; }
+    }
+
+    /* Le scelte sono raggruppate nelle STESSE tre famiglie della schermata di
+       apertura: chi arriva qui le ha appena viste cosi', e ritrovarle piatte
+       spezzerebbe il filo. Due colonne per gruppo: nove righe in colonna erano
+       un muro da leggere, non una scelta da fare. */
+    .lp-settori { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .lp-settori .fv-scelta { margin: 0; }
+    .lp-gruppo { margin-bottom: var(--sp-2); }
+    .lp-gruppo:last-child { margin-bottom: 0; }
+    /* Scelte a due righe: la cifra fa da titolo, l'intenzione sotto spiega
+       cosa vuol dire sceglierla. Senza, erano quattro prezzi in fila. */
+    /* .fv-nota arriva da fotovoltaico.css con rgba(255,255,255,0.62): e' un
+       grigio mascherato dentro il colore, non un'opacity, e per questo era
+       sfuggito al controllo. Sul nero legge come disattivato. */
+    .lp-passo .fv-nota { color: #FFFFFF; }
+
+    .lp-intenzioni .fv-scelta span { display: block; line-height: 1.35; }
+    .lp-intenzioni .fv-scelta b {
+      display: block; font-family: 'Clash Display', sans-serif; font-weight: 700;
+      font-size: 1.02rem; color: #FFFFFF; margin-bottom: 2px;
+    }
+    .lp-intenzioni .fv-scelta em {
+      display: block; font-style: normal; font-size: 0.84rem; color: #FFFFFF;
+    }
+
+    .lp-gruppo h3 {
+      font-family: 'Clash Display', sans-serif; font-weight: 700;
+      font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
+      margin: 0 0 var(--sp-1);
+    }
+
+    @media (max-width: 860px) {
+      .lp-settori { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .lp-famiglie { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .lp-numeri { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .lp-settori { grid-template-columns: 1fr; }
+      .lp-scena { padding: 20px 16px 44px; }
+    }
+  </style>
+</head>
+
+<body class="fv-pagina lp-pagina" data-orbs-fixed="1 2 4">
+
+  <header class="lp-testa">
+    <img src="../brand-assets/LOGO/giesse-wordmark-white.png" alt="Giesse">
+  </header>
+
+  <main class="lp-scena">
+    <div class="lp-dentro">
+
+      <div class="lp-barra" id="lpBarra" aria-hidden="true" hidden>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+
+      <!-- ====================================================== 0 APERTURA -->
+      <section class="lp-passo is-active" data-passo="0">
+        <!-- La riga sulla soglia dei 900 euro stava qui ed e' stata tolta su
+             richiesta di Gaetano: la soglia ora si dichiara solo sulla schermata
+             del budget. La regola .lp-ammissione resta nel foglio, pronta se un
+             domani la riga torna in apertura. -->
+
+        <!-- Il "35" e' un dato dato da Gaetano il 15/11/2026. Nel progetto l'unica
+             cifra documentata e' 24 clienti attivi (listino + documenti della
+             ripartenza): se un domani va aggiornato, si cambia QUI. -->
+        <!-- Il gradiente del brand sul nome del metodo. Non il rosso: il rosso
+             su questa pagina marca SOLO il dolore (vedi la schermata 3),
+             altrimenti smette di dire qualcosa. -->
+        <h1 class="lp-titolo">Acquisisci nuovi clienti con la <span class="grad-text">Customer Generation</span></h1>
+
+        <p class="lp-sotto">
+          Implementiamo il digital advertising nella tua azienda con un unico
+          obiettivo: <strong>riempire il tuo negozio, la tua agenda, portare
+          richieste per i tuoi servizi o prodotti</strong> da nuovi potenziali
+          clienti consapevoli.
+        </p>
+
+        <p class="lp-settori-intro">Se lavori in uno di questi settori, possiamo lavorare insieme:</p>
+        <div class="lp-famiglie">
+          <div class="lp-famiglia">
+            <h3 class="grad-text">Attivit&agrave; locali</h3>
+            <ul>
+              <li>Ristorazione e locali</li>
+              <li>Bellezza e benessere</li>
+              <li>Sport e fitness</li>
+              <li>Auto e moto</li>
+            </ul>
+          </div>
+          <div class="lp-famiglia">
+            <h3 class="grad-text">Aziende</h3>
+            <ul>
+              <li>Casa, arredo ed edilizia</li>
+              <li>Energia e impianti</li>
+              <li>E-commerce</li>
+            </ul>
+          </div>
+          <div class="lp-famiglia">
+            <h3 class="grad-text">Professionisti</h3>
+            <ul>
+              <li>Salute e studi professionali</li>
+              <li>Immobiliare, finanza, assicurazioni</li>
+              <li>Altri servizi e professioni</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="fv-azioni">
+          <button type="button" class="fv-btn" data-avanti>Inizia la fase di candidatura</button>
+        </div>
+
+        <div class="lp-numeri">
+          <!-- data-count: i numeri salgono da zero quando entrano in vista.
+               Il contatore sta in motion.js e sa gia' leggere prefisso e
+               suffisso, quindi "+" e "€" restano al loro posto. -->
+          <div class="lp-num"><b data-count>30.000+</b><span>potenziali clienti generati per i nostri partner</span></div>
+          <div class="lp-num"><b data-count>9 &euro;</b><span>per cliente acquisito dai nostri partner</span></div>
+          <div class="lp-num"><b data-count>1.000+</b><span>campagne lanciate</span></div>
+          <div class="lp-num"><b data-count>300.000 &euro;</b><span>gestiti in advertising</span></div>
+        </div>
+
+        <p class="lp-partner-intro">
+          Alcuni dei nostri partner che usano questo metodo per acquisire
+          costantemente nuovi clienti paganti:
+        </p>
+        <!-- Cinque loghi recuperati dai progetti sul Mac. Gli altri cinque sono
+             segnaposto testuali: appena arrivano i file si sostituisce il <b>
+             con un <img>, la lastra bianca resta identica. -->
+        <div class="lp-partner">
+          <span><img src="../images/partner/bellessere.png" alt="Bellessere Service"></span>
+          <span><img src="../images/partner/greenfuel.png" alt="GreenFuel"></span>
+          <span><img src="../images/partner/unipegaso.svg" alt="UniPegaso Sicilia"></span>
+          <span><img src="../images/partner/fer-esco.png" alt="F.E.R. Energy Service Company"></span>
+          <span><img src="../images/partner/mediter.png" alt="Mediter CER"></span>
+          <span><img src="../images/partner/piluso-gomme.png" alt="Piluso Gomme"></span>
+          <span><img src="../images/partner/talea.png" alt="Talea Automotive"></span>
+          <span><img src="../images/partner/caffettiamo.png" alt="Caffettiamo Caff&egrave;"></span>
+          <span><img src="../images/partner/kiran-club.png" alt="Kiran Club"></span>
+        </div>
+
+        <div class="lp-fiducia">
+          <span class="lp-badge lp-badge--g"><img src="../brand-assets/partner/google-partner.png" alt="Google Partner"></span>
+          <span class="lp-badge lp-badge--m"><img src="../brand-assets/partner/meta-business-partner.png" alt="Meta Business Partner"></span>
+          <span class="lp-badge lp-badge--t"><img src="../brand-assets/partner/tiktok-marketing-partner.png" alt="TikTok Marketing Partner"></span>
+          <span class="lp-google">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.4l6.9 5.3c4.1-3.8 6.6-9.4 6.6-15z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.5-5.3l-6.9-5.3c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9.1l-7.1 5.5C8 41.3 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.5 28.5c-.5-1.4-.7-2.9-.7-4.5s.3-3.1.7-4.5l-7.1-5.5C2.9 17 2 20.4 2 24s.9 7 2.4 10z"/><path fill="#EA4335" d="M24 10.4c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 4.2 29.9 2 24 2 15.4 2 8 6.7 4.4 14l7.1 5.5c1.8-5.3 6.7-9.1 12.5-9.1z"/></svg>
+            <b>5,0</b> su Google
+          </span>
+        </div>
+
+        <!-- La riga sul budget che resta sul tuo account stava qui ed e' stata
+             tolta: il punto ha gia' una schermata tutta sua (passo 4), ripeterlo
+             in apertura lo indeboliva.
+             Il bottone "Inizia" stava qui in fondo: e' stato spostato subito
+             sotto i settori, cosi' l'azione arriva appena uno si riconosce, e i
+             numeri restano sotto come rinforzo per chi scorre. -->
+      </section>
+
+      <!-- =========================================== 1 SEGMENTAZIONE -->
+      <!-- Questa domanda fa tre lavori insieme: segmenta, qualifica e decide
+           quale prova si vede nella schermata dopo (data-prova). -->
+      <section class="lp-passo" data-passo="1">
+        <h2 class="lp-domanda">Che <span class="grad-text">attivit&agrave;</span> hai?</h2>
+        <!-- Un solo fieldset obbligatorio: i tre gruppi dentro sono
+             raggruppamento visivo, la validazione continua a chiedere una
+             risposta sola. -->
+        <fieldset class="fv-dom" data-obbligatorio data-auto>
+          <div class="lp-gruppo">
+            <h3 class="grad-text">Attivit&agrave; locali</h3>
+            <div class="fv-scelte lp-settori">
+              <label class="fv-scelta"><input type="radio" name="settore" value="Ristorazione e locali" data-prova="primaclasse"><span>Ristorazione e locali</span></label>
+              <label class="fv-scelta"><input type="radio" name="settore" value="Bellezza e benessere" data-prova="bellessere"><span>Bellezza e benessere</span></label>
+              <label class="fv-scelta"><input type="radio" name="settore" value="Sport e fitness" data-prova="kiran"><span>Sport e fitness</span></label>
+              <label class="fv-scelta"><input type="radio" name="settore" value="Auto e moto" data-prova="piluso"><span>Auto e moto</span></label>
+            </div>
+          </div>
+          <div class="lp-gruppo">
+            <h3 class="grad-text">Aziende</h3>
+            <div class="fv-scelte lp-settori">
+              <label class="fv-scelta"><input type="radio" name="settore" value="Casa, arredo ed edilizia" data-prova="tutte"><span>Casa, arredo ed edilizia</span></label>
+              <label class="fv-scelta"><input type="radio" name="settore" value="Energia e impianti" data-prova="greenfuel"><span>Energia e impianti</span></label>
+              <!-- Nessun caso di lead generation su e-commerce: vede i quattro insieme. -->
+              <label class="fv-scelta"><input type="radio" name="settore" value="E-commerce" data-prova="tutte"><span>E-commerce</span></label>
+            </div>
+          </div>
+          <div class="lp-gruppo">
+            <h3 class="grad-text">Professionisti</h3>
+            <div class="fv-scelte lp-settori">
+              <label class="fv-scelta"><input type="radio" name="settore" value="Salute e studi professionali" data-prova="tutte"><span>Salute e studi professionali</span></label>
+              <label class="fv-scelta"><input type="radio" name="settore" value="Immobiliare, finanza, assicurazioni" data-prova="talea"><span>Immobiliare, finanza, assicurazioni</span></label>
+              <label class="fv-scelta"><input type="radio" name="settore" value="Altri servizi e professioni" data-prova="talea"><span>Altri servizi e professioni</span></label>
+            </div>
+          </div>
+        </fieldset>
+        <div class="fv-azioni">
+          <button type="button" class="fv-btn" data-avanti>Continua</button>
+        </div>
+      </section>
+
+      <!-- ====================================== 2 PROVA, scelta dal settore -->
+      <section class="lp-passo" data-passo="2" data-prova-settore>
+
+        <div class="lp-prova" data-prova="greenfuel">
+          <h2 class="lp-prova-tit" style="margin-bottom:var(--sp-1)">Lo stesso settore, <span class="grad-text">prima e dopo</span></h2>
+          <div class="lp-schermata"><img src="../images/portfolio/lead-generation/mini-greenfuel.jpg" width="620" height="254" alt="Campagna GreenFuel nel gestore inserzioni Meta"></div>
+          <!-- "sei volte" e' aritmetica sui numeri gia' pubblicati: 20 / 3,24 = 6,2.
+               Niente di nuovo da documentare. -->
+          <p class="lp-didascalia"><strong>GreenFuel, fotovoltaico, Sicilia orientale.</strong> Pagavano <strong>20&nbsp;&euro;</strong> per ogni richiesta. Oggi ne arrivano a <strong>3,24&nbsp;&euro;</strong>. Con lo stesso budget, <strong>sei volte i contatti</strong>: 1.284 richieste con 4.165&nbsp;&euro;.</p>
+        </div>
+
+        <div class="lp-prova" data-prova="piluso">
+          <h2 class="lp-prova-tit" style="margin-bottom:var(--sp-1)">Lo stesso settore, <span class="grad-text">numeri veri</span></h2>
+          <div class="lp-schermata"><img src="../images/portfolio/lead-generation/mini-piluso-gomme.jpg" width="620" height="318" alt="Campagna Piluso Gomme nel gestore inserzioni Meta"></div>
+          <p class="lp-didascalia"><strong>Piluso Gomme, gommista.</strong> <strong>372 contatti</strong> a <strong>3,52&nbsp;&euro;</strong> l&rsquo;uno, in un bacino locale. Non un marchio nazionale: un&rsquo;officina di paese.</p>
+        </div>
+
+        <!-- Serve due gruppi (immobiliare/finanza/assicurazioni e altri servizi):
+             il titolo non puo' promettere "lo stesso settore", perche' per
+             nessuno dei due lo e'. Dice invece cosa hanno in comune. -->
+        <div class="lp-prova" data-prova="talea">
+          <h2 class="lp-prova-tit" style="margin-bottom:var(--sp-1)">Lo stesso <span class="grad-text">modo di vendere</span></h2>
+          <div class="lp-schermata"><img src="../images/portfolio/lead-generation/mini-talea.jpg" width="620" height="224" alt="Campagna Talea nel gestore inserzioni Meta"></div>
+          <p class="lp-didascalia"><strong>Talea, noleggio a lungo termine.</strong> <strong>321 partite IVA</strong> a <strong>2,21&nbsp;&euro;</strong> l&rsquo;una. Un servizio che non si compra da soli: si chiude al telefono, dopo un preventivo. Come il tuo.</p>
+        </div>
+
+        <div class="lp-prova" data-prova="bellessere">
+          <h2 class="lp-prova-tit" style="margin-bottom:var(--sp-1)">Lo stesso settore, <span class="grad-text">numeri veri</span></h2>
+          <div class="lp-schermata"><img src="../images/portfolio/lead-generation/mini-bellessere.jpg" width="620" height="227" alt="Campagna Bellessere nel gestore inserzioni Meta"></div>
+          <p class="lp-didascalia"><strong>Bellessere Service, centro estetico.</strong> Una campagna sul makeup, nel Calatino: <strong>34 richieste</strong> a <strong>8,93&nbsp;&euro;</strong> l&rsquo;una. &Egrave; una delle quattro che abbiamo girato per loro.</p>
+        </div>
+
+        <!-- Kiran non e' lead generation: e' Social Boost, cioe' gestione social
+             e contenuti per il lancio. Il numero e' vero e pubblicato, ma va
+             detto cos'era, se no attribuiamo a un servizio il risultato di un
+             altro. -->
+        <div class="lp-prova" data-prova="kiran">
+          <h2 class="lp-prova-tit" style="margin-bottom:var(--sp-1)">Un centro nuovo, <span class="grad-text">pieno in un mese</span></h2>
+          <div class="lp-reel">
+            <img src="../images/portfolio/video/mini-kiran-nuoto.jpg" width="314" height="560" alt="Reel Kiran Club, nuoto">
+            <img src="../images/portfolio/video/mini-kiran-acqua-fitness.jpg" width="314" height="560" alt="Reel Kiran Club, acqua fitness">
+            <img src="../images/portfolio/video/mini-kiran-mix.jpg" width="314" height="560" alt="Reel Kiran Club">
+          </div>
+          <!-- Il lavoro va nominato, ma al positivo: dire "non era lead
+               generation" e' una scusa messa in prima fila. Dire "lancio di
+               apertura: contenuti, reel e campagne" dice la stessa cosa e
+               suona come un mestiere. Il numero resta attribuito al lavoro
+               giusto e nessuno lo legge come un costo per contatto. -->
+          <p class="lp-didascalia"><strong>Kiran Club, Caltanissetta.</strong> Lancio di apertura: contenuti, reel e campagne per un centro sportivo che partiva da zero clienti. <strong>Oltre 1.000 iscritti attivi nei primi trenta giorni.</strong></p>
+        </div>
+
+        <!-- Caffettiamo stava qui come prova per la ristorazione, ma la sua
+             schermata dice "Promo Macchina Caffe'": un ristoratore leggeva
+             "lo stesso settore" e vedeva un altro mestiere. Resta nel blocco
+             coi cinque casi, che e' il suo posto giusto. -->
+        <div class="lp-prova" data-prova="primaclasse">
+          <h2 class="lp-prova-tit" style="margin-bottom:var(--sp-1)">Un ristorante <span class="grad-text">sempre pieno</span></h2>
+          <div class="lp-reel">
+            <img src="../images/portfolio/foto/mini-primaclasse-sala-luci.jpg" width="448" height="560" alt="Sala del ristorante Prima Classe">
+            <img src="../images/portfolio/foto/mini-primaclasse-forno-pizza.jpg" width="448" height="560" alt="Pizza al forno, Prima Classe">
+            <img src="../images/portfolio/foto/mini-primaclasse-tavolo.jpg" width="448" height="560" alt="Tavolo apparecchiato, Prima Classe">
+          </div>
+          <p class="lp-didascalia"><strong>Prima Classe, Piazza Armerina.</strong> Un ristorante <strong>costantemente sold out</strong> grazie al nostro lavoro: shooting in sede, contenuti e campagne li facciamo noi.</p>
+        </div>
+
+        <!-- Mostrato ai settori di cui non abbiamo ancora un caso. Il titolo non si
+             scusa dell'assenza: dice la cosa vera e piu' forte, cioe' che il
+             meccanismo non dipende dal mestiere. -->
+        <div class="lp-prova is-on" data-prova="tutte">
+          <h2 class="lp-prova-tit" style="margin-bottom:var(--sp-1)">Il metodo <span class="grad-text">non cambia</span> col settore</h2>
+          <p class="lp-didascalia">Cambiano l&rsquo;offerta, il pubblico e le creativit&agrave;. Il modo di costruirli e di correggerli ogni settimana &egrave; lo stesso ovunque.</p>
+          <div class="lp-casi">
+            <div class="lp-caso"><b>1.284</b><em>3,24&nbsp;&euro;</em><span>GreenFuel<br>fotovoltaico</span></div>
+            <div class="lp-caso"><b>372</b><em>3,52&nbsp;&euro;</em><span>Piluso Gomme<br>gommista</span></div>
+            <div class="lp-caso"><b>321</b><em>2,21&nbsp;&euro;</em><span>Talea<br>noleggio lungo termine</span></div>
+            <div class="lp-caso"><b>177</b><em>3,09&nbsp;&euro;</em><span>Caffettiamo<br>promozione locale</span></div>
+            <div class="lp-caso"><b>34</b><em>8,93&nbsp;&euro;</em><span>Bellessere<br>centro estetico</span></div>
+          </div>
+          <p class="lp-didascalia">Cinque mondi che non si somigliano per niente: pannelli solari, pneumatici, noleggio auto, caffetteria, estetica. Stesso impianto, risultati veri in tutti e cinque.</p>
+        </div>
+
+        <!-- La nota parla di costi per contatto: si mostra solo sui blocchi che
+             ne hanno uno. Su Kiran e Prima Classe, che portano un risultato di
+             altro tipo, non c'entra niente. -->
+        <p class="lp-nota-forte" id="lpNotaCosti">
+          Non sono listini. &Egrave; quello che &egrave; successo in quelle zone,
+          con quelle offerte, in quei periodi.
+        </p>
+
+        <div class="fv-azioni">
+          <button type="button" class="fv-btn" data-avanti>Continua</button>
+        </div>
+      </section>
+
+      <!-- ============================================= 7 QUALIFICO — budget -->
+      <section class="lp-passo" data-passo="3">
+        <!-- Non una scala di prezzi ma una scala di intenzioni: ogni fascia
+             dice che passo vuole fare, non quanto puo' permettersi. Si parte
+             dalla piu' alta, cosi' chi puo' investire trova subito la sua e
+             non legge per prima la riga di chi non ci arriva.
+             Nessuna fascia promette un risultato: quello dipende da zona,
+             offerta e margini, e prometterlo qui sarebbe inventare. -->
+        <h2 class="lp-domanda">Oggi, che tipi di <span class="grad-text">investimenti mensili</span> puoi fare per il marketing del tuo business?</h2>
+        <p class="fv-nota">Le cifre riguardano budget pubblicitario e gestione. Lavoriamo da 900&nbsp;&euro; in su.</p>
+        <fieldset class="fv-dom lp-intenzioni" data-obbligatorio data-auto>
+          <div class="fv-scelte">
+            <!-- Le quattro cifre sono i gradini esatti del listino Lead
+                 Generation (900 / 1.800 / 3.000 / 6.000, budget ads + fee):
+                 prima erano forbici e il gradino da 6.000 non c'era proprio.
+                 I raggi d'azione li ha dati Gaetano il 15/11/2026. -->
+            <label class="fv-scelta"><input type="radio" name="budget" value="6000"><span><b>6.000&nbsp;&euro;</b><em>Per chi vuole scalare su un bacino nazionale</em></span></label>
+            <label class="fv-scelta"><input type="radio" name="budget" value="3000"><span><b>3.000&nbsp;&euro;</b><em>Per chi lavora su un bacino regionale</em></span></label>
+            <label class="fv-scelta"><input type="radio" name="budget" value="1800"><span><b>1.800&nbsp;&euro;</b><em>Per chi lavora su met&agrave; bacino regionale</em></span></label>
+            <label class="fv-scelta"><input type="radio" name="budget" value="900"><span><b>900&nbsp;&euro;</b><em>Per chi lavora con clienti in un raggio di massimo 40&nbsp;km dalla sua attivit&agrave;</em></span></label>
+          </div>
+        </fieldset>
+        <div class="fv-azioni">
+          <button type="button" class="fv-btn" data-avanti>Continua</button>
+        </div>
+      </section>
+
+      <!-- ===================================== 4 RASSICURAZIONE -->
+      <!-- Arriva subito dopo la cifra: e' il momento in cui uno si chiede "con
+           chi sto parlando". I loghi non sono decorazione, sono la stessa
+           affermazione resa verificabile. -->
+      <section class="lp-passo" data-passo="4">
+        <h2 class="lp-prova-tit" style="margin-bottom:var(--sp-1)">Sei in <span class="grad-text">buone mani</span></h2>
+        <p class="lp-didascalia">
+          Stai parlando con un&rsquo;agenzia che <strong>in questo preciso istante</strong>
+          lavora con oltre <strong>35 partner</strong> esattamente come te.
+        </p>
+        <p class="lp-didascalia">
+          Gestiamo centinaia di migliaia di euro in campagne pubblicitarie, con un
+          obiettivo solo: <strong>trasformare il tuo investimento in un ritorno
+          reale</strong> e in pi&ugrave; fatturato per la tua azienda.
+        </p>
+        <div class="lp-partner">
+          <span><img src="../images/partner/bellessere.png" alt="Bellessere Service"></span>
+          <span><img src="../images/partner/greenfuel.png" alt="GreenFuel"></span>
+          <span><img src="../images/partner/unipegaso.svg" alt="UniPegaso Sicilia"></span>
+          <span><img src="../images/partner/fer-esco.png" alt="F.E.R. Energy Service Company"></span>
+          <span><img src="../images/partner/mediter.png" alt="Mediter CER"></span>
+          <span><img src="../images/partner/piluso-gomme.png" alt="Piluso Gomme"></span>
+          <span><img src="../images/partner/talea.png" alt="Talea Automotive"></span>
+          <span><img src="../images/partner/caffettiamo.png" alt="Caffettiamo Caff&egrave;"></span>
+          <span><img src="../images/partner/kiran-club.png" alt="Kiran Club"></span>
+        </div>
+        <div class="fv-azioni">
+          <button type="button" class="fv-btn" data-avanti>Continua</button>
+        </div>
+      </section>
+      <!-- ===== 5 QUALIFICO - chi gestisce le richieste --------------------
+           Era la schermata 7 ("Chi richiama i contatti quando arrivano?"), con
+           le stesse quattro figure fra le opzioni. Spostata qui su richiesta di
+           Gaetano (15/11/2026) e riscritta col suo taglio: la domanda non chiede
+           piu' SE arrivano richieste, le da' per in arrivo e chiede se c'e'
+           qualcuno pronto a raccoglierle. Non e' una seconda domanda: la
+           vecchia e' stata tolta, altrimenti si chiedeva due volte la stessa
+           cosa. Il campo resta chi_richiama, cosi' il dato non cambia nome. -->
+      <section class="lp-passo" data-passo="5">
+        <h2 class="lp-domanda">Avete una persona incaricata di interagire immediatamente con le <span class="grad-text">richieste massive</span> che arriveranno?</h2>
+        <p class="fv-nota">Segretaria, team commerciale, responsabile di sala, receptionist.</p>
+        <fieldset class="fv-dom" data-obbligatorio data-auto>
+          <div class="fv-scelte">
+            <label class="fv-scelta"><input type="radio" name="chi_richiama" value="Si"><span>S&igrave;, assolutamente</span></label>
+            <label class="fv-scelta"><input type="radio" name="chi_richiama" value="Ci stiamo attrezzando"><span>No, ma ci stiamo attrezzando</span></label>
+          </div>
+        </fieldset>
+        <p class="lp-nota-forte">&Egrave; la domanda che decide se una campagna diventa clienti o resta un elenco di nomi.</p>
+        <div class="fv-azioni">
+          <button type="button" class="fv-btn" data-avanti>Continua</button>
+        </div>
+      </section>
+
+      <!-- ===== 6 PROVA - i primi 5 minuti ---------------------------------
+           Chiesta da Gaetano il 15/11/2026 subito dopo la domanda su chi
+           gestisce le richieste: chi ha appena risposto "ci stiamo attrezzando"
+           qui capisce perche' conta.
+           I NUMERI NON SONO NOSTRI e non sono inventati: vengono dalla guida
+           WIT (sezione 09), che cita la ricerca di James Oldroyd sui tempi di
+           risposta ai lead, ripresa anche dall'Harvard Business Review.
+           La fonte resta scritta in pagina: senza, sarebbero due cifre
+           buttate li', e su questa pagina i numeri senza fonte non si mettono. -->
+      <section class="lp-passo" data-passo="6">
+        <h2 class="lp-prova-tit">I primi <span class="grad-text">5 minuti</span> valgono tutto il resto</h2>
+        <p class="lp-didascalia">
+          Chi ha appena chiesto informazioni sul tuo prodotto, sul tuo servizio o
+          vuole prenotare &egrave; caldo <strong>adesso</strong>, non stasera. Le
+          ricerche di James Oldroyd sui tempi di risposta ai contatti, riprese
+          dall&rsquo;<strong>Harvard Business Review</strong>, misurano quanto
+          costa aspettare.
+        </p>
+        <div class="lp-numeri lp-numeri--due">
+          <div class="lp-num"><b data-count>100x</b><span>pi&ugrave; probabilit&agrave; di riuscire a parlarci, contattandolo entro 5 minuti invece che dopo 30</span></div>
+          <div class="lp-num"><b data-count>21x</b><span>pi&ugrave; probabilit&agrave; di qualificarlo, nello stesso confronto</span></div>
+        </div>
+        <p class="lp-nota-forte">Pi&ugrave; tempo passa fra la richiesta e la prima risposta, pi&ugrave; il contatto si raffredda.</p>
+        <div class="fv-azioni">
+          <button type="button" class="fv-btn" data-avanti>Continua</button>
+        </div>
+      </section>
+
+
+      <!-- ================================================= 3 DOLORE -->
+      <!-- PROVVISORIO: le quattro risposte devono diventare le frasi ESATTE che
+           i clienti ripetono in telefonata. Oggi sono scritte da me. -->
+      <section class="lp-passo" data-passo="7">
+        <!-- Qui il rosso ci sta: questa e' la schermata del dolore. La riga va
+             su uno <span> dentro il testo, mai sul blocco, se no il tratto si
+             stira fino al bordo quando la frase occupa tutta la riga. -->
+        <h2 class="lp-domanda">Oggi <span class="ul-rossa">come arrivano</span> i tuoi clienti da te?</h2>
+        <!-- Riscritta il 15/11/2026: prima le opzioni erano frasi di dolore
+             scritte da me. Gaetano le vuole come CANALI, cosi' la risposta dice
+             da dove arriva oggi il fatturato invece di far scegliere un disagio.
+             L'ultima opzione e' quella che qualifica di piu': chi non sa da dove
+             arrivano i clienti non sta misurando niente. Il campo resta
+             "dolore" per non cambiare nome al dato. -->
+        <fieldset class="fv-dom" data-obbligatorio data-auto>
+          <div class="fv-scelte">
+            <label class="fv-scelta"><input type="radio" name="dolore" value="Passaparola"><span>Passaparola e clienti abituali</span></label>
+            <label class="fv-scelta"><input type="radio" name="dolore" value="Posizione"><span>La vetrina, la posizione, chi passa davanti</span></label>
+            <label class="fv-scelta"><input type="radio" name="dolore" value="Social organico"><span>I social, pubblicando senza pubblicit&agrave;</span></label>
+            <label class="fv-scelta"><input type="radio" name="dolore" value="Google"><span>Google e le ricerche online</span></label>
+            <label class="fv-scelta"><input type="radio" name="dolore" value="Ads attive"><span>Campagne pubblicitarie gi&agrave; attive</span></label>
+            <label class="fv-scelta"><input type="radio" name="dolore" value="Non lo so"><span>Sinceramente, non lo so con precisione</span></label>
+          </div>
+        </fieldset>
+        <div class="fv-azioni">
+          <button type="button" class="fv-btn" data-avanti>Continua</button>
+        </div>
+      </section>
+
+      <!-- ===== PROVA - il limite del canale dichiarato ---------------------
+           Copy approvato da Gaetano il 15/11/2026. Stessa meccanica della
+           schermata del settore: qui la variante accesa dipende dalla risposta
+           data alla schermata precedente (campo "dolore"). Ogni blocco dice il
+           limite di quel canale e poi cosa ci mettiamo noi.
+           Il rosso marca SOLO il dolore: la riga della soluzione usa il blu del
+           brand (.lp-soluzione), altrimenti il rosso smette di dire qualcosa. -->
+      <section class="lp-passo" data-passo="8" data-prova-canale>
+        <div class="lp-canale" data-canale="Passaparola">
+          <h2 class="lp-prova-tit">Il passaparola <span class="ul-rossa">non lo decidi tu</span></h2>
+          <p class="lp-didascalia">Funziona finch&eacute; gira. Ma non ha un rubinetto: non puoi aprirlo il mese in cui l&rsquo;incasso cala, e non puoi chiedergli di portarti il doppio dei clienti a settembre.</p>
+          <p class="lp-didascalia"><strong>I clienti che hai oggi domani possono scegliere un altro.</strong> Basta che apra qualcuno pi&ugrave; vicino, o che un conoscente ne consigli un altro, e quel flusso si sposta senza che tu te ne accorga.</p>
+          <p class="lp-soluzione">Fare lead generation con noi significa avere la certezza di <strong>far arrivare il tuo lavoro ai clienti giusti ogni giorno</strong>, senza aspettare che qualcuno parli di te.</p>
+        </div>
+        <div class="lp-canale" data-canale="Posizione">
+          <h2 class="lp-prova-tit">La vetrina ti porta chi passa, <span class="ul-rossa">non chi ti serve</span></h2>
+          <p class="lp-didascalia">Il tuo bacino &egrave; largo quanto la tua strada. E chi passa davanti non &egrave; detto che sia il tuo cliente: &egrave; solo qualcuno che stava andando da un&rsquo;altra parte.</p>
+          <p class="lp-didascalia"><strong>Basta una stagione storta, dei lavori in corso o un&rsquo;apertura pi&ugrave; vicina al flusso</strong> e il flusso cambia strada. Tu non puoi farci niente: la posizione non la sposti.</p>
+          <p class="lp-soluzione">Con la lead generation non aspetti chi passa: <strong>scegli tu chi deve vedere la tua attivit&agrave; e in quale zona</strong>, e lo raggiungi ogni giorno.</p>
+        </div>
+        <div class="lp-canale" data-canale="Social organico">
+          <h2 class="lp-prova-tit">Like e visualizzazioni <span class="ul-rossa">non sono clienti</span></h2>
+          <p class="lp-didascalia"><strong>Avere like, commenti o un video virale non significa avere pi&ugrave; clienti.</strong> Non ti dice quanti clienti nuovi ti ha portato il digitale, e non ti dice quanto ti &egrave; costato ognuno.</p>
+          <p class="lp-didascalia"><strong>Significa solo dipendere dalle piattaforme e dai trend del momento:</strong> cambia l&rsquo;algoritmo, cambia la moda, e il mese dopo riparti da zero.</p>
+          <p class="lp-soluzione">Il nostro &egrave; <strong>un lavoro completamente tecnico</strong>: campagne costruite per portare richieste, non interazioni, con un costo per contatto che sai leggere ogni giorno.</p>
+        </div>
+        <div class="lp-canale" data-canale="Google">
+          <h2 class="lp-prova-tit">Su Google raccogli la domanda, <span class="ul-rossa">non la crei</span></h2>
+          <p class="lp-didascalia">Intercetti solo chi ti sta gi&agrave; cercando, adesso, con le parole giuste. &Egrave; un bacino limitato, <strong>conteso da chiunque altro paghi per le stesse parole</strong>, e quando le ricerche calano calano anche i contatti.</p>
+          <p class="lp-didascalia">Tutti quelli che sarebbero i tuoi clienti ma non ti stanno cercando in questo momento, non ti vedono.</p>
+          <p class="lp-soluzione">Con le campagne arrivi anche a chi non ti cerca ma &egrave; esattamente il tuo cliente: <strong>la domanda la costruisci tu</strong> invece di aspettarla.</p>
+        </div>
+        <div class="lp-canale" data-canale="Ads attive">
+          <h2 class="lp-prova-tit">Avere campagne attive <span class="ul-rossa">non &egrave; avere un sistema</span></h2>
+          <p class="lp-didascalia">La domanda vera &egrave; un&rsquo;altra: <strong>sai quanto ti costa un contatto, quanti diventano clienti e da quale inserzione sono arrivati?</strong></p>
+          <p class="lp-didascalia">Se la risposta non &egrave; un numero, stai spendendo al buio e lo scoprirai a fine mese.</p>
+          <p class="lp-soluzione">Noi partiamo da l&igrave;: <strong>costo per contatto, da quale annuncio, quanti diventano appuntamenti.</strong> Poi si ottimizza su quello.</p>
+        </div>
+        <div class="lp-canale" data-canale="Non lo so">
+          <h2 class="lp-prova-tit">&Egrave; la risposta pi&ugrave; onesta, <span class="ul-rossa">ed &egrave; anche la pi&ugrave; cara</span></h2>
+          <p class="lp-didascalia"><strong>Se non sai da dove arrivano i tuoi clienti, non sai cosa sta funzionando.</strong> E quello che non sai di aver fatto bene non puoi ripeterlo, n&eacute; aumentarlo.</p>
+          <p class="lp-didascalia">Ogni mese riparte da zero, e ogni euro speso &egrave; una scommessa.</p>
+          <p class="lp-soluzione">La prima cosa che mettiamo in piedi non &egrave; una campagna: <strong>&egrave; la misurazione.</strong> Da l&igrave; in poi ogni scelta ha un numero sotto.</p>
+        </div>
+        <div class="fv-azioni">
+          <button type="button" class="fv-btn" data-avanti>Continua</button>
+        </div>
+      </section>
+
+
+
+
+      <!-- ===== QUALIFICA + PAIN - il problema da risolvere -----------------
+           E' lo step 8 di WIT: l'ultima domanda prima dei contatti, quella che
+           qualifica e fa sentire il problema nello stesso gesto. Il testo della
+           domanda e' di Gaetano (15/11/2026); le opzioni le ho proposte io
+           sul modello WIT, dove sono le frasi che i clienti ripetono in call.
+           Vanno sostituite con le frasi vere appena le abbiamo. -->
+      <section class="lp-passo" data-passo="9">
+        <h2 class="lp-domanda">Se iniziassimo un percorso insieme oggi stesso, quale sarebbe il <span class="grad-text">principale problema</span> che vorresti risolvessimo al tuo business?</h2>
+        <fieldset class="fv-dom" data-obbligatorio data-auto>
+          <div class="fv-scelte">
+            <label class="fv-scelta"><input type="radio" name="problema" value="Piu richieste"><span>Voglio pi&ugrave; richieste da clienti nuovi</span></label>
+            <label class="fv-scelta"><input type="radio" name="problema" value="Continuita"><span>Voglio continuit&agrave;: basta mesi pieni e mesi vuoti</span></label>
+            <label class="fv-scelta"><input type="radio" name="problema" value="Qualita"><span>Voglio clienti pi&ugrave; in target, non curiosi che fanno perdere tempo</span></label>
+            <label class="fv-scelta"><input type="radio" name="problema" value="Agenzia delusa"><span>Ho gi&agrave; lavorato con un&rsquo;agenzia e non ha funzionato</span></label>
+            <label class="fv-scelta"><input type="radio" name="problema" value="Misurare"><span>Voglio capire quanto mi costa davvero un cliente nuovo</span></label>
+          </div>
+        </fieldset>
+        <div class="fv-azioni">
+          <button type="button" class="fv-btn" data-avanti>Continua</button>
+        </div>
+      </section>
+
+      <!-- ============================================== 8 CONTATTI -->
+      <section class="lp-passo" data-passo="10">
+        <!-- Testo di Gaetano (15/11/2026). L'apertura e' una AMMISSIONE: chi
+             arriva qui ha risposto a sei domande, e sentirsi dire che il filtro
+             l'ha passato vale piu' di un altro titolo. -->
+        <p class="lp-ammessa">Ok, secondo noi potresti essere il <strong>partner perfetto</strong> per iniziare un percorso insieme, gi&agrave; da oggi.</p>
+        <h2 class="lp-domanda">Ora dicci: avremmo il <span class="grad-text">piacere di parlare</span> con&hellip;</h2>
+        <form id="lpForm" autocomplete="on">
+          <!-- Riempiti da JS al caricamento della pagina leggendo la query
+               string. Sono il motivo per cui questa landing esiste su un link
+               a parte: senza, dopo la campagna non sai da quale annuncio
+               arriva ogni contatto. -->
+          <input type="hidden" name="utm_source"><input type="hidden" name="utm_medium">
+          <input type="hidden" name="utm_campaign"><input type="hidden" name="utm_content">
+          <input type="hidden" name="utm_term"><input type="hidden" name="gclid">
+          <input type="hidden" name="fbclid"><input type="hidden" name="pagina">
+          <input type="hidden" name="provenienza"><input type="hidden" name="inviato_il">
+        <div class="fv-coppia">
+          <div class="fv-campo">
+            <label for="lpNome">Nome</label>
+            <input type="text" id="lpNome" name="nome" autocomplete="given-name" required>
+          </div>
+          <div class="fv-campo">
+            <label for="lpCognome">Cognome</label>
+            <input type="text" id="lpCognome" name="cognome" autocomplete="family-name" required>
+          </div>
+        </div>
+        <div class="fv-coppia">
+          <div class="fv-campo">
+            <label for="lpCitta">Citt&agrave;</label>
+            <input type="text" id="lpCitta" name="citta" autocomplete="address-level2" required>
+          </div>
+          <div class="fv-campo">
+            <label for="lpAzienda">Nome azienda o attivit&agrave;</label>
+            <input type="text" id="lpAzienda" name="azienda" autocomplete="organization" required>
+          </div>
+        </div>
+        <div class="fv-campo">
+          <label for="lpTel">Numero di cellulare</label>
+          <input type="tel" id="lpTel" name="telefono" autocomplete="tel" required aria-describedby="lpTelNota">
+          <p class="fv-aiuto" id="lpTelNota">Un numero a cui rispondi sempre e su cui hai WhatsApp.</p>
+        </div>
+        <div class="fv-campo">
+          <label for="lpEmail">Email</label>
+          <input type="email" id="lpEmail" name="email" autocomplete="email" required>
+        </div>
+        <!-- DUE caselle, non una. Il consenso per essere ricontattati e' quello
+             che serve a erogare il servizio ed e' obbligatorio; il consenso
+             marketing deve essere SEPARATO e libero, altrimenti non e' un
+             consenso valido e si porta dietro il primo. Richiesta originale:
+             "acconsento al trattamento scopi di marketing". -->
+        <label class="fv-privacy">
+          <input type="checkbox" name="privacy" required>
+          <span>Ho letto l&rsquo;<a href="../privacy.html" target="_blank" rel="noopener">informativa privacy</a> e acconsento al trattamento dei miei dati per essere ricontattato.</span>
+        </label>
+        <label class="fv-privacy">
+          <input type="checkbox" name="marketing">
+          <span>Acconsento inoltre al trattamento dei dati per finalit&agrave; di marketing. <em>Facoltativo.</em></span>
+        </label>
+        <div class="fv-azioni">
+          <button type="button" class="fv-btn" data-invia>Avanti</button>
+        </div>
+        <!-- Se l'invio non riesce, il contatto NON si perde: i dati restano
+             salvati sul dispositivo e gli diamo una via d'uscita subito. -->
+        <div class="lp-guasto" id="lpGuasto" hidden>
+          <p><strong>Non siamo riusciti a inviare.</strong> I tuoi dati sono salvati: riprova fra un attimo, oppure scrivici e ti rispondiamo noi.</p>
+          <a class="fv-btn fv-btn-ghost" href="https://wa.me/393273939836?text=Ciao%2C%20ho%20provato%20a%20inviare%20la%20candidatura%20dal%20sito%20ma%20non%20e%27%20partita" target="_blank" rel="noopener">Scrivici su WhatsApp</a>
+        </div>
+        </form>
+      </section>
+
+      <!-- ===== THANK YOU PAGE --------------------------------------------
+           Testo di Gaetano (15/11/2026). La gerarchia e' una sola: la cosa che
+           deve succedere qui e' che scelga uno slot. Quindi UN pulsante pieno
+           per il calendario, e WhatsApp in secondo piano (.fv-btn-ghost) dopo
+           i tre passaggi: chi vuole parlare subito lo trova, ma non e' la via
+           principale e non compete col bottone del calendario.
+           DUE SEGNAPOSTO ANCORA DA RIEMPIRE, entrambi segnati in pagina:
+           - il link Calendly (da creare, con Google Meet come luogo)
+           - il video di benvenuto -->
+      <section class="lp-passo" data-passo="11">
+        <div class="fv-grazie">
+          <h2 class="lp-domanda">Oggi potrebbe iniziare il tuo <span class="grad-text">percorso con noi</span></h2>
+          <p class="lp-didascalia">La tua candidatura &egrave; andata a buon fine.</p>
+          <p class="lp-didascalia"><strong>Prenota la tua call su Meet:</strong> 45 minuti, scegli tu quando.</p>
+          <p class="lp-didascalia lp-poche">Apriamo <strong>marted&igrave;, mercoled&igrave; e gioved&igrave; pomeriggio</strong>. Se trovi uno slot gi&agrave; occupato, a quell&rsquo;ora siamo al telefono con un altro partner.</p>
+          <ol class="lp-passaggi">
+            <li><strong>Ci guardiamo in faccia</strong> su Google Meet, nel giorno e nell&rsquo;ora che hai scelto.</li>
+            <li><strong>Facciamo un check della tua situazione:</strong> come arrivano oggi i tuoi clienti e dove si perde il lavoro.</li>
+            <li><strong>Decidiamo insieme se e quando iniziare.</strong> Senza giri di parole: se non siamo noi la risposta giusta, te lo diciamo.</li>
+          </ol>
+          <!-- Card del video di benvenuto. Il file sta in reels/portfolio/ perche'
+               e' l'unica cartella che sync.sh pubblica: altrove darebbe 404. -->
+                    <figure class="lp-video">
+            <div class="lp-video-cornice">
+              <!-- autoplay SOLO muto: i browser rifiutano l'autoplay sonoro, e
+                   un play() da script su un video non muto viene bloccato.
+                   I sottotitoli sono impressi, quindi muto si segue lo stesso.
+                   L'attributo autoplay resta anche se il JS chiama play():
+                   senza, nei browser dentro le app (Instagram, WhatsApp) il
+                   video resta fermo. -->
+              <!-- NIENTE attributo controls finche' e' fermo: con i controlli
+                   nativi accesi, sotto al nostro play grande comparivano anche
+                   la barra di avanzamento e il menu a tre puntini del browser,
+                   due interfacce sovrapposte sulla stessa immagine. Il JS li
+                   accende al primo play, cosi' da li' in poi si puo' mettere in
+                   pausa e regolare il volume. -->
+              <video id="lpVideo" src="../reels/portfolio/benvenuto.mp4"
+                     poster="../images/benvenuto-poster.jpg"
+                     playsinline preload="metadata"></video>
+              <button type="button" class="lp-play" id="lpPlay">
+                <span class="lp-play-cerchio">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+                </span>
+                <span class="lp-play-eti">Ascoltami per 1 minuto</span>
+              </button>
+            </div>
+            <figcaption>Un minuto: cosa succede adesso, prima della call.</figcaption>
+          </figure>
+
+          <div class="fv-azioni">
+            <a class="fv-btn" id="lpCalendario" href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1_44Vj9fU8RRMpnCfAt05Ok1kYFNgS9tSMJ6HNtmD4l7bTZrQA1A8TuDA-_pYNiOKoI1Lx0q3e" target="_blank" rel="noopener">Scegli il tuo slot</a>
+          </div>
+
+          <!-- Regola di Gaetano (16/11/2026): va detta PRIMA che prenoti, non
+               dopo. Una call con chi non decide e' una call da rifare. -->
+          <p class="fv-nota lp-regola"><strong>Prenota solo se le decisioni per la tua azienda le prendi tu.</strong> Se ci sono dei soci, venite insieme: cos&igrave; non ci sono cose da rispiegare dopo.</p>
+
+          <p class="fv-nota">Preferisci sentirci subito?</p>
+          <div class="fv-azioni">
+            <a class="fv-btn fv-btn-ghost" href="https://wa.me/393273939836?text=Ho%20appena%20inviato%20la%20candidatura%20dal%20sito%2C%20vorrei%20parlare%20con%20un%20consulente" target="_blank" rel="noopener"><svg class="ico-wa" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47s1.06 2.87 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.2-.57-.35z"/><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.02h-.01c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.82c0 4.54-3.69 8.23-8.22 8.23z"/></svg><span>Voglio parlare adesso con un&nbsp;consulente</span></a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="lp-legale">
+    <a href="../privacy.html" target="_blank" rel="noopener">Informativa privacy</a>
+    <a href="../cookie.html" target="_blank" rel="noopener">Cookie policy</a>
+    <button type="button" data-consenso="apri">Preferenze cookie</button>
+  </footer>
+
+  <!-- ==========================================================================
+       Lo stepper. Invia al foglio (var FOGLIO) e traccia ogni schermata.
+       Tutto cio' che e' tracciamento passa da assets/consenso.js: GA4, Meta
+       Pixel, Clarity e Google Ads NON partono prima della scelta del
+       visitatore, e le funzioni traccia()/meta() qui sotto non fanno nulla
+       finche' gtag e fbq non esistono.
+       ========================================================================== -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* ====================================================================
+       DA RIEMPIRE PRIMA DI PUBBLICARE
+       --------------------------------------------------------------------
+       FOGLIO: l'URL /exec dell'Apps Script pubblicato come Web App
+       (vedi apps-script.gs nella stessa cartella: istruzioni in testa).
+       Finche' resta vuoto NON si invia niente e la pagina lo dice chiaro
+       invece di fingere che sia andato tutto bene.
+
+       (Il calendario e' gia' collegato: pagina Google 'Consulenza Giesse',
+       45 minuti, Meet automatico, solo mar/mer/gio 14:30-17:30.)
+       ==================================================================== */
+    var FOGLIO   = 'https://script.google.com/macros/s/AKfycbxm83cGj8pwKkZrFslHL4B2YsvvlOYBIVcXksHRLjHcgr-cOOsNlKmTWYylU7jghA-Q0w/exec';
+    var CALENDAR  = 'https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1_44Vj9fU8RRMpnCfAt05Ok1kYFNgS9tSMJ6HNtmD4l7bTZrQA1A8TuDA-_pYNiOKoI1Lx0q3e';
+
+    var passi  = [].slice.call(document.querySelectorAll('.lp-passo'));
+    var barra  = document.getElementById('lpBarra');
+    var tacche = [].slice.call(barra.querySelectorAll('i'));
+    var corrente = 0;
+
+    /* ======================================================================
+       TRACCIAMENTO
+       ----------------------------------------------------------------------
+       Niente parte prima del consenso: GA4, Meta Pixel, Clarity e Google Ads
+       li accende assets/consenso.js dopo la scelta del visitatore. Finche'
+       non li accende, gtag e fbq non esistono e queste due funzioni non fanno
+       nulla: e' il motivo per cui NON si chiama mai gtag() direttamente.
+
+       Perche' un evento per schermata: di un percorso a dodici schermate,
+       senza questi eventi si sa solo quanti arrivano in fondo, non su QUALE
+       domanda si fermano. Con questi, in GA4 si legge l'imbuto e si sa quale
+       domanda togliere o riscrivere. E' la stessa misura della landing
+       fotovoltaico (evento fv_passo), tenuta uguale apposta.
+       ====================================================================== */
+    var NOMI_PASSO = [
+      'apertura', 'settore', 'prova_settore', 'budget', 'buone_mani',
+      'chi_richiama', 'cinque_minuti', 'canale', 'limite_canale', 'problema',
+      'contatti', 'grazie'
+    ];
+    var visti = {};          // un evento per schermata per visita, non uno per passaggio
+    var partito = false;     // form_start una volta sola
+
+    /* LA CODA, e perche' serve.
+       Il banner dei cookie compare sopra la pagina gia' caricata: fra
+       l'apertura e il clic su "Accetta" passano secondi, e in quei secondi
+       gtag e fbq NON esistono ancora. Senza coda, l'evento della schermata di
+       apertura — cioe' il denominatore di tutto l'imbuto — andrebbe perso
+       proprio per i visitatori che poi acconsentono. Qui gli eventi emessi
+       troppo presto restano in attesa e partono appena il consenso accende i
+       tracker. Se il visitatore rifiuta, la coda non si svuota mai: e' il
+       comportamento giusto. */
+    var coda = [];
+    var attesa = null;
+
+    function scoda() {
+      var ga = typeof window.gtag === 'function';
+      var fb = typeof window.fbq === 'function';
+      if (!ga && !fb) return false;
+      var restano = [];
+      coda.forEach(function (ev) {
+        if (ev.tipo === 'ga' && ga) { try { window.gtag('event', ev.nome, ev.dati); } catch (e) {} }
+        else if (ev.tipo === 'fb' && fb) { try { window.fbq('track', ev.nome, ev.dati); } catch (e) {} }
+        else restano.push(ev);
+      });
+      coda = restano;
+      return coda.length === 0;
+    }
+
+    /* Il controllo parte solo quando c'e' qualcosa in coda e si spegne da
+       solo appena l'ha svuotata, o dopo tre minuti: oltre, chi non ha ancora
+       scelto non sceglie piu'. */
+    function sorveglia() {
+      if (attesa) return;
+      var fine = Date.now() + 180000;
+      attesa = setInterval(function () {
+        if (scoda() || Date.now() > fine) { clearInterval(attesa); attesa = null; }
+      }, 400);
+    }
+
+    function traccia(nome, dati) {
+      if (typeof window.gtag === 'function') {
+        try { window.gtag('event', nome, dati || {}); } catch (e) {}
+        return;
+      }
+      coda.push({ tipo: 'ga', nome: nome, dati: dati || {} });
+      sorveglia();
+    }
+    function meta(nome, dati) {
+      if (typeof window.fbq === 'function') {
+        try { window.fbq('track', nome, dati || {}); } catch (e) {}
+        return;
+      }
+      coda.push({ tipo: 'fb', nome: nome, dati: dati || {} });
+      sorveglia();
+    }
+
+    function tracciaPasso(n) {
+      if (visti[n]) return;
+      visti[n] = true;
+      traccia('lp_passo', { passo: n, nome_passo: NOMI_PASSO[n] || ('passo_' + n) });
+      // L'inizio vero del modulo e' la prima domanda, non l'apertura: chi
+      // guarda e se ne va senza toccare niente non ha iniziato niente.
+      if (n === 1 && !partito) {
+        partito = true;
+        traccia('form_start', { modulo: 'lead_generation' });
+        meta('InitiateCheckout', { content_name: 'Landing Lead Generation' });
+      }
+    }
+
+    function mostra(n) {
+      if (n < 0 || n >= passi.length) return;
+      // Agganci per MARCATORE, non per numero: il confronto con '2' si
+      // rompeva a ogni rinumerazione delle schermate.
+      if (passi[n].hasAttribute('data-prova-settore')) scegliProva();
+      if (passi[n].hasAttribute('data-prova-canale'))  scegliCanale();
+      passi[corrente].classList.remove('is-active');
+      passi[n].classList.add('is-active');
+      corrente = n;
+      var mostrala = n > 0 && n < passi.length - 1;
+      barra.hidden = !mostrala;
+      tacche.forEach(function (t, i) { t.classList.toggle('is-on', i < n); });
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      tracciaPasso(n);
+    }
+
+    // accende la prova del settore scelto; se il settore non ne ha una propria
+    // resta accesa quella con tutti e quattro i casi.
+    function scegliProva() {
+      var sel = document.querySelector('input[name="settore"]:checked');
+      var quale = sel ? (sel.dataset.prova || 'tutte') : 'tutte';
+      [].forEach.call(document.querySelectorAll('.lp-prova'), function (p) {
+        p.classList.toggle('is-on', p.dataset.prova === quale);
+      });
+      // la nota sui costi vale solo dove un costo per contatto c'e' davvero
+      var conCosti = ['greenfuel', 'piluso', 'talea', 'bellessere', 'tutte'];
+      var nota = document.getElementById('lpNotaCosti');
+      if (nota) nota.hidden = conCosti.indexOf(quale) === -1;
+    }
+
+    // accende la variante del canale dichiarato alla schermata precedente.
+    // Se per qualsiasi motivo non c'e' corrispondenza resta accesa la prima,
+    // cosi' la schermata non puo' mai restare vuota.
+    function scegliCanale() {
+      var sel = document.querySelector('input[name="dolore"]:checked');
+      var quale = sel ? sel.value : '';
+      var blocchi = [].slice.call(document.querySelectorAll('.lp-canale'));
+      var acceso = false;
+      blocchi.forEach(function (c) {
+        var on = c.dataset.canale === quale;
+        c.classList.toggle('is-on', on);
+        if (on) acceso = true;
+      });
+      if (!acceso && blocchi[0]) blocchi[0].classList.add('is-on');
+    }
+
+    /* --- provenienza: si legge UNA volta, all'arrivo. Se uno ricarica la
+       pagina senza UTM dopo averla aperta dall'annuncio, le conserviamo:
+       il contatto resta attribuito all'annuncio che l'ha portato. */
+    (function provenienza() {
+      var q = new URLSearchParams(location.search);
+      var chiavi = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','fbclid'];
+      var memoria = {};
+      try { memoria = JSON.parse(sessionStorage.getItem('lpProvenienza') || '{}'); } catch (err) {}
+      chiavi.forEach(function (k) {
+        var v = q.get(k) || memoria[k] || '';
+        if (v) memoria[k] = v;
+        var campo = document.querySelector('input[name="' + k + '"]');
+        if (campo) campo.value = v;
+      });
+      try { sessionStorage.setItem('lpProvenienza', JSON.stringify(memoria)); } catch (err) {}
+      var pag = document.querySelector('input[name="pagina"]');
+      if (pag) pag.value = location.href;
+      var prov = document.querySelector('input[name="provenienza"]');
+      if (prov) prov.value = document.referrer || 'diretto';
+    })();
+
+    /* --- tutte le risposte, non solo i contatti. Ogni schermata lascia il
+       suo campo: settore, budget, chi gestisce, canale, problema. */
+    function raccogli() {
+      var dati = {};
+      [].forEach.call(document.querySelectorAll('input[name]'), function (i) {
+        if (i.type === 'radio') { if (i.checked) dati[i.name] = i.value; }
+        else if (i.type === 'checkbox') { dati[i.name] = i.checked ? 'si' : 'no'; }
+        else { dati[i.name] = i.value.trim(); }
+      });
+      dati.inviato_il = new Date().toISOString();
+      dati.slot_calendly = '';   // lo riempie lo script dal calendario
+      return dati;
+    }
+
+    var inCorso = false;
+    function invia(bottone) {
+      if (inCorso) return;                 // niente doppio invio
+      var dati = raccogli();
+      try { localStorage.setItem('lpBozza', JSON.stringify(dati)); } catch (err) {}
+
+      if (!FOGLIO) {
+        // In ANTEPRIMA LOCALE si prosegue lo stesso, cosi' si puo' rivedere la
+        // schermata finale mentre il foglio non c'e' ancora. Il riquadro rosso
+        // che sta su quella schermata dice comunque che manca il collegamento.
+        // Online NON succede mai: il controllo e' sul nome dell'host, e
+        // giesseagency.com non passa di qui.
+        if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+          preparaCalendly(dati);
+          mostra(passi.length - 1);
+          return;
+        }
+        // Meglio dirlo che fingere: senza destinazione il contatto si perde.
+        guasto(bottone, 'Modulo non ancora collegato.');
+        return;
+      }
+      inCorso = true;
+      var etichetta = bottone ? bottone.textContent : '';
+      if (bottone) { bottone.disabled = true; bottone.textContent = 'Invio in corso...'; }
+
+      // text/plain: evita il preflight CORS, che Apps Script non gestisce.
+      fetch(FOGLIO, { method: 'POST', body: JSON.stringify(dati) })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r; })
+        .then(function () {
+          try { localStorage.removeItem('lpBozza'); } catch (err) {}
+          // L'ordine conta: prima i segnali, poi la schermata. Se qualcosa
+          // nella thank-you page sbagliasse, la conversione e' gia' partita.
+          traccia('generate_lead', {
+            currency: 'EUR', value: 0,
+            settore: dati.settore || '',
+            budget_tier: dati.budget || '',
+            citta: dati.citta || '',
+            canale_attuale: dati.dolore || '',
+            problema: dati.problema || ''
+          });
+          meta('Lead', { content_name: 'Landing Lead Generation' });
+          // La conversione Google Ads la fa partire consenso.js, che
+          // controlla da solo se il visitatore ha accettato il marketing.
+          if (window.GiesseConsenso && window.GiesseConsenso.conversioneAds) {
+            window.GiesseConsenso.conversioneAds();
+          }
+          preparaCalendly(dati);
+          mostra(passi.length - 1);
+        })
+        .catch(function () {
+          // Si traccia anche il fallimento: senza, un endpoint rotto si
+          // vedrebbe solo dal foglio vuoto, e troppo tardi.
+          traccia('lp_invio_fallito', { passo: corrente });
+          inCorso = false;
+          if (bottone) { bottone.disabled = false; bottone.textContent = etichetta; }
+          guasto(bottone, 'Non siamo riusciti a inviare.');
+        });
+    }
+
+    /* Il contatto NON si perde se l'invio fallisce: resta salvato e gli
+       diamo WhatsApp come via d'uscita immediata. */
+    function guasto(bottone, testo) {
+      var box = document.getElementById('lpGuasto');
+      if (!box) return;
+      box.querySelector('strong').textContent = testo;
+      box.hidden = false;
+      box.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+
+    /* Nome ed email precompilati su Calendly: una schermata in meno da
+       riempire, e il nostro foglio e la prenotazione si ritrovano per email. */
+    function preparaCalendly(dati) {
+      var a = document.getElementById('lpCalendario');
+      if (!a || !CALENDAR) return;
+      var nome = [dati.nome, dati.cognome].filter(Boolean).join(' ');
+      a.href = CALENDAR + (CALENDAR.indexOf('?') === -1 ? '?' : '&') +
+               'name=' + encodeURIComponent(nome) +
+               '&email=' + encodeURIComponent(dati.email || '');
+    }
+
+    /* Il video NON parte da solo: parte al tocco del pulsante grande.
+       Cosi' l'audio c'e' sempre, perche' il play nasce da un gesto, e non
+       si mette a parlare addosso a chi sta leggendo. */
+    (function () {
+      var v = document.getElementById('lpVideo');
+      var c = document.getElementById('lpPlay');
+      if (!v || !c) return;
+      c.addEventListener('click', function () {
+        v.muted = false; v.volume = 1;
+        v.controls = true;              // da qui in poi servono: pausa e volume
+        var p = v.play();
+        if (p && p.catch) p.catch(function () { v.muted = true; v.play(); });
+        c.hidden = true;
+        traccia('lp_video_play', { passo: corrente });
+        meta('ViewContent', { content_name: 'video benvenuto' });
+      });
+      v.addEventListener('pause', function () { if (v.currentTime < v.duration - 0.3) c.hidden = false; });
+      v.addEventListener('play', function () { c.hidden = true; });
+    })();
+
+    /* I due clic che contano DOPO l'invio. Prenotare lo slot e' il vero
+       traguardo del percorso: senza questo evento sapremmo quanti si
+       candidano e non quanti si siedono davvero in call. */
+    document.addEventListener('click', function (e) {
+      var cal = e.target.closest('#lpCalendario');
+      if (cal) {
+        traccia('lp_slot_click', { passo: corrente });
+        meta('Schedule', { content_name: 'Prenotazione call 45 minuti' });
+        return;
+      }
+      var wa = e.target.closest('a[href*="wa.me"]');
+      if (wa) {
+        traccia('whatsapp_click', { passo: corrente, nome_passo: NOMI_PASSO[corrente] || '' });
+        meta('Contact', { content_name: 'WhatsApp landing lead generation' });
+        return;
+      }
+    });
+
+    document.addEventListener('click', function (e) {
+      var av = e.target.closest('[data-avanti]');
+      var ind = e.target.closest('[data-indietro]');
+      var sub = e.target.closest('[data-invia]');
+      if (av)  { if (controlla()) mostra(corrente + 1); return; }
+      if (ind) { mostra(corrente - 1); return; }
+      if (sub) { if (controlla()) invia(sub); return; }
+
+      // NESSUN avanzamento automatico al tocco della risposta: si prosegue solo
+      // premendo Continua. Scegliere e confermare restano due gesti distinti,
+      // cosi' nessuno si ritrova alla schermata dopo per un tocco di troppo e
+      // chi vuole cambiare idea puo' farlo prima di confermare.
+    });
+
+    function controlla() {
+      var p = passi[corrente];
+      var gruppi = [].slice.call(p.querySelectorAll('fieldset[data-obbligatorio]'));
+      for (var i = 0; i < gruppi.length; i++) {
+        if (!gruppi[i].querySelector('input:checked')) { segnala(gruppi[i]); return false; }
+      }
+      var campi = [].slice.call(p.querySelectorAll('input[required]'));
+      for (var j = 0; j < campi.length; j++) {
+        if (!campi[j].checkValidity()) { campi[j].focus(); campi[j].reportValidity(); return false; }
+      }
+      return true;
+    }
+
+    /* La schermata 0 e' gia' attiva nel markup: non passa da mostra(), quindi
+       il suo evento va mandato a mano. Senza questa riga l'imbuto partirebbe
+       dalla schermata 1 e non si saprebbe mai quanti arrivano e se ne vanno
+       senza toccare niente — che e' il numero piu' importante di tutti. */
+    tracciaPasso(0);
+
+    function segnala(el) {
+      el.classList.add('fv-errore');
+      // Su una schermata lunga (la 1 ha dieci settori: il bottone sta a 910px,
+      // oltre la piega) chi scorre fino a Continua e lo preme senza aver
+      // scelto vedeva l'avviso accendersi FUORI dallo schermo, sopra di lui:
+      // il bottone sembrava semplicemente non funzionare. Se il gruppo non e'
+      // in vista lo riportiamo al centro, e teniamo l'avviso acceso piu' a
+      // lungo perche' lo scorrimento se ne mangia una parte.
+      var r = el.getBoundingClientRect();
+      var fuori = r.top < 0 || r.bottom > window.innerHeight;
+      if (fuori) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      setTimeout(function () { el.classList.remove('fv-errore'); }, fuori ? 2200 : 1200);
+    }
+  })();
+  </script>
+
+  <script src="../assets/consenso.js"></script>
+  <script src="../assets/motion.js"></script>
+</body>
+</html>
