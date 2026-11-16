@@ -1242,7 +1242,12 @@
       var restano = [];
       coda.forEach(function (ev) {
         if (ev.tipo === 'ga' && ga) { try { window.gtag('event', ev.nome, ev.dati); } catch (e) {} }
-        else if (ev.tipo === 'fb' && fb) { try { window.fbq('track', ev.nome, ev.dati); } catch (e) {} }
+        else if (ev.tipo === 'fb' && fb) {
+          try {
+            if (ev.id) window.fbq('track', ev.nome, ev.dati, { eventID: ev.id });
+            else       window.fbq('track', ev.nome, ev.dati);
+          } catch (e) {}
+        }
         else restano.push(ev);
       });
       coda = restano;
@@ -1268,16 +1273,48 @@
       coda.push({ tipo: 'ga', nome: nome, dati: dati || {} });
       sorveglia();
     }
-    function meta(nome, dati) {
+    function meta(nome, dati, id) {
       if (typeof window.fbq === 'function') {
-        try { window.fbq('track', nome, dati || {}); } catch (e) {}
+        try {
+          if (id) window.fbq('track', nome, dati || {}, { eventID: id });
+          else    window.fbq('track', nome, dati || {});
+        } catch (e) {}
         return;
       }
-      coda.push({ tipo: 'fb', nome: nome, dati: dati || {} });
+      coda.push({ tipo: 'fb', nome: nome, dati: dati || {}, id: id });
       sorveglia();
     }
 
+    /* CLARITY — i tag che rendono le registrazioni cercabili.
+       Senza, Clarity registra tutto e non si puo' chiedere "fammi vedere solo
+       chi si e' fermato sul budget" o "solo le sessioni diventate lead":
+       restano centinaia di video indistinguibili. Con i tag, in Clarity si
+       filtra per lp_passo, lp_settore, lp_budget e lp_esito.
+       'upgrade' marca la sessione come prioritaria, cosi' Clarity la conserva
+       invece di scartarla nel campionamento: le sessioni dei lead sono le
+       uniche che vale davvero la pena riguardare. */
+    function clar(chiave, valore) {
+      if (typeof window.clarity !== 'function') return;
+      try { window.clarity('set', chiave, String(valore)); } catch (e) {}
+    }
+    function clarPriorita(motivo) {
+      if (typeof window.clarity !== 'function') return;
+      try { window.clarity('upgrade', motivo); } catch (e) {}
+    }
+
+    /* UN SOLO ID PER CANDIDATURA, generato qui e usato in tre posti:
+       il Pixel (eventID), il foglio (colonna event_id) e — appena ci sara' il
+       token — la Conversions API dall'Apps Script.
+       Serve a una cosa sola ma decisiva: Meta riceverebbe lo STESSO lead due
+       volte, una dal browser e una dal server, e lo conterebbe due volte,
+       dimezzando il costo per lead che leggi nel pannello. Con lo stesso id
+       sui due invii, Meta capisce che e' lo stesso evento. */
+    var idCandidatura = 'lp-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+
     function tracciaPasso(n) {
+      // Il tag Clarity si riscrive a OGNI passaggio, anche tornando indietro:
+      // deve dire dove la sessione e' arrivata, non dove era la prima volta.
+      clar('lp_passo', NOMI_PASSO[n] || ('passo_' + n));
       if (visti[n]) return;
       visti[n] = true;
       traccia('lp_passo', { passo: n, nome_passo: NOMI_PASSO[n] || ('passo_' + n) });
@@ -1367,6 +1404,7 @@
         else { dati[i.name] = i.value.trim(); }
       });
       dati.inviato_il = new Date().toISOString();
+      dati.event_id = idCandidatura;   // serve alla Conversions API per non contare due volte
       dati.slot_calendly = '';   // lo riempie lo script dal calendario
       return dati;
     }
@@ -1411,7 +1449,14 @@
             canale_attuale: dati.dolore || '',
             problema: dati.problema || ''
           });
-          meta('Lead', { content_name: 'Landing Lead Generation' });
+          meta('Lead', {
+            content_name: 'Landing Lead Generation',
+            content_category: dati.settore || ''
+          }, idCandidatura);
+          clar('lp_esito', 'lead');
+          clar('lp_settore', dati.settore || '');
+          clar('lp_budget', dati.budget || '');
+          clarPriorita('lead');   // questa registrazione va conservata
           // La conversione Google Ads la fa partire consenso.js, che
           // controlla da solo se il visitatore ha accettato il marketing.
           if (window.GiesseConsenso && window.GiesseConsenso.conversioneAds) {
@@ -1424,6 +1469,8 @@
           // Si traccia anche il fallimento: senza, un endpoint rotto si
           // vedrebbe solo dal foglio vuoto, e troppo tardi.
           traccia('lp_invio_fallito', { passo: corrente });
+          clar('lp_esito', 'invio_fallito');
+          clarPriorita('invio_fallito');   // da riguardare: qui si perde un contatto
           inCorso = false;
           if (bottone) { bottone.disabled = false; bottone.textContent = etichetta; }
           guasto(bottone, 'Non siamo riusciti a inviare.');
@@ -1465,6 +1512,7 @@
         if (p && p.catch) p.catch(function () { v.muted = true; v.play(); });
         c.hidden = true;
         traccia('lp_video_play', { passo: corrente });
+        clar('lp_video', 'play');
         meta('ViewContent', { content_name: 'video benvenuto' });
       });
       v.addEventListener('pause', function () { if (v.currentTime < v.duration - 0.3) c.hidden = false; });
@@ -1479,6 +1527,7 @@
       if (cal) {
         traccia('lp_slot_click', { passo: corrente });
         meta('Schedule', { content_name: 'Prenotazione call 45 minuti' });
+        clar('lp_esito', 'slot_aperto');
         return;
       }
       var wa = e.target.closest('a[href*="wa.me"]');
@@ -1494,7 +1543,13 @@
       var ind = e.target.closest('[data-indietro]');
       var sub = e.target.closest('[data-invia]');
       if (av)  { if (controlla()) mostra(corrente + 1); return; }
-      if (ind) { mostra(corrente - 1); return; }
+      if (ind) {
+        // Tornare indietro e' esitazione, ed e' un dato: se succede sempre
+        // sulla stessa schermata, quella domanda e' scritta male.
+        traccia('lp_indietro', { passo: corrente, nome_passo: NOMI_PASSO[corrente] || '' });
+        mostra(corrente - 1);
+        return;
+      }
       if (sub) { if (controlla()) invia(sub); return; }
 
       // NESSUN avanzamento automatico al tocco della risposta: si prosegue solo
