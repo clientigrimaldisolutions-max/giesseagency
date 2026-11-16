@@ -1239,6 +1239,9 @@
       var ga = typeof window.gtag === 'function';
       var fb = typeof window.fbq === 'function';
       if (!ga && !fb) return false;
+      // Il secondo pixel va montato PRIMA di svuotare la coda, se no gli
+      // eventi arretrati partirebbero solo verso il pixel del sito.
+      if (fb) montaPixelCampagna();
       var restano = [];
       coda.forEach(function (ev) {
         if (ev.tipo === 'ga' && ga) { try { window.gtag('event', ev.nome, ev.dati); } catch (e) {} }
@@ -1273,7 +1276,38 @@
       coda.push({ tipo: 'ga', nome: nome, dati: dati || {} });
       sorveglia();
     }
+    /* ======================================================================
+       IL SECONDO PIXEL — quello che l'account della campagna vede davvero
+       ----------------------------------------------------------------------
+       assets/consenso.js accende GIESSE AGENCY PIXEL (1436951801354839), che
+       e' il pixel di tutto il sito: storico, pubblici per il retargeting,
+       tutto sta li' e non si tocca.
+       Ma l'account pubblicitario ACQUISITION LEAD, quello che fara' girare la
+       campagna, NON ha quel pixel fra le sue origini dati: vede solo GIESSE
+       PIXEL (507777909005054). Finche' le cose stanno cosi', nel pannello
+       campagna l'evento Lead non e' nemmeno selezionabile e Meta non puo'
+       mostrare quanti lead arrivano ne' quanto li stai pagando.
+       Qui la landing monta ANCHE quel secondo pixel. Non e' una sostituzione:
+       con due init attivi ogni fbq('track') va a tutti e due, quindi il
+       pixel del sito continua a ricevere tutto come prima e l'account della
+       campagna riceve gli stessi eventi sul pixel che sa leggere.
+       Il PageView del secondo va mandato a mano: consenso.js lo manda solo
+       per il primo, perche' il secondo a quel punto non esiste ancora.
+       ====================================================================== */
+    var PIXEL_CAMPAGNA = '507777909005054';   // GIESSE PIXEL
+    var pixelMontato = false;
+
+    function montaPixelCampagna() {
+      if (pixelMontato || typeof window.fbq !== 'function') return;
+      pixelMontato = true;
+      try {
+        window.fbq('init', PIXEL_CAMPAGNA);
+        window.fbq('trackSingle', PIXEL_CAMPAGNA, 'PageView');
+      } catch (e) { pixelMontato = false; }
+    }
+
     function meta(nome, dati, id) {
+      montaPixelCampagna();          // prima di ogni evento, cosi' nessuno nasce orfano
       if (typeof window.fbq === 'function') {
         try {
           if (id) window.fbq('track', nome, dati || {}, { eventID: id });
@@ -1575,6 +1609,19 @@
        il suo evento va mandato a mano. Senza questa riga l'imbuto partirebbe
        dalla schermata 1 e non si saprebbe mai quanti arrivano e se ne vanno
        senza toccare niente — che e' il numero piu' importante di tutti. */
+    /* Se il consenso e' gia' stato dato in una visita precedente, fbq esiste
+       fin dal caricamento e la coda resta vuota: nessuno chiamerebbe
+       montaPixelCampagna(). Qui lo si tenta subito, e si riprova per qualche
+       secondo perche' consenso.js carica fbevents.js in modo asincrono. */
+    montaPixelCampagna();
+    if (!pixelMontato) {
+      var tentativi = 0;
+      var attesaPixel = setInterval(function () {
+        montaPixelCampagna();
+        if (pixelMontato || ++tentativi > 40) clearInterval(attesaPixel);
+      }, 300);
+    }
+
     tracciaPasso(0);
 
     function segnala(el) {
