@@ -1551,6 +1551,7 @@
           // Si traccia anche il fallimento: senza, un endpoint rotto si
           // vedrebbe solo dal foglio vuoto, e troppo tardi.
           traccia('lp_invio_fallito', { passo: corrente });
+          conta('invio_fallito', { passo: corrente, nome_passo: NOMI_PASSO[corrente] || '' });
           clar('lp_esito', 'invio_fallito');
           clarPriorita('invio_fallito');   // da riguardare: qui si perde un contatto
           inCorso = false;
@@ -1594,6 +1595,7 @@
         if (p && p.catch) p.catch(function () { v.muted = true; v.play(); });
         c.hidden = true;
         traccia('lp_video_play', { passo: corrente });
+        conta('clic', { nome_passo: 'video_benvenuto', passo: corrente });
         clar('lp_video', 'play');
         meta('ViewContent', { content_name: 'video benvenuto' });
       });
@@ -1608,6 +1610,7 @@
       var cal = e.target.closest('#lpCalendario');
       if (cal) {
         traccia('lp_slot_click', { passo: corrente });
+        conta('clic', { nome_passo: 'prenota_call', passo: corrente });
         meta('Schedule', { content_name: 'Prenotazione call 45 minuti' });
         clar('lp_esito', 'slot_aperto');
         return;
@@ -1615,6 +1618,7 @@
       var wa = e.target.closest('a[href*="wa.me"]');
       if (wa) {
         traccia('whatsapp_click', { passo: corrente, nome_passo: NOMI_PASSO[corrente] || '' });
+        conta('clic', { nome_passo: 'whatsapp', passo: corrente });
         meta('Contact', { content_name: 'WhatsApp landing lead generation' });
         return;
       }
@@ -1629,6 +1633,7 @@
         // Tornare indietro e' esitazione, ed e' un dato: se succede sempre
         // sulla stessa schermata, quella domanda e' scritta male.
         traccia('lp_indietro', { passo: corrente, nome_passo: NOMI_PASSO[corrente] || '' });
+        conta('indietro', { passo: corrente, nome_passo: NOMI_PASSO[corrente] || '' });
         mostra(corrente - 1);
         return;
       }
