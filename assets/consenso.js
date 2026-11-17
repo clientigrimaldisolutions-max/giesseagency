@@ -221,8 +221,36 @@
   // ---------------------------------------------------------------- banner ---
   var nodo = null;
 
+  /* IL BANNER NON DEVE MAI COPRIRE QUELLO CHE SI TOCCA.
+     Scoperto il 17/11/2026, ed e' costato contatti veri: il banner e' fixed
+     in fondo e su un telefono e' alto 299px su 812, cioe' si prende il 37%
+     dello schermo. Finche' il visitatore non sceglie resta li', e con
+     pointer-events attivi INTERCETTA i tocchi: nella schermata dei contatti
+     i campi "Numero di cellulare" ed "Email" finivano sotto di lui e non si
+     potevano toccare. Verificato con elementFromPoint: su quei campi
+     l'elemento in cima era .ck-banner, non l'input. Chi non aveva ancora
+     scelto sui cookie non riusciva a candidarsi, e non poteva nemmeno
+     capire perche'.
+     La cura: finche' il banner e' aperto la pagina si allunga in fondo di
+     quanto e' alto lui. Cosi' nessun contenuto gli finisce sotto e tutto
+     resta raggiungibile scorrendo. Va ricalcolato anche quando si apre
+     "Scegli quali", perche' il banner diventa piu' alto. */
+  function riservaSpazio() {
+    if (!nodo) return;
+    var r = nodo.getBoundingClientRect();
+    var staccoDalFondo = parseFloat(getComputedStyle(nodo).bottom) || 0;
+    document.body.style.paddingBottom = Math.ceil(r.height + staccoDalFondo + 16) + 'px';
+  }
+
+  function liberaSpazio() {
+    document.body.style.paddingBottom = '';
+  }
+
+  window.addEventListener('resize', function () { if (nodo) riservaSpazio(); });
+
   function chiudi() {
     if (!nodo) return;
+    liberaSpazio();
     nodo.classList.remove('is-in');
     var via = function () { if (nodo && nodo.parentNode) nodo.parentNode.removeChild(nodo); nodo = null; };
     nodo.addEventListener('transitionend', via, { once: true });
@@ -301,7 +329,7 @@
       '<button type="button" class="ck-scegli" aria-expanded="false">Scegli quali</button>';
 
     document.body.appendChild(nodo);
-    requestAnimationFrame(function () { nodo.classList.add('is-in'); });
+    requestAnimationFrame(function () { nodo.classList.add('is-in'); riservaSpazio(); });
 
     var dettaglio = nodo.querySelector('.ck-dettaglio');
     var scegli = nodo.querySelector('.ck-scegli');
@@ -309,6 +337,7 @@
     scegli.addEventListener('click', function () {
       var aperto = dettaglio.classList.toggle('is-aperto');
       scegli.setAttribute('aria-expanded', String(aperto));
+      riservaSpazio();
       // Aperto il pannello, il link diventa il tasto per confermare:
       // altrimenti si spuntano le caselle e non si capisce come salvare.
       scegli.textContent = aperto ? 'Salva le mie scelte' : 'Scegli quali';
