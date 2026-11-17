@@ -109,6 +109,43 @@
   // -------------------------------------------------------------- tracker ---
   var avviati = { statistiche: false, marketing: false };
 
+  /* CLARITY, e perche' questo e' l'unico tracker che si carica prima della
+     scelta. Clarity ha una modalita' prevista da Microsoft: con il consenso
+     NEGATO il tag si carica lo stesso ma non scrive nessun cookie, ne' di
+     prima ne' di terza parte, e non cuce insieme le visite. Serve perche'
+     altrimenti vediamo solo chi accetta: il 17/11/2026 erano 5 persone su
+     443, e la sola che ha attraversato tutto il questionario non era fra
+     quelle cinque. Senza registrazione non si capisce DOVE si e' bloccata.
+     Di suo Clarity maschera il contenuto dei campi di testo, quindi quello
+     che si scrive nel modulo non finisce comunque nei video.
+     NOTA: Microsoft impone il segnale di consenso in UE, UK e Svizzera dal
+     31 ottobre 2025. Questo e' il modo previsto, non un aggiramento. */
+  function caricaClarity() {
+    if (!CLARITY || eInterno() || window.clarity) return;
+    (function (c, l, a, r, i, t, y) {
+      c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+      t = l.createElement(r); t.async = 1; t.src = 'https://www.clarity.ms/tag/' + i;
+      y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+    })(window, document, 'clarity', 'script', CLARITY);
+    // Si parte SEMPRE da negato. Se poi arriva il consenso, applica() alza
+    // l'interruttore; se arriva il rifiuto, Clarity cancella da solo i cookie
+    // che aveva messo e riparte senza.
+    clarityConsenso('denied', 'denied');
+  }
+
+  /* L'unico posto da cui si parla del consenso a Clarity. La funzione stub
+     messa dal caricatore accoda le chiamate fatte prima che lo script arrivi,
+     quindi non serve aspettare. */
+  function clarityConsenso(analitici, pubblicita) {
+    if (typeof window.clarity !== 'function') return;
+    try {
+      window.clarity('consentv2', {
+        analytics_Storage: analitici,
+        ad_Storage: pubblicita
+      });
+    } catch (e) {}
+  }
+
   function avviaStatistiche() {
     if (avviati.statistiche) return;
     avviati.statistiche = true;
@@ -124,16 +161,6 @@
       ? { anonymize_ip: true, traffic_type: 'internal' }
       : { anonymize_ip: true });
 
-    // Microsoft Clarity: registra la sessione, quindi sta fra le statistiche
-    // e non parte senza consenso. Di suo maschera gia' il contenuto dei campi
-    // di testo, quindi quello che si scrive nel modulo non finisce nei video.
-    if (CLARITY && !interno) {
-      (function (c, l, a, r, i, t, y) {
-        c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-        t = l.createElement(r); t.async = 1; t.src = 'https://www.clarity.ms/tag/' + i;
-        y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-      })(window, document, 'clarity', 'script', CLARITY);
-    }
   }
 
   function avviaMarketing() {
@@ -182,6 +209,11 @@
 
   function applica(g) {
     if (!g) return;
+    // Clarity prima di tutto: sta gia' girando senza cookie, qui si limita a
+    // sapere com'e' andata la scelta. Vale in entrambi i versi, perche' da
+    // "Gestisci i cookie" un consenso si puo' anche revocare.
+    clarityConsenso(g.statistiche ? 'granted' : 'denied',
+                    g.marketing ? 'granted' : 'denied');
     if (g.statistiche) avviaStatistiche();
     if (g.marketing) avviaMarketing();
   }
@@ -292,9 +324,15 @@
   // ------------------------------------------------------------------ avvio ---
   function avvia() {
     var g = leggi();
-    // NIENTE tracciamento prima della scelta. Statistiche e marketing partono
-    // solo dopo che il visitatore ha deciso: e' quello che dicono la cookie
-    // policy e la privacy policy del sito, e devono continuare a coincidere.
+    /* NESSUN COOKIE prima della scelta, e questo non e' cambiato.
+       Quello che e' cambiato il 17/11/2026 e' che Clarity ora si carica
+       subito in modalita' negata: non scrive cookie, non salva niente sul
+       dispositivo, non riconosce chi torna. GA4, il Pixel e Google Ads invece
+       restano fermi finche' il visitatore non ha deciso.
+       ATTENZIONE: la cookie policy e la privacy policy devono dirlo. Se
+       dicono ancora "nessuno strumento di analisi prima del consenso", vanno
+       aggiornate, altrimenti la pagina e il testo non coincidono piu'. */
+    caricaClarity();
     if (g) { applica(g); return avviaAscoltoApri(); }
 
     /* QUANDO COMPARE, e perche' non piu' subito.
