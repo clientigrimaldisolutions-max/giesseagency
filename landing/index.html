@@ -1220,6 +1220,17 @@
       'chi_richiama', 'cinque_minuti', 'canale', 'limite_canale', 'problema',
       'contatti', 'grazie'
     ];
+
+    /* Quale campo risponde a quale schermata. Ci sono SOLO le domande a
+       scelta multipla. Il passo 10 (nome, cognome, telefono, email) non e'
+       qui dentro e non deve entrarci mai: quei dati sono personali e partono
+       solo con l'invio consapevole del modulo, con la casella privacy
+       spuntata. Di chi non invia registriamo QUALI campi ha compilato, mai
+       cosa ci ha scritto. */
+    var CAMPO_PASSO = {
+      1: 'settore', 3: 'budget', 5: 'chi_richiama', 7: 'dolore', 9: 'problema'
+    };
+    var CAMPI_CONTATTI = ['nome', 'cognome', 'telefono', 'email', 'azienda', 'citta', 'privacy'];
     var visti = {};          // un evento per schermata per visita, non uno per passaggio
     var partito = false;     // form_start una volta sola
 
@@ -1370,6 +1381,22 @@
       visti[n] = true;
       traccia('lp_passo', { passo: n, nome_passo: NOMI_PASSO[n] || ('passo_' + n) });
       conta('passo', { passo: n, nome_passo: NOMI_PASSO[n] || ('passo_' + n) });
+      /* La risposta appena scelta appartiene alla schermata PRECEDENTE, non
+         a questa: si arriva al passo n perche' si e' risposto al passo n-1.
+         Va come evento a se' stante, cosi' nel foglio si legge per intero su
+         una riga sola — Evento=risposta, Nome passo=budget, Risposta=900 — e
+         si raggruppa senza incrociare due righe. */
+      var campoPrec = CAMPO_PASSO[n - 1];
+      if (campoPrec) {
+        var scelto = document.querySelector('input[name="' + campoPrec + '"]:checked');
+        if (scelto && scelto.value) {
+          conta('risposta', {
+            passo: n - 1,
+            nome_passo: NOMI_PASSO[n - 1] || ('passo_' + (n - 1)),
+            risposta: scelto.value
+          });
+        }
+      }
       // L'inizio vero del modulo e' la prima domanda, non l'apertura: chi
       // guarda e se ne va senza toccare niente non ha iniziato niente.
       if (n === 1 && !partito) {
@@ -1493,6 +1520,43 @@
         }
       }, { threshold: 0.5 });
       osserva.observe(bottone);
+    })();
+
+    /* Chi arriva al modulo e se ne va senza inviarlo. L'unica cosa che serve
+       sapere e' DOVE si e' bloccato: quali campi aveva compilato e quali no.
+       Registriamo i NOMI dei campi, mai il loro contenuto. Nome, cognome,
+       telefono ed email di chi non invia sono dati personali di una persona
+       che ha scelto di non darceli, e la casella privacy non e' spuntata:
+       quei valori non devono uscire dal browser. Sapere che si bloccano sul
+       telefono vale piu' di cento numeri orfani, perche' dice cosa riscrivere.
+       pagehide copre il telefono, dove non si "chiude" la pagina ma si cambia
+       app; visibilitychange copre il cambio di scheda sul desktop.
+       NOTA per chi legge il foglio: se una visita ha sia `modulo_lasciato`
+       sia `lead`, non e' un abbandono — e' uno che e' uscito un attimo e poi
+       e' tornato a inviare. */
+    (function () {
+      var mandato = false;
+      function uscita() {
+        if (mandato || corrente !== 10) return;
+        mandato = true;
+        var pieni = [], vuoti = [];
+        CAMPI_CONTATTI.forEach(function (nome) {
+          var campo = document.querySelector('[name="' + nome + '"]');
+          if (!campo) return;
+          var compilato = (campo.type === 'checkbox') ? campo.checked : !!campo.value.trim();
+          (compilato ? pieni : vuoti).push(nome);
+        });
+        conta('modulo_lasciato', {
+          passo: 10,
+          nome_passo: 'contatti',
+          risposta: 'pieni: ' + (pieni.join(' ') || 'nessuno') +
+                    ' | vuoti: ' + (vuoti.join(' ') || 'nessuno')
+        });
+      }
+      window.addEventListener('pagehide', uscita);
+      document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') uscita();
+      });
     })();
 
     /* --- tutte le risposte, non solo i contatti. Ogni schermata lascia il
