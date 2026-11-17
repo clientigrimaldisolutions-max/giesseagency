@@ -1285,6 +1285,57 @@
       sorveglia();
     }
 
+    /* ======================================================================
+       IL CONTATORE SENZA COOKIE — l'unico che vede TUTTI
+       ----------------------------------------------------------------------
+       GA4, Pixel e Clarity partono solo col consenso: chi ignora il banner,
+       per loro non e' mai entrato. Il 17/11, con 34 uscite da Meta verso
+       questa landing, il pannello Meta segnava ZERO visite. Senza questo
+       contatore non si sa nemmeno quante persone arrivano, e quindi non si
+       puo' distinguere "la pagina converte male" da "non ci arriva nessuno".
+
+       PERCHE' QUESTO NON CHIEDE IL CONSENSO E GLI ALTRI SI'.
+       Non scrive e non legge NIENTE sul dispositivo: nessun cookie, nessun
+       localStorage, nessun sessionStorage. Non manda niente a terzi: scrive
+       sul nostro foglio. L'id di visita vive in una variabile JavaScript e
+       muore chiudendo la scheda, quindi non riconosce chi torna. Non si
+       registra ne' fbclid ne' lo user agent: servirebbero a identificare la
+       persona, e qui serve soltanto contarla e sapere dove si ferma.
+       Se un giorno si aggiunge un identificatore o una memoria sul
+       dispositivo, questo contatore torna sotto consenso come gli altri.
+       ====================================================================== */
+    var idVisita = 'v-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+
+    function conta(evento, extra) {
+      var corpo = {
+        tipo: 'traffico',
+        evento: evento,
+        visita: idVisita,
+        pagina: location.pathname,
+        schermo: (window.innerWidth < 768 ? 'mobile' : 'desktop')
+      };
+      // Da quale annuncio: si leggono i campi nascosti, che gestiscono gia'
+      // il caso della ricarica senza UTM (vedi la funzione provenienza).
+      ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'].forEach(function (k) {
+        var campo = document.querySelector('input[name="' + k + '"]');
+        corpo[k] = campo ? (campo.value || '') : '';
+      });
+      if (extra) Object.keys(extra).forEach(function (k) { corpo[k] = extra[k]; });
+
+      var testo = JSON.stringify(corpo);
+      // text/plain: evita il preflight CORS, che Apps Script non gestisce.
+      try {
+        if (navigator.sendBeacon &&
+            navigator.sendBeacon(FOGLIO, new Blob([testo], { type: 'text/plain' }))) return;
+      } catch (err) {}
+      // Riserva: fetch che sopravvive al cambio pagina. Mai aspettato: il
+      // conteggio non deve rallentare di un millisecondo la landing, e se
+      // fallisce si perde una riga di statistica, non un contatto.
+      try {
+        fetch(FOGLIO, { method: 'POST', body: testo, keepalive: true, mode: 'no-cors' });
+      } catch (err) {}
+    }
+
     /* CLARITY — i tag che rendono le registrazioni cercabili.
        Senza, Clarity registra tutto e non si puo' chiedere "fammi vedere solo
        chi si e' fermato sul budget" o "solo le sessioni diventate lead":
@@ -1318,6 +1369,7 @@
       if (visti[n]) return;
       visti[n] = true;
       traccia('lp_passo', { passo: n, nome_passo: NOMI_PASSO[n] || ('passo_' + n) });
+      conta('passo', { passo: n, nome_passo: NOMI_PASSO[n] || ('passo_' + n) });
       // L'inizio vero del modulo e' la prima domanda, non l'apertura: chi
       // guarda e se ne va senza toccare niente non ha iniziato niente.
       if (n === 1 && !partito) {
@@ -1416,6 +1468,9 @@
       if (pag) pag.value = location.href;
       var prov = document.querySelector('input[name="provenienza"]');
       if (prov) prov.value = document.referrer || 'diretto';
+      // Il conteggio della visita parte DA QUI e non prima: qui i campi
+      // nascosti sono pieni, quindi la riga sa da quale annuncio arriva.
+      conta('visita');
     })();
 
     /* --- tutte le risposte, non solo i contatti. Ogni schermata lascia il
@@ -1477,6 +1532,9 @@
             content_name: 'Landing Lead Generation',
             content_category: dati.settore || ''
           }, idCandidatura);
+          // Anche nel contatore: cosi' l'imbuto si legge tutto in un posto,
+          // dalla visita al contatto, senza dipendere dal consenso.
+          conta('lead');
           clar('lp_esito', 'lead');
           clar('lp_settore', dati.settore || '');
           clar('lp_budget', dati.budget || '');

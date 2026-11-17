@@ -223,9 +223,30 @@
     // e' un requisito, non una gentilezza. Nascondere il rifiuto dietro un link
     // grigio e' il classico schema che il Garante sanziona, e trasformerebbe
     // un banner regolare in un problema.
+    // IL TESTO, e perche' questo invece del precedente.
+    // Prima diceva: "Ne usiamo alcuni per capire come viene usato il sito e
+    // per misurare le nostre campagne". Vero, ma raccontato dal nostro lato:
+    // chi legge sente "vogliono misurarmi" e il riflesso e' Rifiuta. Qui si
+    // dice la stessa identica cosa dal lato suo e in concreto — quale
+    // annuncio l'ha portato, e a cosa ci serve — senza promettere niente che
+    // non facciamo. Chi arriva su questa landing fa impresa: il problema del
+    // budget buttato in annunci che non funzionano lo conosce di persona.
+    // Due versioni dello stesso messaggio, perche' questo file lo carica TUTTO
+    // il sito. Chi arriva da un annuncio (ha utm, fbclid o gclid nell'URL) si
+    // sente dire la cosa concreta e vera per lui: quale annuncio l'ha portato.
+    // Chi arriva dal blog o da Google si sentirebbe raccontare un annuncio che
+    // non esiste, e una frase che non torna fa esattamente il danno che
+    // vogliamo evitare: insospettisce. A quello si dice la stessa cosa nella
+    // forma giusta per lui.
+    var daAnnuncio = /[?&](utm_source|utm_campaign|fbclid|gclid)=/.test(location.search);
+    var spiegazione = daAnnuncio
+      ? 'Questi cookie ci dicono quale annuncio ti ha portato qui, cos\u00ec spegniamo quelli che non funzionano. '
+      : 'Questi cookie ci dicono quali pagine servono davvero e da dove arrivano le persone, cos\u00ec smettiamo di spendere su quello che non funziona. ';
+
     nodo.innerHTML =
-      '<p class="ck-titolo">Cookie</p>' +
-      '<p class="ck-testo">Ne usiamo alcuni per capire come viene usato il sito e per misurare le nostre campagne. ' +
+      '<p class="ck-titolo">Ci aiuta a non sprecare budget</p>' +
+      '<p class="ck-testo">' + spiegazione +
+        '\u00c8 la stessa cosa che facciamo per i nostri clienti. ' +
         '<a href="' + su + 'cookie.html">Dettagli</a></p>' +
       '<div class="ck-dettaglio">' +
         '<div class="ck-voce">' +
@@ -274,8 +295,34 @@
     // NIENTE tracciamento prima della scelta. Statistiche e marketing partono
     // solo dopo che il visitatore ha deciso: e' quello che dicono la cookie
     // policy e la privacy policy del sito, e devono continuare a coincidere.
-    if (g) applica(g);
-    else costruisci(null);
+    if (g) { applica(g); return avviaAscoltoApri(); }
+
+    /* QUANDO COMPARE, e perche' non piu' subito.
+       Il banner arrivava nello stesso istante del caricamento: la persona non
+       ha ancora letto una riga, non sa dove e', e la risposta piu' rapida per
+       togliersi di mezzo una finestra che non capisce e' Rifiuta. Con qualche
+       secondo davanti, la pagina ha gia' detto chi siamo e la scelta si fa
+       sapendo a chi la si sta dando.
+       Legalmente non cambia niente, ed e' il motivo per cui si puo' fare:
+       prima della scelta non parte NESSUN tracker, ne' adesso ne' prima.
+       Sei secondi: sotto non si legge niente, sopra si rischia che la persona
+       abbia gia' cominciato il percorso e il banner le arrivi addosso mentre
+       compila. La coda degli eventi della landing aspetta tre minuti, quindi
+       questo ritardo non fa perdere nemmeno un evento di chi poi accetta. */
+    var apparso = false;
+    function mostraIlBanner() {
+      if (apparso) return;
+      apparso = true;
+      costruisci(null);
+    }
+    setTimeout(mostraIlBanner, 6000);
+    avviaAscoltoApri();
+  }
+
+  /* "Gestisci i cookie" nel footer deve funzionare sempre: sia per chi ha gia'
+     scelto, sia per chi non ha ancora scelto e vuole decidere subito senza
+     aspettare i sei secondi. */
+  function avviaAscoltoApri() {
     document.addEventListener('click', function (e) {
       var t = e.target.closest('[data-consenso="apri"]');
       if (t) { e.preventDefault(); costruisci(leggi()); }
