@@ -1473,6 +1473,28 @@
       conta('visita');
     })();
 
+    /* --- Il buco scoperto il 17/11: con i soli eventi "visita" e "passo" non
+       si distingue chi rimbalza senza guardare niente da chi legge tutto e
+       decide di non candidarsi. Sul telefono il bottone della prima schermata
+       cade sotto la piega (940px su 812 di viewport), quindi la domanda vera
+       e': lo hanno almeno VISTO? Una riga sola per visita, al primo affacciarsi
+       del bottone. Su desktop parte subito, ed e' giusto: li' il bottone si
+       vede senza scrollare. */
+    (function () {
+      var bottone = document.querySelector('.lp-passo[data-passo="0"] [data-avanti]');
+      if (!bottone || !window.IntersectionObserver) return;
+      var gia = false;
+      var osserva = new IntersectionObserver(function (voci) {
+        for (var i = 0; i < voci.length; i++) {
+          if (!voci[i].isIntersecting || gia) continue;
+          gia = true;
+          osserva.disconnect();
+          conta('visto_bottone', { passo: 0, nome_passo: 'apertura' });
+        }
+      }, { threshold: 0.5 });
+      osserva.observe(bottone);
+    })();
+
     /* --- tutte le risposte, non solo i contatti. Ogni schermata lascia il
        suo campo: settore, budget, chi gestisce, canale, problema. */
     function raccogli() {
