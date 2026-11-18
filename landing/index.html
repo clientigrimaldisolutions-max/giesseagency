@@ -1317,7 +1317,24 @@
        ====================================================================== */
     var idVisita = 'v-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
 
+    /* PROVE IN LOCALE: NON ARRIVANO AL FOGLIO (18/11/2026)
+       Il server di prova serve la copia di deploy/, che punta allo script di
+       produzione: ogni prova finiva dentro TRAFFICO, in mezzo ai visitatori
+       veri, e andava poi ripulita a mano riga per riga. La regola era
+       "ricordati di cambiare FOGLIO prima di provare": e' saltata due volte
+       in un giorno. Adesso decide il posto, non la memoria. */
+    function eInLocale() {
+      try {
+        var casa = location.hostname;
+        return location.protocol === 'file:' ||
+               casa === 'localhost' || casa === '127.0.0.1' ||
+               casa === '::1' || casa === '[::1]' ||
+               /\.(local|test|localhost)$/.test(casa);
+      } catch (err) { return false; }
+    }
+
     function conta(evento, extra) {
+      if (eInLocale()) return;
       var corpo = {
         tipo: 'traffico',
         evento: evento,

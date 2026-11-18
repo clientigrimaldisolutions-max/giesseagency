@@ -93,6 +93,19 @@
 
   function eInterno() {
     try {
+      /* IL POSTO DECIDE DA SOLO (18/11/2026)
+         Su localhost, 127.0.0.1, un nome .local/.test o un file aperto da
+         disco non esiste un visitatore vero: quelle sono sempre prove nostre.
+         Prima bisognava ricordarsi ?interno=1 e nessuno se lo ricordava:
+         in tre giorni Clarity aveva raccolto 13 visualizzazioni nostre
+         mescolate a quelle dei visitatori. Una regola che dipende dalla
+         memoria di chi prova non e' una regola. */
+      var casa = location.hostname;
+      if (location.protocol === 'file:' ||
+          casa === 'localhost' || casa === '127.0.0.1' ||
+          casa === '::1' || casa === '[::1]' ||
+          /\.(local|test|localhost)$/.test(casa)) return true;
+
       var q = new URLSearchParams(location.search);
       if (q.has('interno')) {
         var acceso = q.get('interno') !== '0';

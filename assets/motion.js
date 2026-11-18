@@ -659,11 +659,54 @@
       return false;
     }
 
-    function aggiorna() {
-      var mostra = !menuAperto() && !sottoCiSonoBersagli();
+    function applicaStato(mostra) {
       if (mostra) fab.classList.add('is-in'); else fab.classList.remove('is-in');
       fab.setAttribute('aria-hidden', mostra ? 'false' : 'true');
       fab.tabIndex = mostra ? 0 : -1;
+    }
+
+    /* IL TEMPO MINIMO FRA DUE CAMBI (18/11/2026)
+       Misurato sul sito vero a 375px, scorrendo tutta la home a piccoli passi:
+       il bottone cambiava stato NOVE volte, tutte fra l'87% e il 99% della
+       pagina. Nell'87% iniziale non lampeggiava mai. In fondo ci sono la
+       scheda del modulo e poi i link del footer, alti 44-54px, che gli
+       scorrono sotto uno dopo l'altro: ognuno lo spegneva e lo riaccendeva.
+
+       La regola "non coprire nulla" resta giusta: era la REATTIVITA' a essere
+       sbagliata. Qui la cura e' un tempo minimo fra un cambio e il successivo.
+       Il primo cambio e' immediato — se c'e' un bersaglio sotto, il bottone si
+       toglie di mezzo subito, che e' il punto di tutta la regola — ma per
+       ATTESA_FRA_CAMBI millisecondi non se ne fa un altro. Alla scadenza si
+       guarda com'e' messa la pagina ADESSO e ci si adegua.
+
+       PRIMA VERSIONE, SBAGLIATA, lasciata scritta perche' e' una trappola
+       facile da rifare: avevo chiesto che lo stato nuovo REGGESSE per 420ms
+       prima di applicarlo. Misurato: col pollice che scorre, un ostacolo
+       qualsiasi azzerava l'attesa, e il bottone non ricompariva PIU'. Zero
+       apparizioni su 226 letture. Far aspettare il cambio non e' come
+       distanziare i cambi: il primo modo ha uno stato in cui resta
+       incastrato, il secondo no. */
+    var ATTESA_FRA_CAMBI = 900;
+    var ultimoCambio = 0;
+    var timerCambio = null;
+
+    function aggiorna() {
+      var mostra = !menuAperto() && !sottoCiSonoBersagli();
+      if (mostra === fab.classList.contains('is-in')) return;
+
+      var passato = Date.now() - ultimoCambio;
+      if (passato >= ATTESA_FRA_CAMBI) {
+        ultimoCambio = Date.now();
+        applicaStato(mostra);
+        return;
+      }
+      /* Troppo presto. Non si butta via la richiesta: si riguarda la pagina
+         appena scade il tempo minimo. */
+      if (timerCambio) return;
+      timerCambio = setTimeout(function () {
+        timerCambio = null;
+        aggiorna();
+      }, ATTESA_FRA_CAMBI - passato);
     }
 
     /* Freno: lo scorrimento manda decine di eventi al secondo e ogni giro legge
