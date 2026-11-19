@@ -544,6 +544,60 @@
     @media (max-width: 860px) {
       .lp-settori { grid-template-columns: repeat(2, minmax(0,1fr)); }
       .lp-famiglie { grid-template-columns: 1fr; }
+
+      /* I SETTORI SI DISPONGONO IN RIGA, NON IN COLONNA (19/11/2026)
+         Misurato sul contatore senza cookie, su tutta la vita della campagna:
+         462 persone sono arrivate sulla landing e SOLO 10 hanno visto il
+         pulsante "Inizia la fase di candidatura". Il 2%.
+         La causa non era il questionario ne' la velocita': impilato su una
+         colonna questo blocco e' alto 472px e spingeva il pulsante a 940px
+         su una viewport da 812. Sotto la piega — e dentro la WebView di
+         Instagram, da cui arriva tutto il traffico, c'e' anche la barra del
+         browser che toglie altri ~100px.
+         Le tre famiglie restano tutte e tre e si leggono ancora: cambia solo
+         come si dispongono. Il concetto della schermata non si tocca —
+         prima dico in che mondo lavoro, poi invito. */
+      .lp-famiglia { padding: 13px 16px; }
+      .lp-famiglia h3 { margin: 0 0 7px; }
+      .lp-famiglia ul { display: flex; flex-wrap: wrap; gap: 5px 14px; }
+      .lp-famiglia li {
+        margin-bottom: 0; font-size: 0.82rem; line-height: 1.35;
+      }
+      .lp-famiglia li::before { top: 0.44em; }
+
+      /* L'INVITO PRIMA DELL'ELENCO, SOLO SU TELEFONO (19/11/2026)
+         Stringere non bastava: tolti tutti i margini recuperabili il pulsante
+         restava a filo dei 812px, e la viewport utile dentro la WebView di
+         Instagram su molti Android e' 640-700px, non 812. Sotto quella soglia
+         il pulsante tornava invisibile, che e' il difetto che stiamo curando.
+         Si riordina con `order`: il MARKUP NON CAMBIA, cambia solo la
+         disposizione sotto gli 860px. Su desktop resta tutto com'era.
+         Il concetto regge nei due versi — prima invito e poi rassicuro su chi
+         seguiamo, invece di rassicurare e poi invitare. Per tornare indietro
+         basta cancellare questo blocco. */
+      /* `.is-active` E' OBBLIGATORIO QUI.
+         Senza, il selettore `.lp-passo[data-passo="0"]` ha la stessa
+         specificita' di `.lp-passo.is-active` (0,2,1) ma viene dopo nel
+         foglio: vinceva lui, il `display:flex` sovrascriveva il
+         `display:none` di `.lp-passo` e la schermata di apertura NON SPARIVA
+         PIU'. Si restava col titolo e il pulsante in pagina sopra le domande.
+         Preso in prova il 19/11 prima della pubblicazione. */
+      .lp-passo[data-passo="0"].is-active { display: flex; flex-direction: column; }
+      /* TUTTI i figli vanno numerati, non solo quelli che si spostano.
+         `order` vale 0 di default: elencando solo i primi sei, i quattro
+         rimasti (loghi partner, fiducia, il secondo blocco azioni) finivano
+         in CIMA alla schermata con il loro order 0. Qui si parte da 6 per
+         tutti e si tirano avanti solo i quattro che servono; a parita' di
+         order il browser tiene l'ordine del documento, quindi la coda resta
+         esattamente com'e' scritta nel markup. */
+      .lp-passo[data-passo="0"] > *                 { order: 6; }
+      .lp-passo[data-passo="0"] > .lp-titolo        { order: 1; }
+      .lp-passo[data-passo="0"] > .lp-sotto         { order: 2; }
+      /* il pulsante d'avvio e' quello che SEGUE l'elenco nel markup:
+         cosi' il secondo .fv-azioni in fondo alla schermata non viene preso */
+      .lp-passo[data-passo="0"] > .lp-famiglie + .fv-azioni { order: 3; margin: 2px 0 26px; }
+      .lp-passo[data-passo="0"] > .lp-settori-intro { order: 4; }
+      .lp-passo[data-passo="0"] > .lp-famiglie      { order: 5; }
     }
     @media (max-width: 720px) {
       .lp-numeri { grid-template-columns: repeat(2, minmax(0,1fr)); }
