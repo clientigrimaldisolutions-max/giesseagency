@@ -66,6 +66,13 @@
       data: new Date().toISOString()
     };
     try { localStorage.setItem(CHIAVE, JSON.stringify(g)); } catch (e) {}
+    /* Si annuncia la scelta a chi sta nella pagina. Serve alla landing, che
+       la registra sul suo contatore senza cookie: sapere QUANTI accettano e'
+       la misura che decide se ha senso lavorare sull'ottimizzazione di Meta
+       o se il problema e' il banner. Si manda la scelta, non la persona. */
+    try {
+      document.dispatchEvent(new CustomEvent('giesse:consenso', { detail: g }));
+    } catch (e) {}
     return g;
   }
 
@@ -91,6 +98,27 @@
      dei visitatori veri. */
   var CHIAVE_INTERNO = 'giesse-interno';
 
+  /* I POSTI CHE SONO SEMPRE NOSTRI (18/11/2026)
+     Non solo localhost: anche il computer raggiunto dal telefono sulla rete
+     di casa o dell'ufficio (192.168.x, 10.x, 172.16-31.x), che e' il modo
+     normale di provare un sito da un telefono vero. Il sito pubblico sta su
+     giesseagency.com: a un indirizzo privato non ci arriva nessun
+     visitatore, quindi escluderli non toglie un solo dato buono. */
+  function eInLocale() {
+    try {
+      var casa = location.hostname;
+      if (location.protocol === 'file:') return true;
+      if (casa === 'localhost' || casa === '127.0.0.1' ||
+          casa === '::1' || casa === '[::1]') return true;
+      if (/\.(local|test|localhost)$/.test(casa)) return true;
+      if (/^127\./.test(casa)) return true;
+      if (/^10\./.test(casa)) return true;
+      if (/^192\.168\./.test(casa)) return true;
+      if (/^172\.(1[6-9]|2[0-9]|3[01])\./.test(casa)) return true;
+      return false;
+    } catch (e) { return false; }
+  }
+
   function eInterno() {
     try {
       /* IL POSTO DECIDE DA SOLO (18/11/2026)
@@ -100,11 +128,7 @@
          in tre giorni Clarity aveva raccolto 13 visualizzazioni nostre
          mescolate a quelle dei visitatori. Una regola che dipende dalla
          memoria di chi prova non e' una regola. */
-      var casa = location.hostname;
-      if (location.protocol === 'file:' ||
-          casa === 'localhost' || casa === '127.0.0.1' ||
-          casa === '::1' || casa === '[::1]' ||
-          /\.(local|test|localhost)$/.test(casa)) return true;
+      if (eInLocale()) return true;
 
       var q = new URLSearchParams(location.search);
       if (q.has('interno')) {

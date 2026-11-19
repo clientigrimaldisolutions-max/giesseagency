@@ -1326,10 +1326,17 @@
     function eInLocale() {
       try {
         var casa = location.hostname;
-        return location.protocol === 'file:' ||
-               casa === 'localhost' || casa === '127.0.0.1' ||
-               casa === '::1' || casa === '[::1]' ||
-               /\.(local|test|localhost)$/.test(casa);
+        if (location.protocol === 'file:') return true;
+        if (casa === 'localhost' || casa === '127.0.0.1' ||
+            casa === '::1' || casa === '[::1]') return true;
+        if (/\.(local|test|localhost)$/.test(casa)) return true;
+        // Anche la rete di casa o dell'ufficio: e' cosi' che si prova il
+        // sito dal telefono vero, ed e' finito due volte dentro TRAFFICO.
+        if (/^127\./.test(casa)) return true;
+        if (/^10\./.test(casa)) return true;
+        if (/^192\.168\./.test(casa)) return true;
+        if (/^172\.(1[6-9]|2[0-9]|3[01])\./.test(casa)) return true;
+        return false;
       } catch (err) { return false; }
     }
 
@@ -1350,6 +1357,13 @@
       });
       if (extra) Object.keys(extra).forEach(function (k) { corpo[k] = extra[k]; });
 
+      spedisci(corpo);
+    }
+
+    /* Il trasporto, separato da cosa si manda: lo usano sia il contatore
+       senza cookie sia il segnale a Meta, che sono due cose diverse e devono
+       restare separate (vedi sotto). */
+    function spedisci(corpo) {
       var testo = JSON.stringify(corpo);
       // text/plain: evita il preflight CORS, che Apps Script non gestisce.
       try {
@@ -1363,6 +1377,78 @@
         fetch(FOGLIO, { method: 'POST', body: testo, keepalive: true, mode: 'no-cors' });
       } catch (err) {}
     }
+
+    /* ======================================================================
+       IL SEGNALE A META, E PERCHE' NON PASSA DAL CONTATORE (18/11/2026)
+       ----------------------------------------------------------------------
+       Meta ottimizza su quello che VEDE. Oggi vede solo l'evento Lead, e solo
+       all'invio del modulo: fra l'arrivo e l'invio, per Meta non succede
+       niente. Con zero invii dall'inizio della campagna, l'algoritmo non ha
+       un solo esempio da cui imparare, e consegna poco e caro.
+       L'inizio del questionario e' il primo gesto vero che una persona fa:
+       e' quello il segnale da dare.
+
+       Dal browser l'evento InitiateCheckout parte gia'. Ma il Pixel muore
+       con i blocchi pubblicitari, con Safari e dentro i browser delle app:
+       la copia dal server lo recupera. Stesso event_id sui due invii, cosi'
+       Meta li riconosce come UNO e non conta doppio.
+
+       PERCHE' UNA STRADA SEPARATA, e non un campo in piu' sul contatore.
+       Il contatore qui sopra sta fuori dal consenso per una ragione precisa:
+       non scrive niente sul dispositivo e non porta NESSUN identificatore.
+       Il fbclid e' un identificatore: infilarlo li' dentro trascinerebbe
+       l'intero contatore sotto consenso, e perderemmo l'unica misura che
+       oggi vede tutti. Quindi il segnale a Meta viaggia da solo, parte SOLO
+       col consenso marketing, e se il consenso non c'e' non parte niente —
+       ne' dal browser ne' dal server. Nessuna scorciatoia: senza permesso
+       Meta non riceve un dato che sia uno.
+       ====================================================================== */
+    var idInizio = 'ic-' + idVisita;      // lo stesso per Pixel e server
+    var segnaleInizioMandato = false;
+
+    function consensoMarketing() {
+      try {
+        var s = (window.GiesseConsenso && typeof GiesseConsenso.stato === 'function')
+          ? GiesseConsenso.stato() : null;
+        return !!(s && s.marketing);
+      } catch (err) { return false; }
+    }
+
+    function segnalaInizio() {
+      if (segnaleInizioMandato || eInLocale()) return;
+      if (!consensoMarketing()) return;   // niente permesso, niente invio
+      segnaleInizioMandato = true;
+
+      var campo = document.querySelector('input[name="fbclid"]');
+      spedisci({
+        tipo: 'capi',
+        evento: 'questionario_iniziato',
+        event_id: idInizio,
+        fbclid: campo ? (campo.value || '') : '',
+        pagina: location.href,
+        agente: navigator.userAgent,
+        marketing: 'si'
+      });
+    }
+
+    /* QUANTI ACCETTANO DAVVERO — il numero che decide tutto il resto.
+       Finora non lo sapevamo. Lo deduciamo per sottrazione e il conto fa
+       paura: contro centinaia di visite, Meta ha registrato 5 visite in
+       tutta la vita della campagna, perche' il Pixel parte solo col
+       consenso. Se davvero accetta l'1%, nessun lavoro sull'ottimizzazione
+       puo' funzionare: Meta resterebbe cieco per costruzione, e la mossa
+       giusta non sarebbe toccare la campagna ma il banner.
+       Quindi si misura, invece di dedurre. La scelta e' un conteggio, non
+       un identificatore: sta nel contatore senza cookie come gli altri. */
+    document.addEventListener('giesse:consenso', function (ev) {
+      var g = (ev && ev.detail) || {};
+      var scelta = (g.statistiche && g.marketing) ? 'tutto'
+                 : (!g.statistiche && !g.marketing) ? 'niente'
+                 : 'parziale';
+      conta('consenso', { risposta: scelta });
+      // Chi accetta DOPO aver gia' iniziato entra adesso nel conto di Meta.
+      if (g.marketing && partito) segnalaInizio();
+    });
 
     /* CLARITY — i tag che rendono le registrazioni cercabili.
        Senza, Clarity registra tutto e non si puo' chiedere "fammi vedere solo
@@ -1419,8 +1505,13 @@
       if (n === 1 && !partito) {
         partito = true;
         traccia('form_start', { modulo: 'lead_generation' });
-        meta('InitiateCheckout', { content_name: 'Landing Lead Generation' });
+        meta('InitiateCheckout', { content_name: 'Landing Lead Generation' }, idInizio);
       }
+      /* Fuori dal blocco qui sopra apposta: chi accetta i cookie DOPO aver
+         gia' iniziato deve comunque entrare nel conteggio di Meta, e lo fa
+         al primo passo successivo. La funzione si protegge da sola dai
+         doppioni. */
+      if (n >= 1) segnalaInizio();
     }
 
     function mostra(n) {
